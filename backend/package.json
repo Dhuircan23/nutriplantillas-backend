@@ -1,0 +1,36 @@
+{
+  "name": "nutriplantillas-backend",
+  "version": "1.0.0",
+  "description": "Backend real para NutriPlantillas: auth, pedidos, pago Webpay Plus (Transbank) y descargas protegidas.",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "migrate": "node db/migrate.js",
+    "seed:generate": "node db/generate-seed.js",
+    "test": "node --test tests/",
+    "test:unit": "node --test tests/assetResolver.test.js",
+    "test:integration": "node --test tests/downloads.security.test.js",
+    "reconcile": "node src/jobs/reconcilePendingOrders.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-async-errors": "^3.1.1",
+    "express-rate-limit": "^7.4.0",
+    "google-auth-library": "^9.14.1",
+    "helmet": "^7.1.0",
+    "jwks-rsa": "^3.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0",
+    "transbank-sdk": "^6.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "supertest": "^7.0.0"
+  }
+}

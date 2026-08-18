@@ -1,0 +1,1038 @@
+{
+  "generated": "2026-08-17",
+  "note": "Mapa de activos NUTRIMETRIA 32. Los nombres canonicos derivan del SKU porque el sistema de archivos del proyecto rechaza parentesis y comas presentes en los nombres originales. El nombre original queda registrado aqui para trazabilidad. Ningun Excel fue modificado.",
+  "publicRoot": "public/documentation",
+  "protectedRoot": "backend/secure-files",
+  "products": [
+    {
+      "id": "nmx01",
+      "sku": "NMX-01",
+      "name": "Calculadora Energética (Necesidades Energéticas)",
+      "phase": 1,
+      "phaseName": "Fase 1 · Motores",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 7990,
+      "excel": {
+        "originalName": "NMX-01_Necesidades_Energeticas_DEFINITIVO_2026.xlsx",
+        "canonical": "NMX-01.xlsx",
+        "path": "backend/secure-files/excel/NMX-01.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-01_NUTRIMETRIA.pdf",
+        "canonical": "NMX-01.pdf",
+        "path": "public/documentation/portfolios/NMX-01.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-01_NUTRIMETRIA.docx",
+        "canonical": "NMX-01.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-01.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx01.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx09",
+      "sku": "NMX-09",
+      "name": "Calculadora de Percentiles OMS",
+      "phase": 1,
+      "phaseName": "Fase 1 · Motores",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 6990,
+      "excel": {
+        "originalName": "NMX-09_Calculadora_de_Percentiles_OMS_18CA_CORREGIDO_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-09.xlsx",
+        "path": "backend/secure-files/excel/NMX-09.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-09_NUTRIMETRIA.pdf",
+        "canonical": "NMX-09.pdf",
+        "path": "public/documentation/portfolios/NMX-09.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-09_NUTRIMETRIA.docx",
+        "canonical": "NMX-09.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-09.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx09.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx10",
+      "sku": "NMX-10",
+      "name": "Motor de Requerimiento Energético, MET y Efecto Térmico",
+      "phase": 1,
+      "phaseName": "Fase 1 · Motores",
+      "version": "v1.0.1",
+      "price_clp": 6990,
+      "excel": {
+        "originalName": "NMX-10_Requerimiento_Energetico_Harris_REPARADO_v1_0_1(3)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-10.xlsx",
+        "path": "backend/secure-files/excel/NMX-10.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-10_NUTRIMETRIA.pdf",
+        "canonical": "NMX-10.pdf",
+        "path": "public/documentation/portfolios/NMX-10.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-10_NUTRIMETRIA.docx",
+        "canonical": "NMX-10.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-10.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx10.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx12",
+      "sku": "NMX-12",
+      "name": "Calculadora de Grasa y Composición Corporal",
+      "phase": 1,
+      "phaseName": "Fase 1 · Motores",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 6990,
+      "excel": {
+        "originalName": "NMX-12_Calculadora_Grasa_Composicion_Corporal_18CA_CORREGIDO_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-12.xlsx",
+        "path": "backend/secure-files/excel/NMX-12.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-12_NUTRIMETRIA.pdf",
+        "canonical": "NMX-12.pdf",
+        "path": "public/documentation/portfolios/NMX-12.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-12_NUTRIMETRIA.docx",
+        "canonical": "NMX-12.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-12.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx12.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx16",
+      "sku": "NMX-16",
+      "name": "Calculadora de Somatotipo y Somatocarta (Heath–Carter)",
+      "phase": 1,
+      "phaseName": "Fase 1 · Motores",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 6990,
+      "excel": {
+        "originalName": "NMX-16_INICIO aprobado(2)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-16.xlsx",
+        "path": "backend/secure-files/excel/NMX-16.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-16_NUTRIMETRIA.pdf",
+        "canonical": "NMX-16.pdf",
+        "path": "public/documentation/portfolios/NMX-16.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-16_NUTRIMETRIA.docx",
+        "canonical": "NMX-16.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-16.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx16.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx36",
+      "sku": "NMX-36",
+      "name": "Calculadora Especializada de Plicometría",
+      "phase": 1,
+      "phaseName": "Fase 1 · Motores",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 6990,
+      "excel": {
+        "originalName": "NMX-36_INICIO aprobado(2)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-36.xlsx",
+        "path": "backend/secure-files/excel/NMX-36.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-36_NUTRIMETRIA.pdf",
+        "canonical": "NMX-36.pdf",
+        "path": "public/documentation/portfolios/NMX-36.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-36_NUTRIMETRIA.docx",
+        "canonical": "NMX-36.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-36.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx36.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx15",
+      "sku": "NMX-15",
+      "name": "Biblioteca Profesional de Fórmulas",
+      "phase": 2,
+      "phaseName": "Fase 2 · Bases y Bibliotecas",
+      "version": "v1.0",
+      "price_clp": 5990,
+      "excel": {
+        "originalName": "NMX-15_Biblioteca_Formulas_v1_0(3)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-15.xlsx",
+        "path": "backend/secure-files/excel/NMX-15.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-15_NUTRIMETRIA.pdf",
+        "canonical": "NMX-15.pdf",
+        "path": "public/documentation/portfolios/NMX-15.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-15_NUTRIMETRIA.docx",
+        "canonical": "NMX-15.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-15.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx15.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx21",
+      "sku": "NMX-21",
+      "name": "Distribución Alimentaria (INTA 2018)",
+      "phase": 2,
+      "phaseName": "Fase 2 · Bases y Bibliotecas",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 7990,
+      "excel": {
+        "originalName": "NMX-21_Distribucion_Alimentaria_INTA2018_REPARADO_XLFN_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-21.xlsx",
+        "path": "backend/secure-files/excel/NMX-21.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-21_NUTRIMETRIA.pdf",
+        "canonical": "NMX-21.pdf",
+        "path": "public/documentation/portfolios/NMX-21.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-21_NUTRIMETRIA.docx",
+        "canonical": "NMX-21.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-21.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx21.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx43",
+      "sku": "NMX-43",
+      "name": "Biblioteca UDD y Banco Clínico-Formativo (Bases de la Nutrición I y II)",
+      "phase": 2,
+      "phaseName": "Fase 2 · Bases y Bibliotecas",
+      "version": "v1.2.0",
+      "price_clp": 7990,
+      "excel": {
+        "originalName": "NMX-43_BIBLIOTECA_UDD_v1_2_0_CASOS_69(3)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-43.xlsx",
+        "path": "backend/secure-files/excel/NMX-43.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-43_NUTRIMETRIA.pdf",
+        "canonical": "NMX-43.pdf",
+        "path": "public/documentation/portfolios/NMX-43.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-43_NUTRIMETRIA.docx",
+        "canonical": "NMX-43.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-43.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx43.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx13",
+      "sku": "NMX-13",
+      "name": "Recordatorio de 24 Horas (con catálogo PAL, NMX-01)",
+      "phase": 3,
+      "phaseName": "Fase 3 · Evaluación y Registro",
+      "version": "v2.0.3",
+      "price_clp": 5990,
+      "excel": {
+        "originalName": "NMX-13_Recordatorio_24_Horas_con_catalogo_PAL_NMX01_v2_0_3(2)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-13.xlsx",
+        "path": "backend/secure-files/excel/NMX-13.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-13_NUTRIMETRIA.pdf",
+        "canonical": "NMX-13.pdf",
+        "path": "public/documentation/portfolios/NMX-13.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-13_NUTRIMETRIA.docx",
+        "canonical": "NMX-13.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-13.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx13.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx17",
+      "sku": "NMX-17",
+      "name": "Recordatorio de 24 Horas Conectado a Equivalentes",
+      "phase": 3,
+      "phaseName": "Fase 3 · Evaluación y Registro",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 5990,
+      "excel": {
+        "originalName": "NMX-17_Recordatorio_24h_Equivalentes_aprobado(2)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-17.xlsx",
+        "path": "backend/secure-files/excel/NMX-17.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-17_NUTRIMETRIA.pdf",
+        "canonical": "NMX-17.pdf",
+        "path": "public/documentation/portfolios/NMX-17.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-17_NUTRIMETRIA.docx",
+        "canonical": "NMX-17.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-17.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx17.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx22",
+      "sku": "NMX-22",
+      "name": "Registro Nutricional para Enfermedad Renal",
+      "phase": 3,
+      "phaseName": "Fase 3 · Evaluación y Registro",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 6990,
+      "excel": {
+        "originalName": "NMX-22_KDOQI_KDIGO(2)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-22.xlsx",
+        "path": "backend/secure-files/excel/NMX-22.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-22_NUTRIMETRIA.pdf",
+        "canonical": "NMX-22.pdf",
+        "path": "public/documentation/portfolios/NMX-22.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-22_NUTRIMETRIA.docx",
+        "canonical": "NMX-22.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-22.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx22.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx24",
+      "sku": "NMX-24",
+      "name": "Seguimiento Mensual de Hábitos (Habit Tracker)",
+      "phase": 3,
+      "phaseName": "Fase 3 · Evaluación y Registro",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 4990,
+      "excel": {
+        "originalName": "NMX-24_Habit_Tracker_Mensual_(5)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-24.xlsx",
+        "path": "backend/secure-files/excel/NMX-24.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-24_NUTRIMETRIA.pdf",
+        "canonical": "NMX-24.pdf",
+        "path": "public/documentation/portfolios/NMX-24.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-24_NUTRIMETRIA.docx",
+        "canonical": "NMX-24.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-24.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx24.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx29",
+      "sku": "NMX-29",
+      "name": "Recordatorio de 24 Horas Renal",
+      "phase": 3,
+      "phaseName": "Fase 3 · Evaluación y Registro",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 6990,
+      "excel": {
+        "originalName": "NMX-29_KDOQI_KDIGO(2)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-29.xlsx",
+        "path": "backend/secure-files/excel/NMX-29.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-29_NUTRIMETRIA.pdf",
+        "canonical": "NMX-29.pdf",
+        "path": "public/documentation/portfolios/NMX-29.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-29_NUTRIMETRIA.docx",
+        "canonical": "NMX-29.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-29.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx29.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx35",
+      "sku": "NMX-35",
+      "name": "Diario Dietético y Conductual",
+      "phase": 3,
+      "phaseName": "Fase 3 · Evaluación y Registro",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 4990,
+      "excel": {
+        "originalName": "NMX-35_Diario_Dietetico_Conductual_aprobado(2)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-35.xlsx",
+        "path": "backend/secure-files/excel/NMX-35.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-35_NUTRIMETRIA.pdf",
+        "canonical": "NMX-35.pdf",
+        "path": "public/documentation/portfolios/NMX-35.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-35_NUTRIMETRIA.docx",
+        "canonical": "NMX-35.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-35.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx35.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx41",
+      "sku": "NMX-41",
+      "name": "Software Acompañante para Plicómetro",
+      "phase": 3,
+      "phaseName": "Fase 3 · Evaluación y Registro",
+      "version": "v1.0",
+      "price_clp": 5990,
+      "excel": {
+        "originalName": "NMX-41_Software_Acompanante_Plicometro_v1_0(4)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-41.xlsx",
+        "path": "backend/secure-files/excel/NMX-41.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-41_NUTRIMETRIA.pdf",
+        "canonical": "NMX-41.pdf",
+        "path": "public/documentation/portfolios/NMX-41.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-41_NUTRIMETRIA.docx",
+        "canonical": "NMX-41.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-41.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx41.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx02",
+      "sku": "NMX-02",
+      "name": "Tabla Dietosintética Semanal",
+      "phase": 4,
+      "phaseName": "Fase 4 · Dietas y Planificación",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 5990,
+      "excel": {
+        "originalName": "NMX-02_Tabla_Dietosintetica_Semanal_SISTEMA_CHILENO_UDD2021(2)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-02.xlsx",
+        "path": "backend/secure-files/excel/NMX-02.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-02_NUTRIMETRIA.pdf",
+        "canonical": "NMX-02.pdf",
+        "path": "public/documentation/portfolios/NMX-02.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-02_NUTRIMETRIA.docx",
+        "canonical": "NMX-02.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-02.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx02.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx07",
+      "sku": "NMX-07",
+      "name": "Gestor de Creación de Dietas",
+      "phase": 4,
+      "phaseName": "Fase 4 · Dietas y Planificación",
+      "version": "v2.0.1",
+      "price_clp": 7990,
+      "excel": {
+        "originalName": "NMX-07_Gestor_Creacion_Dietas_UDD2021_v2_0_1_POST_QA_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-07.xlsx",
+        "path": "backend/secure-files/excel/NMX-07.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-07_NUTRIMETRIA.pdf",
+        "canonical": "NMX-07.pdf",
+        "path": "public/documentation/portfolios/NMX-07.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-07_NUTRIMETRIA.docx",
+        "canonical": "NMX-07.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-07.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx07.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx11",
+      "sku": "NMX-11",
+      "name": "Planificador Integrado de Entrenamiento y Nutrición",
+      "phase": 4,
+      "phaseName": "Fase 4 · Dietas y Planificación",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 6990,
+      "excel": {
+        "originalName": "NMX-11_Planificador_Integrado_18CA_CORREGIDO_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-11.xlsx",
+        "path": "backend/secure-files/excel/NMX-11.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-11_NUTRIMETRIA.pdf",
+        "canonical": "NMX-11.pdf",
+        "path": "public/documentation/portfolios/NMX-11.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-11_NUTRIMETRIA.docx",
+        "canonical": "NMX-11.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-11.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx11.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx25",
+      "sku": "NMX-25",
+      "name": "Constructor de Platillos (Equivalentes Autorizados)",
+      "phase": 4,
+      "phaseName": "Fase 4 · Dietas y Planificación",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 5990,
+      "excel": {
+        "originalName": "NMX-25_Constructor_Platillos_SISTEMA_CHILENO_UDD2021(2)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-25.xlsx",
+        "path": "backend/secure-files/excel/NMX-25.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-25_NUTRIMETRIA.pdf",
+        "canonical": "NMX-25.pdf",
+        "path": "public/documentation/portfolios/NMX-25.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-25_NUTRIMETRIA.docx",
+        "canonical": "NMX-25.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-25.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx25.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx33",
+      "sku": "NMX-33",
+      "name": "Planificador de Entrenamiento Semanal",
+      "phase": 4,
+      "phaseName": "Fase 4 · Dietas y Planificación",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 5990,
+      "excel": {
+        "originalName": "NMX-33_Planificador_Entrenamiento_Semanal_(4)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-33.xlsx",
+        "path": "backend/secure-files/excel/NMX-33.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-33_NUTRIMETRIA.pdf",
+        "canonical": "NMX-33.pdf",
+        "path": "public/documentation/portfolios/NMX-33.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-33_NUTRIMETRIA.docx",
+        "canonical": "NMX-33.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-33.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx33.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx03",
+      "sku": "NMX-03",
+      "name": "Historia Clínica Nutricional Completa (Integración UDD)",
+      "phase": 5,
+      "phaseName": "Fase 5 · Clínica",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 7990,
+      "excel": {
+        "originalName": "NMX-03_INTEGRACION_UDD(2)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-03.xlsx",
+        "path": "backend/secure-files/excel/NMX-03.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-03_NUTRIMETRIA.pdf",
+        "canonical": "NMX-03.pdf",
+        "path": "public/documentation/portfolios/NMX-03.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-03_NUTRIMETRIA.docx",
+        "canonical": "NMX-03.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-03.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx03.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx06",
+      "sku": "NMX-06",
+      "name": "Registro y Seguimiento de Composición Corporal",
+      "phase": 5,
+      "phaseName": "Fase 5 · Clínica",
+      "version": "v1.0.1",
+      "price_clp": 5990,
+      "excel": {
+        "originalName": "NMX-06_QA_REAL_CORREGIDO_v1_0_1_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-06.xlsx",
+        "path": "backend/secure-files/excel/NMX-06.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-06_NUTRIMETRIA.pdf",
+        "canonical": "NMX-06.pdf",
+        "path": "public/documentation/portfolios/NMX-06.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-06_NUTRIMETRIA.docx",
+        "canonical": "NMX-06.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-06.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx06.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx08",
+      "sku": "NMX-08",
+      "name": "Historia Clínica de Nutrición Deportiva",
+      "phase": 5,
+      "phaseName": "Fase 5 · Clínica",
+      "version": "v1.0",
+      "price_clp": 6990,
+      "excel": {
+        "originalName": "NMX-08_Historia_Clinica_Nutricion_Deportiva_v1_0_REDISENO_NMX22(3)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-08.xlsx",
+        "path": "backend/secure-files/excel/NMX-08.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-08_NUTRIMETRIA.pdf",
+        "canonical": "NMX-08.pdf",
+        "path": "public/documentation/portfolios/NMX-08.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-08_NUTRIMETRIA.docx",
+        "canonical": "NMX-08.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-08.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx08.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx20",
+      "sku": "NMX-20",
+      "name": "Formulario Integral de Evaluación (Adulto, Persona Mayor, Hospital, Deporte, TEM, Frisancho)",
+      "phase": 5,
+      "phaseName": "Fase 5 · Clínica",
+      "version": "v3.0.1",
+      "price_clp": 7990,
+      "excel": {
+        "originalName": "NMX-20_QA_REAL_CORREGIDO_v3_0_1_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-20.xlsx",
+        "path": "backend/secure-files/excel/NMX-20.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-20_NUTRIMETRIA.pdf",
+        "canonical": "NMX-20.pdf",
+        "path": "public/documentation/portfolios/NMX-20.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-20_NUTRIMETRIA.docx",
+        "canonical": "NMX-20.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-20.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx20.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx42",
+      "sku": "NMX-42",
+      "name": "Explorador Renal de Alimentos y Equivalentes",
+      "phase": 5,
+      "phaseName": "Fase 5 · Clínica",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 6990,
+      "excel": {
+        "originalName": "NMX-42_KDOQI_KDIGO(2)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-42.xlsx",
+        "path": "backend/secure-files/excel/NMX-42.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-42_NUTRIMETRIA.pdf",
+        "canonical": "NMX-42.pdf",
+        "path": "public/documentation/portfolios/NMX-42.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-42_NUTRIMETRIA.docx",
+        "canonical": "NMX-42.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-42.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx42.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx14i",
+      "sku": "NMX-14-INTEGRADO",
+      "name": "Evaluación Nutricional Pediátrica Integral",
+      "phase": 6,
+      "phaseName": "Fase 6 · Pediatría",
+      "version": "v2.0.1",
+      "price_clp": 7990,
+      "excel": {
+        "originalName": "NMX-14_Evaluacion_Nutricional_Pediatrica_v2_0_1_QA_CORREGIDO_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-14-INTEGRADO.xlsx",
+        "path": "backend/secure-files/excel/NMX-14-INTEGRADO.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-14-INTEGRADO_NUTRIMETRIA.pdf",
+        "canonical": "NMX-14-INTEGRADO.pdf",
+        "path": "public/documentation/portfolios/NMX-14-INTEGRADO.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-14-INTEGRADO_NUTRIMETRIA.docx",
+        "canonical": "NMX-14-INTEGRADO.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-14-INTEGRADO.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx14i.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx14m",
+      "sku": "NMX-14-MINSAL-UDD",
+      "name": "Evaluación Pediátrica OMS/MINSAL + UDD (Fuentes Resueltas)",
+      "phase": 6,
+      "phaseName": "Fase 6 · Pediatría",
+      "version": "v3.1.18",
+      "price_clp": 7990,
+      "excel": {
+        "originalName": "NMX-14_MINSAL_UDD_v3_1_18CA_CORREGIDO_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-14-MINSAL-UDD.xlsx",
+        "path": "backend/secure-files/excel/NMX-14-MINSAL-UDD.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-14-MINSAL-UDD_NUTRIMETRIA.pdf",
+        "canonical": "NMX-14-MINSAL-UDD.pdf",
+        "path": "public/documentation/portfolios/NMX-14-MINSAL-UDD.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-14-MINSAL-UDD_NUTRIMETRIA.docx",
+        "canonical": "NMX-14-MINSAL-UDD.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-14-MINSAL-UDD.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx14m.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx28p",
+      "sku": "NMX-28-PACK",
+      "name": "Guía del Pack de Antropometría (HUB)",
+      "phase": 7,
+      "phaseName": "Fase 7 · Antropometría",
+      "version": "v1.0",
+      "price_clp": 4990,
+      "excel": {
+        "originalName": "NMX-28_Pack_Antropometria_v1_0(4)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-28-PACK.xlsx",
+        "path": "backend/secure-files/excel/NMX-28-PACK.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-28-PACK_NUTRIMETRIA.pdf",
+        "canonical": "NMX-28-PACK.pdf",
+        "path": "public/documentation/portfolios/NMX-28-PACK.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-28-PACK_NUTRIMETRIA.docx",
+        "canonical": "NMX-28-PACK.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-28-PACK.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx28p.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx28i",
+      "sku": "NMX-28-INTEGRADO",
+      "name": "Pack Antropometría Integrado (un solo archivo)",
+      "phase": 7,
+      "phaseName": "Fase 7 · Antropometría",
+      "version": "v2.1",
+      "price_clp": 7990,
+      "excel": {
+        "originalName": "NMX-28_Integrado_v2_1_UDD_18CA_CORREGIDO_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-28-INTEGRADO.xlsx",
+        "path": "backend/secure-files/excel/NMX-28-INTEGRADO.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-28-INTEGRADO_NUTRIMETRIA.pdf",
+        "canonical": "NMX-28-INTEGRADO.pdf",
+        "path": "public/documentation/portfolios/NMX-28-INTEGRADO.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-28-INTEGRADO_NUTRIMETRIA.docx",
+        "canonical": "NMX-28-INTEGRADO.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-28-INTEGRADO.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx28i.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmx34",
+      "sku": "NMX-34",
+      "name": "Indicador Educativo de Edad Metabólica",
+      "phase": 8,
+      "phaseName": "Fase 8 · Complementarios y Guía",
+      "version": "NO_CONFIRMADO",
+      "price_clp": 4990,
+      "excel": {
+        "originalName": "NMX-34_Indicador_Educativo_Edad_Metabolica(4)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-34.xlsx",
+        "path": "backend/secure-files/excel/NMX-34.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-34_NUTRIMETRIA.pdf",
+        "canonical": "NMX-34.pdf",
+        "path": "public/documentation/portfolios/NMX-34.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-34_NUTRIMETRIA.docx",
+        "canonical": "NMX-34.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-34.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmx34.png",
+        "access": "PUBLICO"
+      }
+    },
+    {
+      "id": "nmxp1",
+      "sku": "NMX-P1",
+      "name": "Guía del Paquete (Siete Herramientas)",
+      "phase": 8,
+      "phaseName": "Fase 8 · Complementarios y Guía",
+      "version": "v1.0",
+      "price_clp": 4990,
+      "excel": {
+        "originalName": "NMX-P1_Guia_del_Paquete_v1_0__1_(3)_COMERCIAL_PRE_P19_REPARADO_PRE_P19.xlsx",
+        "canonical": "NMX-P1.xlsx",
+        "path": "backend/secure-files/excel/NMX-P1.xlsx",
+        "access": "PROTEGIDO — requiere compra"
+      },
+      "portfolioPdf": {
+        "originalName": "PORTAFOLIO_NMX-P1_NUTRIMETRIA.pdf",
+        "canonical": "NMX-P1.pdf",
+        "path": "public/documentation/portfolios/NMX-P1.pdf",
+        "access": "PUBLICO — material documental/demostrativo"
+      },
+      "portfolioDocx": {
+        "originalName": "PORTAFOLIO_NMX-P1_NUTRIMETRIA.docx",
+        "canonical": "NMX-P1.docx",
+        "path": "backend/secure-files/portfolios-docx/NMX-P1.docx",
+        "access": "PROTEGIDO — fuente editable"
+      },
+      "cover": {
+        "path": "assets/img/covers/nmxp1.png",
+        "access": "PUBLICO"
+      }
+    }
+  ],
+  "masterDocuments": [
+    {
+      "name": "Portafolio Maestro NUTRIMETRIA 32",
+      "pdf": "public/documentation/master/PORTAFOLIO_MAESTRO_NUTRIMETRIA_32.pdf",
+      "docx": "backend/secure-files/master/PORTAFOLIO_MAESTRO_NUTRIMETRIA_32.docx",
+      "track": "comercial"
+    },
+    {
+      "name": "Catalogo Comercial NUTRIMETRIA 32",
+      "pdf": "public/documentation/master/CATALOGO_COMERCIAL_NUTRIMETRIA_32.pdf",
+      "track": "comercial"
+    },
+    {
+      "name": "Informe de Cierre — Portafolios NUTRIMETRIA (32 productos)",
+      "md": "public/documentation/master/Informe_Cierre_Portafolios_32.md",
+      "track": "tecnico"
+    },
+    {
+      "name": "Indice Maestro de Portafolios",
+      "xlsx": "backend/secure-files/audit/INDICE_PORTAFOLIOS_NUTRIMETRIA_32.xlsx",
+      "track": "tecnico"
+    },
+    {
+      "name": "Matriz de Trazabilidad",
+      "xlsx": "backend/secure-files/audit/MATRIZ_TRAZABILIDAD_PORTAFOLIOS_32.xlsx",
+      "track": "tecnico"
+    },
+    {
+      "name": "Matriz de Contenido NMX",
+      "xlsx": "backend/secure-files/audit/MATRIZ_CONTENIDO_NMX_32.xlsx",
+      "track": "tecnico"
+    },
+    {
+      "name": "Auditoria Portafolio vs Excel",
+      "xlsx": "backend/secure-files/audit/AUDITORIA_PORTAFOLIO_VS_EXCEL_32.xlsx",
+      "track": "tecnico"
+    }
+  ]
+}
