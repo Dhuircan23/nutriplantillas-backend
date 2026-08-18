@@ -1,0 +1,118 @@
+name: Deploy frontend to GitHub Pages
+
+# Publica SOLO el frontend publico. backend/ queda fuera del artefacto,
+# de modo que secure-files/ (los 32 Excel y los DOCX) nunca llega a Pages.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Armar el sitio publico
+        run: |
+          mkdir -p _site
+          # Design Components y runtime
+          cp *.dc.html _site/
+          cp support.js store.js nutrimetria-inventory.js _site/
+          # Assets publicos (portadas, recursos gratuitos)
+          cp -r assets _site/
+          # Documentacion publica (32 portafolios PDF + maestros)
+          cp -r public _site/
+          # Entrada del sitio
+          cp Home.dc.html _site/index.html
+
+      - name: Verificar que ningun archivo protegido quedo en el artefacto
+        run: |
+          fail=0
+
+          # 1. Excel de producto (los 2 recursos gratuitos SI son publicos).
+          leaked_xlsx=$(find _site -name '*.xlsx' -not -path '*/assets/free/*' || true)
+          if [ -n "$leaked_xlsx" ]; then
+            echo "ERROR: hay .xlsx de producto dentro de _site:" >&2
+            echo "$leaked_xlsx" >&2
+            fail=1
+          fi
+
+          # 2. DOCX: ninguno es publico. Los portafolios publicos son PDF.
+          leaked_docx=$(find _site -name '*.docx' || true)
+          if [ -n "$leaked_docx" ]; then
+            echo "ERROR: hay .docx dentro de _site (deben quedar en el backend):" >&2
+            echo "$leaked_docx" >&2
+            fail=1
+          fi
+
+          # 3. Carpetas protegidas completas.
+          for d in backend secure-files uploads; do
+            if [ -e "_site/$d" ]; then
+              echo "ERROR: _site/$d no debe existir" >&2
+              fail=1
+            fi
+          done
+
+          # 4. Secretos y configuracion privada.
+          leaked_env=$(find _site -name '.env' -o -name '.env.*' -o -name '*.pem' -o -name '*.key' | grep -v '\.example$' || true)
+          if [ -n "$leaked_env" ]; then
+            echo "ERROR: hay archivos de secretos dentro de _site:" >&2
+            echo "$leaked_env" >&2
+            fail=1
+          fi
+
+          # 5. Matrices y auditoria interna.
+          leaked_audit=$(grep -rl -E 'MATRIZ_TRAZABILIDAD|MATRIZ_CONTENIDO|AUDITORIA_PORTAFOLIO|INDICE_PORTAFOLIOS' _site --include='*.xlsx' 2>/dev/null || true)
+          if [ -n "$leaked_audit" ]; then
+            echo "ERROR: documentacion interna de auditoria dentro de _site:" >&2
+            echo "$leaked_audit" >&2
+            fail=1
+          fi
+
+          # 6. Cadenas que solo deberian existir en el backend.
+          if grep -rIl -E 'JWT_SECRET|DATABASE_URL|TRANSBANK_API_KEY|TBK_API_KEY_SECRET' _site 2>/dev/null | grep -q .; then
+            echo "ERROR: referencias a secretos en archivos publicos:" >&2
+            grep -rIl -E 'JWT_SECRET|DATABASE_URL|TRANSBANK_API_KEY|TBK_API_KEY_SECRET' _site >&2
+            fail=1
+          fi
+
+          # 7. Lo que SI debe estar.
+          pdf_count=$(find _site/public/documentation/portfolios -name '*.pdf' | wc -l | tr -d ' ')
+          if [ "$pdf_count" -ne 32 ]; then
+            echo "ERROR: se esperaban 32 portafolios PDF publicos, hay $pdf_count" >&2
+            fail=1
+          fi
+          cover_count=$(find _site/assets/img/covers -name '*.png' | wc -l | tr -d ' ')
+          if [ "$cover_count" -lt 32 ]; then
+            echo "ERROR: se esperaban al menos 32 portadas, hay $cover_count" >&2
+            fail=1
+          fi
+
+          if [ "$fail" -ne 0 ]; then exit 1; fi
+          echo "OK: 32 PDF publicos, $cover_count portadas, y ningun archivo protegido en el sitio."
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
