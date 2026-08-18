@@ -1,0 +1,21 @@
+# --- Secretos: NUNCA versionar ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+
+# --- Dependencias ---
+node_modules/
+
+# --- Sistema ---
+.DS_Store
+Thumbs.db
+*.log
+
+# --- Area de trabajo: material fuente y copias historicas ---
+uploads/
+
+# --- Artefactos de captura ---
+screenshots/
