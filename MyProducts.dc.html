@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .glass{background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.15);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  @keyframes nmxPulse{0%,100%{opacity:.5}50%{opacity:.9}}
+  .skeleton{background:rgba(255,255,255,.05);border-radius:5px;animation:nmxPulse 1.4s ease-in-out infinite}
+  @keyframes nmxFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .nmx-fade-in{animation:nmxFadeIn .35s ease}
+</style>
+</helmet>
+
+<dc-import name="Header" active="" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:1200px;margin:0 auto;padding:32px 40px 72px;display:grid;grid-template-columns:220px 1fr;gap:36px;align-items:start">
+  <dc-import name="ClientNav" active="productos" hint-size="220px,360px"></dc-import>
+
+  <div>
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Mis productos</h1>
+
+    <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="skeleton" style="height:120px;border-radius:8px"></div>
+        <div class="skeleton" style="height:120px;border-radius:8px"></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ !isLoading }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ !hasProducts }}" hint-placeholder-val="{{ false }}">
+      <div class="glass" style="border-radius:8px;padding:40px;text-align:center;color:#9fb8ae;font-size:13.5px">Aún no tienes productos comprados. <a href="Catalog.dc.html">Ver catálogo</a></div>
+    </sc-if>
+    <div style="display:flex;flex-direction:column;gap:14px" class="nmx-fade-in">
+      <sc-for list="{{ products }}" as="p" hint-placeholder-count="2">
+        <div class="glass" style="border-radius:8px;padding:20px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+            <div style="display:flex;gap:14px">
+              <div class="glass" style="width:56px;height:44px;flex:none;border-radius:5px;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03),rgba(255,255,255,.03) 8px,rgba(110,231,183,.06) 8px,rgba(110,231,183,.06) 16px)"></div>
+              <div>
+                <div style="font-weight:800;font-size:14.5px;margin-bottom:3px">{{ p.name }}</div>
+                <div class="mono" style="font-size:11px;color:#7fa398">Pedido {{ p.orderCode }} · {{ p.purchaseDate }}</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px" class="mono">
+            <div><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:2px">Precio pagado</div><div style="font-size:12.5px;font-weight:700;color:#e2e8f0">{{ p.priceLabel }}</div></div>
+            <div><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:2px">Descargas disponibles</div><div style="font-size:12.5px;font-weight:700;color:#e2e8f0">{{ p.downloadsLeft }}</div></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a href="{{ p.downloadHref }}" style="text-decoration:none;font-size:12px;font-weight:700;padding:9px 16px;background:#6ee7b7;color:#04140f;border-radius:5px;cursor:pointer">Descargar .xlsx</a>
+            <a href="{{ p.portfolioHref }}" style="text-decoration:none;font-size:12px;font-weight:700;padding:9px 16px;border:1.5px solid rgba(110,231,183,.3);border-radius:5px;color:#e2e8f0">Portafolio .docx</a>
+          </div>
+          <div class="mono" style="font-size:10.5px;color:#7f9a91;margin-top:9px">Las descargas consumen cupo. El portafolio en PDF es de lectura libre y no consume.</div>
+        </div>
+      </sc-for>
+    </div>
+    </sc-if>
+  </div>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { products: [], loaded: false };
+
+  componentDidMount() {
+    this._init();
+  }
+  componentWillUnmount() { if (this._retryTimer) clearTimeout(this._retryTimer); }
+
+  async _init() {
+    if (!window.NMXStore) { this._retryTimer = setTimeout(() => this._init(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session) {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    try {
+      const orders = await window.NMXStore.getMyOrders();
+      const paidOrders = orders.filter((o) => o.status === 'paid');
+      const details = await Promise.all(paidOrders.map((o) => window.NMXStore.getOrder(o.order_code || o.orderCode)));
+      const products = [];
+      details.forEach((order) => {
+        (order.items || []).forEach((it) => {
+          products.push({
+            name: it.name,
+            orderCode: order.orderCode,
+            purchaseDate: order.paidAt ? new Date(order.paidAt).toLocaleDateString('es-CL') : '',
+            priceLabel: '$' + it.priceClp.toLocaleString('es-CL') + ' CLP',
+            downloadsLeft: it.downloadsLeft,
+            downloadHref: window.NMXStore.downloadUrl(it.orderItemId, 'excel'),
+            portfolioHref: window.NMXStore.downloadUrl(it.orderItemId, 'portfolio')
+          });
+        });
+      });
+      this.setState({ products, loaded: true });
+    } catch (e) {
+      this.setState({ products: [], loaded: true });
+    }
+  }
+
+  renderVals() {
+    return { products: this.state.products, isLoading: !this.state.loaded, hasProducts: this.state.loaded ? this.state.products.length > 0 : true };
+  }
+}
+
+</script>
+</body>
+</html>

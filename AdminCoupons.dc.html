@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:220px 1fr;min-height:100vh">
+  <div style="background:#04140f;padding:20px 14px">
+    <dc-import name="AdminNav" active="cupones" hint-size="192px,480px"></dc-import>
+  </div>
+
+  <div style="padding:28px 36px 60px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+      <h1 style="font-size:24px;font-weight:800;margin:0;letter-spacing:-.3px">Cupones</h1>
+      <a href="AdminCouponEditor.dc.html" style="text-decoration:none;font-size:13px;font-weight:700;padding:10px 18px;background:#6ee7b7;color:#04140f;border-radius:6px">+ Crear cupón</a>
+    </div>
+
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden">
+      <div role="table" style="display:flex;flex-direction:column;min-width:900px">
+        <div role="row" style="display:grid;grid-template-columns:1.1fr 1fr 1.4fr 1fr 1fr 1fr;background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:#c7dad2">
+          <div style="padding:12px 16px">Código</div>
+          <div style="padding:12px 16px">Descuento</div>
+          <div style="padding:12px 16px">Vigencia</div>
+          <div style="padding:12px 16px">Límite</div>
+          <div style="padding:12px 16px">Estado</div>
+          <div style="padding:12px 16px">Acciones</div>
+        </div>
+        <sc-for list="{{ coupons }}" as="c" hint-placeholder-count="5">
+          <div role="row" style="display:grid;grid-template-columns:1.1fr 1fr 1.4fr 1fr 1fr 1fr;border-top:1px solid rgba(110,231,183,.12);align-items:center;font-size:12.5px">
+            <div style="padding:12px 16px" class="mono">{{ c.code }}</div>
+            <div style="padding:12px 16px;font-weight:700">{{ c.discount }}</div>
+            <div style="padding:12px 16px;color:#8fa9a0" class="mono">{{ c.range }}</div>
+            <div style="padding:12px 16px" class="mono">{{ c.limit }}</div>
+            <div style="padding:12px 16px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ c.statusBg }};color:{{ c.statusColor }}">{{ c.status }}</span></div>
+            <div style="padding:12px 16px"><a href="AdminCouponEditor.dc.html" style="text-decoration:none;font-size:11.5px;font-weight:700">Editar</a></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session || session.role !== 'admin') {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    if (this._nmxAdminMount) this._nmxAdminMount();
+  }
+  renderVals() {
+    return {
+      coupons: [
+        {code:'BIENVENIDA10', discount:'10%', range:'1 jul – 31 dic 2026', limit:'500 usos', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7', status:'Activo'},
+        {code:'ESTUDIANTE15', discount:'15%', range:'1 ago – 30 sep 2026', limit:'200 usos', statusBg:'rgba(255,255,255,.06)', statusColor:'#b7cfc6', status:'Programado'},
+        {code:'VERANO2026', discount:'$2.000 CLP', range:'1 ene – 28 feb 2026', limit:'300 usos', statusBg:'rgba(255,255,255,.06)', statusColor:'#b7cfc6', status:'Expirado'},
+        {code:'MEMBRESIA20', discount:'20%', range:'1 jun – 31 dic 2026', limit:'100 usos', statusBg:'rgba(255,148,102,.14)', statusColor:'#ff9466', status:'Pausado'},
+        {code:'LANZAMIENTO', discount:'$1.000 CLP', range:'12 jul – 12 ago 2026', limit:'1000 usos', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7', status:'Activo'}
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  @media (max-width:768px){ .rg-cart{grid-template-columns:1fr !important} }
+</style>
+</helmet>
+
+<dc-import name="Header" active="tienda" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:1100px;margin:0 auto;padding:36px 40px 80px">
+  <h1 style="font-size:26px;font-weight:800;margin:0 0 28px;letter-spacing:-.3px">Tu carrito</h1>
+
+  <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ true }}">
+    <div class="rg-cart" style="display:grid;grid-template-columns:1.5fr 1fr;gap:40px;align-items:start">
+      <div>
+        <sc-for list="{{ items }}" as="item" hint-placeholder-count="2">
+          <div style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(110,231,183,.16)">
+            <div style="width:84px;height:64px;flex:none;border-radius:5px;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03),rgba(255,255,255,.03) 8px,rgba(110,231,183,.06) 8px,rgba(110,231,183,.06) 16px)"></div>
+            <div style="flex:1">
+              <div class="mono" style="font-size:10px;color:#6ee7b7;text-transform:uppercase;margin-bottom:4px">{{ item.category }}</div>
+              <div style="font-weight:800;font-size:14.5px;margin-bottom:4px">{{ item.name }}</div>
+              <div class="mono" style="font-size:11px;color:#7fa398">{{ item.format }} · {{ item.version }} · Licencia individual</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between">
+              <span style="font-weight:800;font-size:15px">{{ item.priceLabel }}</span>
+              <span onClick="{{ item.onRemove }}" style="font-size:12px;color:#ff6b5e;cursor:pointer;font-weight:600">Eliminar</span>
+            </div>
+          </div>
+        </sc-for>
+
+        <div style="margin-top:20px;display:flex;gap:10px">
+          <input placeholder="Código de descuento" style="flex:1;padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Manrope',sans-serif"/>
+          <span style="padding:11px 20px;border:1.5px solid #e2e8f0;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer">Aplicar</span>
+        </div>
+      </div>
+
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:22px">
+        <div style="font-weight:800;font-size:15px;margin-bottom:16px">Resumen de compra</div>
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#c7dad2;margin-bottom:10px"><span>Subtotal</span><span>{{ subtotalLabel }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#c7dad2;margin-bottom:10px"><span>Descuento</span><span>—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#c7dad2;margin-bottom:16px"><span>Impuestos (si aplica)</span><span>Incluidos</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;border-top:1px solid rgba(110,231,183,.16);padding-top:14px;margin-bottom:20px"><span>Total</span><span>{{ subtotalLabel }}</span></div>
+        <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#b7cfc6;margin-bottom:18px">
+          <input type="checkbox" style="margin-top:2px"/>
+          <span>Acepto la <a href="License.dc.html">licencia de uso</a> y los <a href="Terms.dc.html">términos y condiciones</a>.</span>
+        </label>
+        <div onClick="{{ onGoToCheckout }}" style="display:block;text-align:center;padding:14px;background:#ff7a45;color:#241008;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer">Ir a pagar</div>
+        <div class="mono" style="text-align:center;font-size:10.5px;color:#8fa9a0;margin-top:10px">Entrega digital inmediata tras la confirmación de pago</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ !hasItems }}" hint-placeholder-val="{{ false }}">
+    <div style="text-align:center;padding:80px 20px;border:1px dashed rgba(110,231,183,.25);border-radius:8px">
+      <div style="font-size:34px;margin-bottom:16px">🛒</div>
+      <div style="font-weight:800;font-size:17px;margin-bottom:8px">Tu carrito está vacío</div>
+      <p style="font-size:13.5px;color:#9fb8ae;margin:0 0 24px">Explora el catálogo y encuentra la herramienta que necesitas.</p>
+      <a href="Catalog.dc.html" style="text-decoration:none;padding:12px 24px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:13.5px">Ver catálogo</a>
+    </div>
+  </sc-if>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { rawItems: [], loaded: false };
+
+  componentDidMount() {
+    this._init();
+    this._onChange = () => this._refresh();
+    window.addEventListener('nmx:cart-changed', this._onChange);
+  }
+
+  componentWillUnmount() {
+    if (this._retryTimer) clearTimeout(this._retryTimer);
+    if (this._onChange) window.removeEventListener('nmx:cart-changed', this._onChange);
+  }
+
+  async _init() {
+    if (!window.NMXStore) {
+      this._retryTimer = setTimeout(() => this._init(), 30);
+      return;
+    }
+    const session = await window.NMXStore.getSession();
+    if (!session) {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    this._refresh();
+  }
+
+  async _refresh() {
+    if (!window.NMXStore) return;
+    try {
+      const rawItems = await window.NMXStore.getCartItems();
+      this.setState({ rawItems, loaded: true });
+    } catch (e) {
+      this.setState({ rawItems: [], loaded: true });
+    }
+  }
+
+  renderVals() {
+    const raw = this.state.rawItems || [];
+    const items = raw.map((p) => ({
+      ...p,
+      onRemove: () => window.NMXStore && window.NMXStore.removeFromCart(p.id)
+    }));
+    const subtotal = raw.reduce((sum, p) => sum + (p.price || 0), 0);
+    const subtotalLabel = '$' + subtotal.toLocaleString('es-CL') + ' CLP';
+    return {
+      items,
+      hasItems: this.state.loaded ? items.length > 0 : true,
+      subtotalLabel,
+      onGoToCheckout: () => {
+        if (window.NMXStore) window.NMXStore.clearBuyNow();
+        window.location.href = 'Checkout.dc.html';
+      }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

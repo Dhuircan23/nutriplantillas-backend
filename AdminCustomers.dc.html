@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:220px 1fr;min-height:100vh">
+  <div style="background:#04140f;padding:20px 14px">
+    <dc-import name="AdminNav" active="clientes" hint-size="192px,480px"></dc-import>
+  </div>
+
+  <div style="padding:28px 36px 60px">
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Clientes</h1>
+
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden">
+      <div role="table" style="display:flex;flex-direction:column;min-width:900px">
+        <div role="row" style="display:grid;grid-template-columns:1.6fr 1.6fr 1fr 1fr 1fr 1fr;background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:#c7dad2">
+          <div style="padding:12px 16px">Nombre</div>
+          <div style="padding:12px 16px">Correo</div>
+          <div style="padding:12px 16px">País</div>
+          <div style="padding:12px 16px">Pedidos</div>
+          <div style="padding:12px 16px">Membresía</div>
+          <div style="padding:12px 16px">Detalle</div>
+        </div>
+        <sc-for list="{{ customers }}" as="c" hint-placeholder-count="6">
+          <div role="row" style="display:grid;grid-template-columns:1.6fr 1.6fr 1fr 1fr 1fr 1fr;border-top:1px solid rgba(110,231,183,.12);align-items:center;font-size:12.5px">
+            <div style="padding:12px 16px;font-weight:700">{{ c.name }}</div>
+            <div style="padding:12px 16px;color:#b7cfc6">{{ c.email }}</div>
+            <div style="padding:12px 16px;color:#b7cfc6">{{ c.country }}</div>
+            <div style="padding:12px 16px" class="mono">{{ c.orders }}</div>
+            <div style="padding:12px 16px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ c.memBg }};color:{{ c.memColor }}">{{ c.membership }}</span></div>
+            <div style="padding:12px 16px"><a href="AdminCustomerDetail.dc.html" style="text-decoration:none;font-size:11.5px;font-weight:700">Ver</a></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session || session.role !== 'admin') {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    if (this._nmxAdminMount) this._nmxAdminMount();
+  }
+  renderVals() {
+    return {
+      customers: [
+        {name:'Camila Rojas', email:'camila.rojas@ejemplo.com', country:'Chile', orders:'3', membership:'Anual', memBg:'rgba(110,231,183,.12)', memColor:'#6ee7b7'},
+        {name:'Ignacio Soto', email:'ignacio.soto@ejemplo.com', country:'Chile', orders:'1', membership:'Sin membresía', memBg:'rgba(255,255,255,.06)', memColor:'#b7cfc6'},
+        {name:'Valentina Muñoz', email:'valentina.munoz@ejemplo.com', country:'Perú', orders:'5', membership:'Mensual', memBg:'rgba(110,231,183,.12)', memColor:'#6ee7b7'},
+        {name:'Diego Fuentes', email:'diego.fuentes@ejemplo.com', country:'Chile', orders:'1', membership:'Sin membresía', memBg:'rgba(255,255,255,.06)', memColor:'#b7cfc6'},
+        {name:'Fernanda Vidal', email:'fernanda.vidal@ejemplo.com', country:'México', orders:'2', membership:'Anual', memBg:'rgba(110,231,183,.12)', memColor:'#6ee7b7'},
+        {name:'Tomás Bravo', email:'tomas.bravo@ejemplo.com', country:'Chile', orders:'4', membership:'Cancelada', memBg:'rgba(255,148,102,.14)', memColor:'#ff9466'}
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

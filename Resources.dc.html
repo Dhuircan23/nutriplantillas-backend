@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+</style>
+</helmet>
+
+<dc-import name="Header" active="recursos" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:1280px;margin:0 auto;padding:44px 40px 8px">
+  <div class="mono" style="color:#ff8f62;font-size:11px;margin-bottom:12px">// CONOCE LA CALIDAD ANTES DE COMPRAR</div>
+  <h1 style="font-size:28px;font-weight:800;margin:0 0 10px;letter-spacing:-.4px">Recursos gratuitos</h1>
+  <p style="font-size:14.5px;color:#9fb8ae;max-width:600px;margin:0 0 32px">Plantillas simples de ejemplo, sin costo, para conocer el estándar Excel Lab.</p>
+</div>
+
+<div style="max-width:1280px;margin:0 auto;padding:0 40px 72px">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;max-width:680px">
+    <sc-for list="{{ resources }}" as="r" hint-placeholder-count="2">
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden;display:flex;flex-direction:column">
+        <div style="height:110px;overflow:hidden">
+          <img src="{{ r.cover }}" alt="{{ r.name }}" style="width:100%;height:100%;object-fit:cover"/>
+        </div>
+        <div style="padding:18px;display:flex;flex-direction:column;gap:8px;flex:1">
+          <span class="mono" style="width:fit-content;font-size:10px;background:rgba(110,231,183,.12);color:#6ee7b7;padding:3px 8px;border-radius:3px">GRATIS</span>
+          <div style="font-weight:800;font-size:14.5px">{{ r.name }}</div>
+          <div style="font-size:12.5px;color:#9fb8ae;line-height:1.5;flex:1">{{ r.desc }}</div>
+          <a href="{{ r.href }}" style="text-decoration:none;margin-top:8px;text-align:center;padding:10px;border:1.5px solid #6ee7b7;color:#6ee7b7;border-radius:6px;font-weight:700;font-size:13px">Ver y descargar</a>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      resources: [
+        {name:'Plantilla gratuita de ejemplo', desc:'Vista simplificada del formato Excel Lab.', cover:'assets/img/covers/excel-lab-demo.png', href:'ResourceDetail.dc.html?id=demo'},
+        {name:'Checklist para consulta nutricional', desc:'Lista de verificación previa a cada sesión.', cover:'assets/img/covers/checklist-consulta.png', href:'ResourceDetail.dc.html?id=checklist'}
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

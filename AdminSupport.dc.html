@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:220px 1fr;min-height:100vh">
+  <div style="background:#04140f;padding:20px 14px">
+    <dc-import name="AdminNav" active="soporte" hint-size="192px,480px"></dc-import>
+  </div>
+
+  <div style="padding:28px 36px 60px">
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Soporte</h1>
+
+    <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+      <select style="padding:9px 12px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:12.5px;font-family:'Manrope',sans-serif"><option>Todos los productos</option></select>
+      <select style="padding:9px 12px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:12.5px;font-family:'Manrope',sans-serif"><option>Todas las prioridades</option></select>
+      <select style="padding:9px 12px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:12.5px;font-family:'Manrope',sans-serif"><option>Todos los estados</option></select>
+    </div>
+
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden;margin-bottom:24px">
+      <div role="table" style="display:flex;flex-direction:column;min-width:960px">
+        <div role="row" style="display:grid;grid-template-columns:0.8fr 1.5fr 1.6fr 0.9fr 1fr 1fr;background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:#c7dad2">
+          <div style="padding:12px 16px">N.°</div>
+          <div style="padding:12px 16px">Cliente</div>
+          <div style="padding:12px 16px">Asunto / Producto</div>
+          <div style="padding:12px 16px">Prioridad</div>
+          <div style="padding:12px 16px">Estado</div>
+          <div style="padding:12px 16px">Detalle</div>
+        </div>
+        <sc-for list="{{ tickets }}" as="t" hint-placeholder-count="6">
+          <div role="row" style="display:grid;grid-template-columns:0.8fr 1.5fr 1.6fr 0.9fr 1fr 1fr;border-top:1px solid rgba(110,231,183,.12);align-items:center;font-size:12.5px">
+            <div style="padding:12px 16px" class="mono">{{ t.number }}</div>
+            <div style="padding:12px 16px;font-weight:700">{{ t.customer }}</div>
+            <div style="padding:12px 16px;color:#b7cfc6">{{ t.subject }} <span class="mono" style="color:#8fa9a0">· {{ t.product }}</span></div>
+            <div style="padding:12px 16px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ t.prioBg }};color:{{ t.prioColor }}">{{ t.priority }}</span></div>
+            <div style="padding:12px 16px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ t.statusBg }};color:{{ t.statusColor }}">{{ t.status }}</span></div>
+            <div style="padding:12px 16px"><a href="AdminSupportDetail.dc.html" style="text-decoration:none;font-size:11.5px;font-weight:700">Ver</a></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.14);border-radius:8px;padding:16px 20px">
+      <div class="mono" style="font-size:11px;color:#8a7a5a;margin-bottom:8px">// PROBLEMAS REPETIDOS DETECTADOS (demostrativo)</div>
+      <div style="font-size:12.5px;color:#c7dad2">3 solicitudes relacionadas con "Registro Antropométrico v1.0" mencionan error de fórmula de percentil — ya corregido en v1.1, pendiente de publicación.</div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session || session.role !== 'admin') {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    if (this._nmxAdminMount) this._nmxAdminMount();
+  }
+  renderVals() {
+    return {
+      tickets: [
+        {number:'S-041', customer:'Camila Rojas', subject:'Archivo no abre en Excel 2019', product:'Reg. Antropométrico', priority:'Crítica', prioBg:'#fde8e6', prioColor:'#ff6b5e', status:'Nuevo', statusBg:'rgba(255,255,255,.06)', statusColor:'#b7cfc6'},
+        {number:'S-040', customer:'Ignacio Soto', subject:'Duda sobre licencia de equipo', product:'General', priority:'Media', prioBg:'rgba(255,148,102,.14)', prioColor:'#ff9466', status:'En revisión', statusBg:'rgba(255,148,102,.14)', statusColor:'#ff9466'},
+        {number:'S-039', customer:'Valentina Muñoz', subject:'Error de fórmula en hoja de resultados', product:'Reg. Antropométrico', priority:'Alta', prioBg:'rgba(255,148,102,.14)', prioColor:'#ff9466', status:'Esperando al cliente', statusBg:'#f3f1e9', statusColor:'#8a7a5a'},
+        {number:'S-038', customer:'Diego Fuentes', subject:'Consulta por compatibilidad Mac', product:'Calc. Energética', priority:'Baja', prioBg:'rgba(255,255,255,.06)', prioColor:'#b7cfc6', status:'Solucionado', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7'},
+        {number:'S-037', customer:'Fernanda Vidal', subject:'Solicitud de factura', product:'General', priority:'Baja', prioBg:'rgba(255,255,255,.06)', prioColor:'#b7cfc6', status:'Cerrado', statusBg:'rgba(255,255,255,.06)', statusColor:'#b7cfc6'},
+        {number:'S-036', customer:'Tomás Bravo', subject:'Error de fórmula de percentil', product:'Reg. Antropométrico', priority:'Alta', prioBg:'rgba(255,148,102,.14)', prioColor:'#ff9466', status:'Solucionado', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7'}
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

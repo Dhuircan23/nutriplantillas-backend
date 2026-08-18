@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:220px 1fr;min-height:100vh">
+  <div style="background:#04140f;padding:20px 14px">
+    <dc-import name="AdminNav" active="versiones" hint-size="192px,480px"></dc-import>
+  </div>
+
+  <div style="padding:28px 36px 60px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+      <h1 style="font-size:24px;font-weight:800;margin:0;letter-spacing:-.3px">Versiones</h1>
+      <a href="AdminPublishVersion.dc.html" style="text-decoration:none;font-size:13px;font-weight:700;padding:10px 18px;background:#6ee7b7;color:#04140f;border-radius:6px">+ Nueva versión</a>
+    </div>
+
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden">
+      <div role="table" style="display:flex;flex-direction:column;min-width:920px">
+        <div role="row" style="display:grid;grid-template-columns:2fr 1fr 1fr 1.3fr 1.4fr 1fr;background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:#c7dad2">
+          <div style="padding:12px 16px">Producto</div>
+          <div style="padding:12px 16px">Versión</div>
+          <div style="padding:12px 16px">Fecha</div>
+          <div style="padding:12px 16px">Estado</div>
+          <div style="padding:12px 16px">Compatibilidad</div>
+          <div style="padding:12px 16px">Acciones</div>
+        </div>
+        <sc-for list="{{ versions }}" as="v" hint-placeholder-count="6">
+          <div role="row" style="display:grid;grid-template-columns:2fr 1fr 1fr 1.3fr 1.4fr 1fr;border-top:1px solid rgba(110,231,183,.12);align-items:center;font-size:12.5px">
+            <div style="padding:12px 16px;font-weight:700">{{ v.product }}</div>
+            <div style="padding:12px 16px" class="mono">{{ v.version }}</div>
+            <div style="padding:12px 16px;color:#8fa9a0" class="mono">{{ v.date }}</div>
+            <div style="padding:12px 16px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ v.statusBg }};color:{{ v.statusColor }}">{{ v.status }}</span></div>
+            <div style="padding:12px 16px;color:#b7cfc6">{{ v.compat }}</div>
+            <div style="padding:12px 16px"><a href="AdminVersionDetail.dc.html" style="text-decoration:none;font-size:11.5px;font-weight:700">Ver detalle</a></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session || session.role !== 'admin') {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    if (this._nmxAdminMount) this._nmxAdminMount();
+  }
+  renderVals() {
+    return {
+      versions: [
+        {product:'Calculadora de Necesidades Energéticas', version:'v1.0', date:'12 jul 2026', status:'Publicada', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7', compat:'Windows, Web'},
+        {product:'Registro Antropométrico', version:'v1.1', date:'—', status:'Lista para publicar', statusBg:'rgba(110,231,183,.06)', statusColor:'#6ee7b7', compat:'Windows, Mac, Web'},
+        {product:'Registro Antropométrico', version:'v1.0', date:'2 jun 2026', status:'Publicada', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7', compat:'Windows, Web'},
+        {product:'Seguimiento de Composición Corporal', version:'v0.9', date:'—', status:'En pruebas', statusBg:'rgba(255,148,102,.14)', statusColor:'#ff9466', compat:'Windows'},
+        {product:'Calculadora de Composición Corporal Antigua', version:'v1.0', date:'20 may 2026', status:'Retirada', statusBg:'#fde8e6', statusColor:'#ff6b5e', compat:'Windows'},
+        {product:'Historia Clínica Nutricional', version:'v0.1', date:'—', status:'Revisión metodológica', statusBg:'#f3f1e9', statusColor:'#8a7a5a', compat:'Sin definir'}
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

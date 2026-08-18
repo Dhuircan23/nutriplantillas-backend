@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12.5px;font-weight:700;color:#c7dad2}
+  .field input{padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Manrope',sans-serif}
+</style>
+</helmet>
+
+<dc-import name="Header" active="" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:1200px;margin:0 auto;padding:32px 40px 72px;display:grid;grid-template-columns:220px 1fr;gap:36px;align-items:start">
+  <dc-import name="ClientNav" active="perfil" hint-size="220px,360px"></dc-import>
+
+  <div style="max-width:560px">
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Perfil</h1>
+    <form style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
+      <div class="field"><label>Nombre</label><input value="Camila Rojas"/></div>
+      <div class="field"><label>Correo electrónico</label><input value="camila.rojas@ejemplo.com"/></div>
+      <div class="field"><label>País</label><input value="Chile"/></div>
+      <div class="field"><label>Profesión (opcional)</label><input value="Nutricionista"/></div>
+      <span style="align-self:flex-start;padding:11px 22px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer">Guardar cambios</span>
+    </form>
+
+    <h2 style="font-size:15px;font-weight:800;margin:0 0 14px">Contraseña</h2>
+    <form style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
+      <div class="field"><label>Contraseña actual</label><input type="password" placeholder="••••••••"/></div>
+      <div class="field"><label>Nueva contraseña</label><input type="password" placeholder="••••••••"/></div>
+      <span style="align-self:flex-start;padding:11px 22px;border:1.5px solid #6ee7b7;color:#6ee7b7;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer">Actualizar contraseña</span>
+    </form>
+
+    <h2 style="font-size:15px;font-weight:800;margin:0 0 14px">Preferencias de comunicación</h2>
+    <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:#c7dad2;margin-bottom:8px"><input type="checkbox" checked/> Novedades de nuevos productos</label>
+    <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:#c7dad2"><input type="checkbox" checked/> Avisos de actualización de mis productos</label>
+  </div>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session) {
+      window.location.href = 'Login.dc.html';
+    }
+  }
+}
+</script>
+</body>
+</html>

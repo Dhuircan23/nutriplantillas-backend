@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+</style>
+</helmet>
+
+<dc-import name="Header" active="" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:820px;margin:0 auto;padding:40px 40px 80px">
+  <div style="background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.14);border-radius:6px;padding:14px 18px;font-size:12.5px;color:#c7dad2;margin-bottom:28px">
+    Borrador informativo pendiente de revisión legal antes de publicación. No se describen aquí sistemas o proveedores aún no implementados.
+  </div>
+  <h1 style="font-size:26px;font-weight:800;margin:0 0 32px;letter-spacing:-.3px">Política de privacidad</h1>
+
+  <sc-for list="{{ sections }}" as="s" hint-placeholder-count="10">
+    <div style="margin-bottom:26px">
+      <h2 style="font-size:15.5px;font-weight:800;margin:0 0 8px">{{ s.title }}</h2>
+      <p style="font-size:13.5px;color:#b7cfc6;line-height:1.65;margin:0">{{ s.text }}</p>
+    </div>
+  </sc-for>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      sections: [
+        {title:'Datos recopilados', text:'Nombre, correo electrónico, país y, opcionalmente, profesión, según lo indicado por el usuario al crear una cuenta.'},
+        {title:'Finalidad', text:'Los datos se usan para gestionar la cuenta, procesar compras, entregar productos digitales y ofrecer soporte.'},
+        {title:'Cuenta', text:'La información de cuenta se conserva mientras el usuario mantenga su perfil activo en la tienda.'},
+        {title:'Compra', text:'Los datos asociados a una compra se conservan para efectos de historial, soporte y entrega digital.'},
+        {title:'Pagos mediante proveedores externos', text:'El procesamiento de pagos se realizará a través de un proveedor externo cuando esté implementado. Nutrimetría no almacenará datos de tarjetas.'},
+        {title:'Comunicaciones', text:'Se enviarán comunicaciones solo si el usuario acepta recibirlas, con opción de darse de baja en cualquier momento.'},
+        {title:'Cookies', text:'El uso de cookies se limitará a funciones esenciales del sitio, sujeto a revisión antes del lanzamiento.'},
+        {title:'Seguridad', text:'Se aplicarán medidas razonables de seguridad, a definir en conjunto con la implementación técnica final.'},
+        {title:'Conservación', text:'Los datos se conservarán mientras exista una relación activa con el usuario o según lo exija la normativa aplicable.'},
+        {title:'Derechos del usuario', text:'El usuario podrá solicitar acceso, corrección o eliminación de sus datos a través de la página de Contacto.'}
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

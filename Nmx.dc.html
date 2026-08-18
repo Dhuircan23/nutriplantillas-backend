@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .nmx-tag{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase}
+  @media (max-width:900px){
+    .nmx-hero{grid-template-columns:1fr !important}
+    .nmx-body{grid-template-columns:1fr !important}
+    .nmx-meta{grid-template-columns:repeat(2,1fr) !important}
+  }
+</style>
+<script src="./nutrimetria-inventory.js"></script>
+</helmet>
+
+<dc-import name="Header" active="tienda" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:1180px;margin:0 auto;padding:30px 40px 80px">
+  <div class="mono" style="font-size:11.5px;color:#8fa9a0;margin-bottom:22px">
+    <a href="Catalog.dc.html" style="color:#8fa9a0;text-decoration:none">Herramientas</a>
+    <span style="color:#4d6b62"> / </span>
+    <a href="{{ product.phaseHref }}" style="color:#8fa9a0;text-decoration:none">{{ product.phaseName }}</a>
+    <span style="color:#4d6b62"> / </span>
+    <span style="color:#e2e8f0">{{ product.sku }}</span>
+  </div>
+
+  <div class="nmx-hero" style="display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:start;margin-bottom:44px">
+    <div>
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden;margin-bottom:12px;min-height:120px;background:#0a251c">
+        {{ coverEl }}
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:11px 13px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8fa9a0" stroke-width="2" style="flex:none;margin-top:1px"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 15l5-5 4 4 3-3 6 6"></path></svg>
+        <div>
+          <div class="nmx-tag" style="color:#8fa9a0;margin-bottom:3px">Captura no generada</div>
+          <div style="font-size:11.5px;color:#7f9a91;line-height:1.5">Las vistas internas del libro no se muestran: <span class="mono">{{ captureNotice }}</span>. La portada es una identificación de marca, no una captura del archivo.</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <span class="nmx-tag" style="background:rgba(110,231,183,.12);color:#6ee7b7;padding:4px 9px;border-radius:3px">{{ product.sku }}</span>
+        <span class="nmx-tag" style="background:rgba(255,255,255,.06);color:#b7cfc6;padding:4px 9px;border-radius:3px">{{ product.phaseName }}</span>
+        <span class="nmx-tag" style="background:rgba(255,255,255,.06);color:#b7cfc6;padding:4px 9px;border-radius:3px">{{ product.kindLabel }}</span>
+      </div>
+
+      <h1 style="font-size:26px;font-weight:800;margin:0 0 10px;letter-spacing:-.4px;line-height:1.25;text-wrap:pretty">{{ product.name }}</h1>
+      <p style="font-size:14.5px;color:#b7cfc6;line-height:1.65;margin:0 0 22px;text-wrap:pretty">{{ product.objective }}</p>
+
+      <div class="nmx-meta" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(110,231,183,.14);border:1px solid rgba(110,231,183,.14);border-radius:6px;overflow:hidden;margin-bottom:24px">
+        <div style="background:#0a1f18;padding:13px 15px">
+          <div class="nmx-tag" style="color:#7f9a91;margin-bottom:5px">Categoría</div>
+          <div style="font-size:12.5px;font-weight:700;line-height:1.4">{{ product.category }}</div>
+        </div>
+        <div style="background:#0a1f18;padding:13px 15px">
+          <div class="nmx-tag" style="color:#7f9a91;margin-bottom:5px">Versión</div>
+          <div class="mono" style="font-size:12.5px;font-weight:600;color:{{ versionColor }};line-height:1.4">{{ versionLabel }}</div>
+        </div>
+        <div style="background:#0a1f18;padding:13px 15px">
+          <div class="nmx-tag" style="color:#7f9a91;margin-bottom:5px">Formato</div>
+          <div style="font-size:12.5px;font-weight:700;line-height:1.4">Excel .xlsx</div>
+        </div>
+      </div>
+
+      <div style="border:1px solid rgba(110,231,183,.2);border-radius:8px;padding:20px;background:rgba(110,231,183,.03)">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:4px">
+          <span style="font-size:30px;font-weight:800;letter-spacing:-.6px">{{ product.priceLabel }}</span>
+        </div>
+        <div style="font-size:12px;color:#8fa9a0;margin-bottom:16px">Incluye el libro Excel completo y el portafolio editable en DOCX. El portafolio en PDF es de lectura libre.</div>
+        <button type="button" disabled="{{ ctaDisabled }}" onClick="{{ onAddToCart }}" style="appearance:none;font-family:inherit;width:100%;padding:14px;background:#6ee7b7;color:#04140f;border:none;border-radius:6px;font-size:14.5px;font-weight:800;cursor:{{ ctaCursor }};margin-bottom:10px">{{ ctaLabel }}</button>
+        <a href="Cart.dc.html" style="display:block;text-align:center;text-decoration:none;padding:12px;border:1.5px solid rgba(110,231,183,.3);color:#e2e8f0;border-radius:6px;font-size:13.5px;font-weight:700">Ver carrito</a>
+      </div>
+
+      <sc-if value="{{ product.note }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:10px;align-items:flex-start;margin-top:18px;background:rgba(255,148,102,.07);border:1px solid rgba(255,148,102,.22);border-radius:6px;padding:12px 14px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff9466" stroke-width="2" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16.5v.01"></path></svg>
+          <div style="font-size:12px;color:#e8c3ae;line-height:1.55">{{ product.note }}</div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <div class="nmx-body" style="display:grid;grid-template-columns:1.6fr 1fr;gap:36px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:30px">
+      <section>
+        <h2 class="nmx-tag" style="color:#6ee7b7;margin:0 0 12px;font-size:11px">Población y alcance</h2>
+        <p style="font-size:13.5px;color:#c7dad2;line-height:1.7;margin:0;text-wrap:pretty">{{ product.population }}</p>
+      </section>
+
+      <section>
+        <h2 class="nmx-tag" style="color:#6ee7b7;margin:0 0 12px;font-size:11px">Entradas que solicita</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <sc-for list="{{ product.inputs }}" as="i" hint-placeholder-count="3">
+            <span style="font-size:12.5px;font-weight:600;color:#c7dad2;background:rgba(255,255,255,.05);border:1px solid rgba(110,231,183,.14);padding:7px 12px;border-radius:5px">{{ i }}</span>
+          </sc-for>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="nmx-tag" style="color:#6ee7b7;margin:0 0 12px;font-size:11px">Resultados que entrega</h2>
+        <div style="display:flex;flex-direction:column;gap:1px;background:rgba(110,231,183,.12);border:1px solid rgba(110,231,183,.12);border-radius:6px;overflow:hidden">
+          <sc-for list="{{ product.results }}" as="r" hint-placeholder-count="3">
+            <div style="background:#0a1f18;padding:13px 16px;display:flex;gap:11px;align-items:center">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2.4" stroke-linecap="round" style="flex:none"><path d="M20 6L9 17l-5-5"></path></svg>
+              <span style="font-size:13.5px;font-weight:600">{{ r }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="nmx-tag" style="color:#6ee7b7;margin:0 0 12px;font-size:11px">Metodología declarada</h2>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <sc-for list="{{ product.methodology }}" as="m" hint-placeholder-count="2">
+            <div class="mono" style="font-size:12px;color:#c7dad2;line-height:1.6;background:rgba(255,255,255,.035);border-left:2px solid #6ee7b7;padding:11px 14px;border-radius:0 5px 5px 0">{{ m }}</div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="nmx-tag" style="color:#6ee7b7;margin:0 0 12px;font-size:11px">Fuentes</h2>
+        <p style="font-size:13.5px;color:#c7dad2;line-height:1.7;margin:0">{{ product.sources }}</p>
+      </section>
+
+      <section>
+        <h2 class="nmx-tag" style="color:#ff9466;margin:0 0 12px;font-size:11px">Limitaciones y alcance</h2>
+        <div style="background:rgba(255,148,102,.06);border:1px solid rgba(255,148,102,.2);border-radius:6px;padding:16px 18px">
+          <p style="font-size:13px;color:#e8c3ae;line-height:1.7;margin:0 0 14px;text-wrap:pretty">{{ product.limitations }}</p>
+          <div class="mono" style="font-size:11.5px;font-weight:600;color:#ff9466;padding-top:12px;border-top:1px solid rgba(255,148,102,.18)">Exactitud matemática ≠ validación clínica</div>
+        </div>
+      </section>
+    </div>
+
+    <aside style="display:flex;flex-direction:column;gap:20px">
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:20px">
+        <div class="nmx-tag" style="color:#6ee7b7;margin-bottom:14px">Documentación del producto</div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+          <a href="{{ product.portfolioPdf }}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px;background:rgba(110,231,183,.06);border:1px solid rgba(110,231,183,.28);border-radius:6px;padding:12px 13px" style-hover="border-color:rgba(110,231,183,.5)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2" style="flex:none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M8 15h8"></path></svg>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12.5px;font-weight:700">Portafolio profesional</div>
+              <div class="mono" style="font-size:10.5px;color:#7f9a91">PDF · lectura libre</div>
+            </div>
+            <span class="nmx-tag" style="color:#6ee7b7">Abrir</span>
+          </a>
+
+          <div style="display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.12);border-radius:6px;padding:12px 13px">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8fa9a0" stroke-width="2" style="flex:none"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12.5px;font-weight:700">Libro Excel completo</div>
+              <div class="mono" style="font-size:10.5px;color:#7f9a91">{{ product.excelFile }} · sin modificación</div>
+            </div>
+            <span class="nmx-tag" style="color:#7f9a91">Tras compra</span>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.12);border-radius:6px;padding:12px 13px">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8fa9a0" stroke-width="2" style="flex:none"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12.5px;font-weight:700">Portafolio editable</div>
+              <div class="mono" style="font-size:10.5px;color:#7f9a91">{{ product.portfolioDocxFile }}</div>
+            </div>
+            <span class="nmx-tag" style="color:#7f9a91">Tras compra</span>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:1px;background:rgba(110,231,183,.1);border:1px solid rgba(110,231,183,.1);border-radius:6px;overflow:hidden">
+          <div style="background:#0a1f18;padding:11px 13px;display:flex;justify-content:space-between;gap:12px">
+            <span class="nmx-tag" style="color:#7f9a91">Estado portafolio</span>
+            <span class="mono" style="font-size:10.5px;font-weight:600;color:#6ee7b7">{{ product.portfolioState }}</span>
+          </div>
+          <div style="background:#0a1f18;padding:11px 13px">
+            <div class="nmx-tag" style="color:#7f9a91;margin-bottom:4px">Estado documental</div>
+            <div class="mono" style="font-size:10.5px;color:#b7cfc6;line-height:1.5">{{ product.docState }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:20px">
+        <div class="nmx-tag" style="color:#6ee7b7;margin-bottom:12px">Integridad del archivo</div>
+        <p style="font-size:12.5px;color:#b7cfc6;line-height:1.65;margin:0 0 14px">Los 32 libros se inspeccionaron en modo solo lectura para documentarlos. Se entregan íntegros: sin cambios en fórmulas, hojas ni datos.</p>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font-size:26px;font-weight:800;color:#6ee7b7;line-height:1">0</span>
+          <span class="nmx-tag" style="color:#7f9a91">Excel modificados</span>
+        </div>
+      </div>
+
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:20px">
+        <div class="nmx-tag" style="color:#6ee7b7;margin-bottom:12px">Distribución</div>
+        <p style="font-size:12.5px;color:#b7cfc6;line-height:1.65;margin:0">Distribución autorizada por el titular. La autorización es comercial y no constituye validación científica ni clínica.</p>
+      </div>
+
+      <a href="Docs.dc.html" style="text-decoration:none;text-align:center;padding:13px;border:1.5px solid rgba(110,231,183,.3);color:#e2e8f0;border-radius:6px;font-size:13.5px;font-weight:700">Documentación oficial de la suite</a>
+    </aside>
+  </div>
+
+  <div style="margin-top:56px;padding-top:36px;border-top:1px solid rgba(110,231,183,.12)">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:20px;flex-wrap:wrap">
+      <h2 style="font-size:18px;font-weight:800;margin:0;letter-spacing:-.2px">Otras herramientas de {{ product.phaseName }}</h2>
+      <a href="{{ product.phaseHref }}" style="font-size:13px;font-weight:700;text-decoration:none">Ver la fase completa →</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px">
+      <sc-for list="{{ siblings }}" as="s" hint-placeholder-count="4">
+        <a href="{{ s.href }}" style="text-decoration:none;color:inherit;border:1px solid rgba(110,231,183,.16);border-radius:7px;overflow:hidden;display:flex;flex-direction:column" style-hover="border-color:rgba(110,231,183,.4)">
+          {{ s.coverEl }}
+          <div style="padding:13px 14px;display:flex;flex-direction:column;gap:6px;flex:1">
+            <span class="nmx-tag" style="color:#6ee7b7">{{ s.sku }}</span>
+            <div style="font-size:12.5px;font-weight:700;line-height:1.4;flex:1;text-wrap:pretty">{{ s.name }}</div>
+            <div class="mono" style="font-size:11px;color:#8fa9a0">{{ s.priceLabel }}</div>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240,&quot;height&quot;:1400}}">
+class Component extends DCLogic {
+  state = { added: false, inventoryReady: false };
+
+  componentDidMount() { this._waitForInventory(); }
+
+  componentWillUnmount() {
+    if (this._addedTimer) clearTimeout(this._addedTimer);
+    if (this._retryTimer) clearTimeout(this._retryTimer);
+  }
+
+  _waitForInventory() {
+    if (window.NMXInventory) { this.setState({ inventoryReady: true }); return; }
+    this._retryTimer = setTimeout(() => this._waitForInventory(), 30);
+  }
+
+  _currentId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id') || 'nmx01';
+  }
+
+  async _addToCart(id) {
+    if (!window.NMXStore) return;
+    const session = await window.NMXStore.getSession();
+    if (!session) { window.location.href = 'Login.dc.html'; return; }
+    try {
+      await window.NMXStore.addToCart(id);
+      this.setState({ added: true });
+      if (this._addedTimer) clearTimeout(this._addedTimer);
+      this._addedTimer = setTimeout(() => this.setState({ added: false }), 2400);
+    } catch (e) { /* el contador del Header refleja el estado real del carrito */ }
+  }
+
+  renderVals() {
+    const inv = window.NMXInventory;
+    const id = this._currentId();
+    const product = inv ? (inv.get(id) || inv.products[0]) : null;
+    if (!product) {
+      return {
+        product: { sku: '—', name: 'Cargando herramienta…', phaseName: '', phaseHref: 'Catalog.dc.html', objective: '', population: '', category: '', kindLabel: '', priceLabel: '—', cover: '', portfolioPdf: '', excelFile: '', portfolioDocxFile: '', inputs: [], results: [], methodology: [], sources: '', limitations: '', portfolioState: '', docState: '', note: '' },
+        siblings: [], captureNotice: '', versionLabel: '—', versionColor: '#8fa9a0', coverEl: null,
+        ctaLabel: 'Cargando…', ctaDisabled: true, ctaCursor: 'default', onAddToCart: () => {}
+      };
+    }
+
+    const notConfirmed = product.version === 'NO_CONFIRMADO';
+    // Las portadas se construyen acá, no en la plantilla: un src en un hole se
+    // emite literal durante el streaming y dispara una petición fallida.
+    const img = (src, alt, style) => React.createElement('img', { src, alt, style });
+    const siblings = inv.byPhase(product.phase).filter((p) => p.id !== product.id).map((p) => ({
+      ...p,
+      coverEl: img(p.cover, p.name, { display: 'block', width: '100%', height: '88px', objectFit: 'cover' })
+    }));
+
+    return {
+      product: { ...product, phaseHref: 'Catalog.dc.html?fase=' + product.phase },
+      coverEl: img(product.cover, product.name, { display: 'block', width: '100%', height: 'auto' }),
+      siblings,
+      captureNotice: inv.report.captureNotice,
+      versionLabel: notConfirmed ? 'No confirmada en el archivo' : product.version,
+      versionColor: notConfirmed ? '#8fa9a0' : '#6ee7b7',
+      ctaLabel: this.state.added ? 'Agregado ✓' : 'Agregar al carrito',
+      ctaDisabled: false,
+      ctaCursor: 'pointer',
+      onAddToCart: (e) => { if (e && e.preventDefault) e.preventDefault(); this._addToCart(product.id); }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

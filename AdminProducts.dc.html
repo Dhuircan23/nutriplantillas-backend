@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:220px 1fr;min-height:100vh">
+  <div style="background:#04140f;padding:20px 14px">
+    <dc-import name="AdminNav" active="productos" hint-size="192px,480px"></dc-import>
+  </div>
+
+  <div style="padding:28px 36px 60px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+      <h1 style="font-size:24px;font-weight:800;margin:0;letter-spacing:-.3px">Productos</h1>
+      <a href="AdminProductEditor.dc.html" style="text-decoration:none;font-size:13px;font-weight:700;padding:10px 18px;background:#6ee7b7;color:#04140f;border-radius:6px">+ Crear producto</a>
+    </div>
+
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden">
+      <div role="table" style="display:flex;flex-direction:column;min-width:960px">
+        <div role="row" style="display:grid;grid-template-columns:2.2fr 1.2fr 1fr 0.9fr 1fr 1fr 1.2fr 1.6fr;background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:#c7dad2">
+          <div style="padding:12px 16px">Producto</div>
+          <div style="padding:12px 16px">Categoría</div>
+          <div style="padding:12px 16px">Precio</div>
+          <div style="padding:12px 16px">Versión</div>
+          <div style="padding:12px 16px">Estado</div>
+          <div style="padding:12px 16px">Ventas</div>
+          <div style="padding:12px 16px">Actualizado</div>
+          <div style="padding:12px 16px">Acciones</div>
+        </div>
+        <sc-for list="{{ products }}" as="p" hint-placeholder-count="8">
+          <div role="row" style="display:grid;grid-template-columns:2.2fr 1.2fr 1fr 0.9fr 1fr 1fr 1.2fr 1.6fr;border-top:1px solid rgba(110,231,183,.12);align-items:center;font-size:12.5px">
+            <div style="padding:12px 16px;display:flex;gap:10px;align-items:center">
+              <div style="width:34px;height:26px;flex:none;border-radius:4px;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03),rgba(255,255,255,.03) 6px,rgba(110,231,183,.06) 6px,rgba(110,231,183,.06) 12px)"></div>
+              <span style="font-weight:700">{{ p.name }}</span>
+            </div>
+            <div style="padding:12px 16px;color:#b7cfc6">{{ p.category }}</div>
+            <div style="padding:12px 16px;font-weight:700">{{ p.price }}</div>
+            <div style="padding:12px 16px" class="mono">{{ p.version }}</div>
+            <div style="padding:12px 16px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ p.statusBg }};color:{{ p.statusColor }}">{{ p.status }}</span></div>
+            <div style="padding:12px 16px" class="mono">{{ p.sales }}</div>
+            <div style="padding:12px 16px;color:#8fa9a0" class="mono">{{ p.updated }}</div>
+            <div style="padding:12px 16px;display:flex;gap:6px">
+              <a href="AdminProductEditor.dc.html" style="text-decoration:none;font-size:11px;font-weight:700;color:#6ee7b7">Editar</a>
+              <a href="AdminVersions.dc.html" style="text-decoration:none;font-size:11px;font-weight:700;color:#6ee7b7">Versiones</a>
+              <span style="font-size:11px;font-weight:700;color:#8fa9a0;cursor:pointer">Duplicar</span>
+              <span style="font-size:11px;font-weight:700;color:#ff6b5e;cursor:pointer">Archivar</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session || session.role !== 'admin') {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    if (this._nmxAdminMount) this._nmxAdminMount();
+  }
+  renderVals() {
+    return {
+      products: [
+        {name:'Calculadora de Necesidades Energéticas', category:'Evaluación energética', price:'$4.990', version:'v1.0', status:'Disponible', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7', sales:'186', updated:'12 jul 2026'},
+        {name:'Registro Antropométrico', category:'Antropometría', price:'$5.990', version:'v1.0', status:'Actualizado', statusBg:'rgba(110,231,183,.06)', statusColor:'#6ee7b7', sales:'142', updated:'8 jul 2026'},
+        {name:'Recordatorio de 24 Horas', category:'Evaluación dietética', price:'$4.490', version:'v1.0', status:'Disponible', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7', sales:'98', updated:'2 jul 2026'},
+        {name:'Seguimiento de Composición Corporal', category:'Seguimiento', price:'$5.490', version:'v0.9', status:'Beta', statusBg:'rgba(255,148,102,.14)', statusColor:'#ff9466', sales:'21', updated:'30 jun 2026'},
+        {name:'Historia Clínica Nutricional', category:'Historia clínica', price:'—', version:'—', status:'En revisión', statusBg:'rgba(255,255,255,.06)', statusColor:'#b7cfc6', sales:'0', updated:'—'},
+        {name:'Tabla Dietosintética Semanal', category:'Planificación alimentaria', price:'—', version:'—', status:'Próximamente', statusBg:'rgba(255,255,255,.06)', statusColor:'#b7cfc6', sales:'0', updated:'—'},
+        {name:'Plan de Nutrición Deportiva', category:'Nutrición deportiva', price:'—', version:'—', status:'Borrador', statusBg:'#f3f1e9', statusColor:'#8a7a5a', sales:'0', updated:'—'},
+        {name:'Calculadora de Composición Corporal Antigua', category:'Antropometría', price:'$3.990', version:'v1.0', status:'Retirado temporalmente', statusBg:'#fde8e6', statusColor:'#ff6b5e', sales:'54', updated:'20 may 2026'}
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

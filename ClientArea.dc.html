@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+</style>
+</helmet>
+
+<dc-import name="Header" active="" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:1200px;margin:0 auto;padding:32px 40px 72px;display:grid;grid-template-columns:220px 1fr;gap:36px;align-items:start">
+  <dc-import name="ClientNav" active="resumen" hint-size="220px,360px"></dc-import>
+
+  <div>
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 4px;letter-spacing:-.3px">Hola{{ greetingSep }}{{ greetingName }}</h1>
+    <p style="font-size:13.5px;color:#9fb8ae;margin:0 0 28px">Resumen de tu cuenta Nutrimetría Excel Lab.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px">
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:18px">
+        <div class="mono" style="font-size:10.5px;color:#8fa9a0;text-transform:uppercase;margin-bottom:6px">Productos</div>
+        <div style="font-size:24px;font-weight:800">{{ productCount }}</div>
+      </div>
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:18px">
+        <div class="mono" style="font-size:10.5px;color:#8fa9a0;text-transform:uppercase;margin-bottom:6px">Membresía</div>
+        <div style="font-size:15px;font-weight:800;color:#34d399">Activa — Plan Anual</div>
+      </div>
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:18px">
+        <div class="mono" style="font-size:10.5px;color:#8fa9a0;text-transform:uppercase;margin-bottom:6px">Descargas pendientes</div>
+        <div style="font-size:24px;font-weight:800">0</div>
+      </div>
+    </div>
+
+    <h2 style="font-size:16px;font-weight:800;margin:0 0 14px">Compras recientes</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:32px">
+      <sc-for list="{{ recentPurchases }}" as="p" hint-placeholder-count="2">
+        <div style="border:1px solid rgba(110,231,183,.16);border-radius:6px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-weight:700;font-size:13.5px">{{ p.name }}</div><div class="mono" style="font-size:11px;color:#7fa398">{{ p.date }}</div></div>
+          <a href="MyProducts.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;padding:8px 14px;border:1.5px solid rgba(110,231,183,.3);border-radius:5px;color:#e2e8f0">Ver</a>
+        </div>
+      </sc-for>
+    </div>
+
+    <h2 style="font-size:16px;font-weight:800;margin:0 0 14px">Últimas actualizaciones</h2>
+    <div style="background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.14);border-radius:6px;padding:14px 16px;font-size:12.5px;color:#c7dad2">
+      No hay actualizaciones nuevas para tus productos en este momento.
+    </div>
+  </div>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { session: null, orders: [], loaded: false };
+
+  componentDidMount() {
+    this._init();
+  }
+
+  async _init() {
+    if (!window.NMXStore) { setTimeout(() => this._init(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session) {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    try {
+      const orders = await window.NMXStore.getMyOrders();
+      this.setState({ session, orders, loaded: true });
+    } catch (e) {
+      this.setState({ session, orders: [], loaded: true });
+    }
+  }
+
+  renderVals() {
+    const paidOrders = (this.state.orders || []).filter((o) => o.status === 'paid');
+    const recentPurchases = paidOrders.slice(0, 5).map((o) => ({
+      name: 'Pedido ' + (o.order_code || o.orderCode),
+      date: o.paid_at ? 'Pagado el ' + new Date(o.paid_at).toLocaleDateString('es-CL') : ''
+    }));
+    return {
+      greetingName: this.state.session ? this.state.session.email : '',
+      greetingSep: this.state.session ? ', ' : '',
+      productCount: paidOrders.length,
+      recentPurchases
+    };
+  }
+}
+
+</script>
+</body>
+</html>

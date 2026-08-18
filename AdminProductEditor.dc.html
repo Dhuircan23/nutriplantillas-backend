@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .card{background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:20px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12px;font-weight:700;color:#c7dad2}
+  .field input,.field select,.field textarea{padding:10px 13px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13px;font-family:'Manrope',sans-serif}
+  .err{font-size:11px;color:#ff6b5e;font-weight:600}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:220px 1fr;min-height:100vh">
+  <div style="background:#04140f;padding:20px 14px">
+    <dc-import name="AdminNav" active="productos" hint-size="192px,480px"></dc-import>
+  </div>
+
+  <div style="padding:28px 36px 60px;max-width:900px">
+    <div class="mono" style="font-size:12px;color:#8fa9a0;margin-bottom:16px"><a href="AdminProducts.dc.html" style="color:#8fa9a0;text-decoration:none">Productos</a> / Editor</div>
+    <h1 style="font-size:22px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Calculadora de Necesidades Energéticas</h1>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:14px">Información general</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="field"><label>Nombre *</label><input value="Calculadora de Necesidades Energéticas"/></div>
+        <div class="field"><label>Categoría *</label><select><option>Evaluación energética</option></select></div>
+        <div class="field"><label>Precio (CLP) *</label><input value="4990"/></div>
+        <div class="field"><label>Versión *</label><input value="1.0"/></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:14px">Descripción comercial</div>
+      <div class="field"><textarea rows="3">Herramienta para calcular y comparar estimaciones de necesidades energéticas utilizando ecuaciones seleccionadas, variables configurables y resultados auditables.</textarea></div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:14px">Funciones, variables, resultados y ecuaciones</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="field"><label>Funciones (una por línea)</label><textarea rows="3">Registro de datos generales
+Selección de ecuación
+Comparación de resultados</textarea></div>
+        <div class="field"><label>Variables de entrada</label><textarea rows="2">Edad, sexo, peso, talla, factor de actividad</textarea></div>
+        <div class="field"><label>Ecuaciones incluidas *</label><textarea rows="2" placeholder="Pendiente de completar"></textarea><span class="err">Ecuaciones sin registrar — requerido antes de publicar</span></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:14px">Fuentes y limitaciones</div>
+      <div class="field" style="margin-bottom:12px"><label>Fuentes *</label><textarea rows="2" placeholder="Pendiente de completar"></textarea><span class="err">Fuentes pendientes — requerido antes de publicar</span></div>
+      <div class="field"><label>Limitaciones *</label><textarea rows="2" placeholder="Pendiente de completar"></textarea><span class="err">Limitaciones no declaradas — requerido antes de publicar</span></div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:14px">Compatibilidad *</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+        <label style="display:flex;gap:8px;font-size:12.5px"><input type="checkbox" checked/> Excel 365 (Windows) — Compatible</label>
+        <label style="display:flex;gap:8px;font-size:12.5px"><input type="checkbox" checked/> Excel 2021 — Compatible</label>
+        <label style="display:flex;gap:8px;font-size:12.5px"><input type="checkbox"/> Excel Mac — Compatibilidad parcial</label>
+        <label style="display:flex;gap:8px;font-size:12.5px"><input type="checkbox"/> Google Sheets — No probado</label>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:14px">Imágenes y archivo descargable</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div style="border:1.5px dashed rgba(110,231,183,.25);border-radius:6px;padding:24px;text-align:center;color:#8fa9a0;font-size:12px">Arrastra imágenes de la galería (demostrativo)</div>
+        <div style="border:1.5px dashed #ff6b5e;border-radius:6px;padding:24px;text-align:center;color:#ff6b5e;font-size:12px">Archivo pendiente de cargar — interfaz demostrativa, sin almacenamiento real</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:14px">Licencia, precio y paquetes</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="field"><label>Tipo de licencia</label><select><option>Individual</option><option>Profesional</option><option>Equipo</option></select></div>
+        <div class="field"><label>Incluir en paquete</label><select><option>Ninguno</option><option>Pack Estudiante</option><option>Pack Profesional</option></select></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:24px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:14px">Estado de publicación</div>
+      <select style="padding:10px 13px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13px;font-family:'Manrope',sans-serif">
+        <option>Borrador</option><option>En revisión</option><option selected>Disponible</option><option>Beta</option><option>Próximamente</option><option>Retirado temporalmente</option><option>Archivado</option>
+      </select>
+    </div>
+
+    <div style="display:flex;gap:12px">
+      <span style="padding:12px 22px;border:1.5px solid #e2e8f0;color:#e2e8f0;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer">Guardar como borrador</span>
+      <span style="padding:12px 22px;background:rgba(110,231,183,.3);color:#5c6a68;border-radius:6px;font-weight:700;font-size:13.5px;cursor:not-allowed" title="Completa fuentes, ecuaciones y limitaciones para publicar">Publicar producto</span>
+      <a href="Nmx.dc.html?id=nmx01" style="text-decoration:none;padding:12px 22px;border:1.5px solid rgba(110,231,183,.3);color:#e2e8f0;border-radius:6px;font-weight:700;font-size:13.5px">Vista previa pública</a>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session || session.role !== 'admin') {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    if (this._nmxAdminMount) this._nmxAdminMount();
+  }
+}
+</script>
+</body>
+</html>

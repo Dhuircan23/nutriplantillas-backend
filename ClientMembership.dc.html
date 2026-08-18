@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+</style>
+</helmet>
+
+<dc-import name="Header" active="" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:1200px;margin:0 auto;padding:32px 40px 72px;display:grid;grid-template-columns:220px 1fr;gap:36px;align-items:start">
+  <dc-import name="ClientNav" active="membresia" hint-size="220px,360px"></dc-import>
+
+  <div>
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Membresía</h1>
+
+    <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:22px;margin-bottom:24px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+        <div>
+          <div class="mono" style="font-size:10.5px;color:#8fa9a0;text-transform:uppercase;margin-bottom:4px">Plan actual</div>
+          <div style="font-size:18px;font-weight:800">Plan Anual</div>
+        </div>
+        <span class="mono" style="font-size:10.5px;background:rgba(110,231,183,.12);color:#6ee7b7;padding:4px 10px;border-radius:3px">Activa</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px" class="mono">
+        <div><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:2px">Renovación</div><div style="font-size:13px;font-weight:700">14 de marzo, 2027</div></div>
+        <div><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:2px">Valor</div><div style="font-size:13px;font-weight:700">$89.990 CLP / año</div></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <span style="font-size:12px;font-weight:700;padding:9px 16px;border:1.5px solid rgba(110,231,183,.3);border-radius:5px;color:#e2e8f0;cursor:pointer">Modificar plan</span>
+        <span style="font-size:12px;font-weight:700;padding:9px 16px;border:1.5px solid #ff6b5e;border-radius:5px;color:#ff6b5e;cursor:pointer">Cancelar membresía</span>
+      </div>
+    </div>
+
+    <h2 style="font-size:16px;font-weight:800;margin:0 0 12px">Productos incluidos en tu plan</h2>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:28px">
+      <sc-for list="{{ included }}" as="i" hint-placeholder-count="5">
+        <div style="display:flex;justify-content:space-between;border:1px solid rgba(110,231,183,.16);border-radius:6px;padding:10px 14px;font-size:13px">
+          <span>{{ i.name }}</span><span class="mono" style="font-size:10.5px;color:{{ i.color }}">{{ i.status }}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <h2 style="font-size:16px;font-weight:800;margin:0 0 12px">Historial de pagos</h2>
+    <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:rgba(255,255,255,.03)"><th style="text-align:left;padding:10px 14px;font-weight:700;color:#c7dad2">Fecha</th><th style="text-align:left;padding:10px 14px;font-weight:700;color:#c7dad2">Monto</th><th style="text-align:left;padding:10px 14px;font-weight:700;color:#c7dad2">Estado</th></tr></thead>
+        <tbody>
+          <tr style="border-top:1px solid rgba(110,231,183,.12)"><td style="padding:10px 14px" class="mono">14 mar 2026</td><td style="padding:10px 14px">$89.990 CLP</td><td style="padding:10px 14px;color:#34d399;font-weight:700">Pagado</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session) {
+      window.location.href = 'Login.dc.html';
+    }
+  }
+  renderVals() {
+    return {
+      included: [
+        {name:'Calculadora energética', status:'Incluido', color:'#34d399'},
+        {name:'Registro antropométrico', status:'Incluido', color:'#34d399'},
+        {name:'Recordatorio 24h', status:'Incluido', color:'#34d399'},
+        {name:'Seguimiento corporal', status:'Incluido', color:'#34d399'},
+        {name:'Nutrición deportiva', status:'Próximamente', color:'#b8730f'}
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

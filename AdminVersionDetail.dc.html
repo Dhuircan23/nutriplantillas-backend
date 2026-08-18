@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .card{background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:20px}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:220px 1fr;min-height:100vh">
+  <div style="background:#04140f;padding:20px 14px">
+    <dc-import name="AdminNav" active="versiones" hint-size="192px,480px"></dc-import>
+  </div>
+
+  <div style="padding:28px 36px 60px;max-width:800px">
+    <div class="mono" style="font-size:12px;color:#8fa9a0;margin-bottom:16px"><a href="AdminVersions.dc.html" style="color:#8fa9a0;text-decoration:none">Versiones</a> / Registro Antropométrico v1.1</div>
+    <h1 style="font-size:22px;font-weight:800;margin:0 0 6px;letter-spacing:-.3px">Registro Antropométrico — v1.1</h1>
+    <span class="mono" style="font-size:10.5px;background:rgba(110,231,183,.06);color:#6ee7b7;padding:3px 9px;border-radius:3px">Lista para publicar</span>
+
+    <div class="card" style="margin:20px 0">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px">Detalle de la versión</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="mono">
+        <div><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:3px">Archivo asociado</div><div style="font-size:13px;font-weight:700">Registro_Antropometrico_v1.1.xlsx</div></div>
+        <div><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:3px">Compatibilidad</div><div style="font-size:13px;font-weight:700">Windows, Mac, Web</div></div>
+        <div><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:3px">Usuarios con acceso</div><div style="font-size:13px;font-weight:700">142 compradores</div></div>
+        <div><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:3px">Estado de revisión</div><div style="font-size:13px;font-weight:700">Aprobado metodológicamente</div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:10px">Cambios</div>
+      <p style="font-size:13px;color:#c7dad2;line-height:1.6;margin:0 0 10px">Se agrega compatibilidad con Excel para Mac y se ajusta el ancho de columnas en la hoja de resultados.</p>
+      <div style="font-weight:800;font-size:14px;margin-bottom:6px">Errores corregidos</div>
+      <p style="font-size:13px;color:#c7dad2;line-height:1.6;margin:0 0 10px">Corrección de fórmula de percentil en la hoja de datos de entrada.</p>
+      <div style="font-weight:800;font-size:14px;margin-bottom:6px">Limitaciones conocidas</div>
+      <p style="font-size:13px;color:#c7dad2;line-height:1.6;margin:0">La versión no incluye gráfico comparativo para menores de edad.</p>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:800;font-size:14px;margin-bottom:14px">Lista de comprobación antes de publicar</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <sc-for list="{{ checklist }}" as="c" hint-placeholder-count="8">
+          <div style="display:flex;gap:8px;align-items:center;font-size:12.5px">
+            <span style="color:{{ c.color }};font-weight:800">{{ c.icon }}</span>{{ c.label }}
+          </div>
+        </sc-for>
+      </div>
+      <a href="AdminPublishVersion.dc.html" style="text-decoration:none;display:inline-block;padding:11px 22px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:13.5px">Continuar a publicación</a>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session || session.role !== 'admin') {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    if (this._nmxAdminMount) this._nmxAdminMount();
+  }
+  renderVals() {
+    return {
+      checklist: [
+        {label:'Archivo cargado', icon:'✓', color:'#34d399'},
+        {label:'Versión registrada', icon:'✓', color:'#34d399'},
+        {label:'Changelog completo', icon:'✓', color:'#34d399'},
+        {label:'Compatibilidad revisada', icon:'✓', color:'#34d399'},
+        {label:'Pruebas documentadas', icon:'✓', color:'#34d399'},
+        {label:'Limitaciones declaradas', icon:'✓', color:'#34d399'},
+        {label:'Fuentes registradas', icon:'✓', color:'#34d399'},
+        {label:'Precio y acceso comprobados', icon:'✓', color:'#34d399'}
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

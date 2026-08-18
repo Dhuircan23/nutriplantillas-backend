@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  @keyframes nmxPulse{0%,100%{opacity:.5}50%{opacity:.9}}
+  .skeleton{background:rgba(255,255,255,.05);border-radius:5px;animation:nmxPulse 1.4s ease-in-out infinite}
+  @keyframes nmxFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .nmx-fade-in{animation:nmxFadeIn .35s ease}
+</style>
+</helmet>
+
+<dc-import name="Header" active="tienda" cart-count="0" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:900px;margin:0 auto;padding:56px 40px 80px">
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ true }}">
+    <div style="text-align:center;margin-bottom:40px">
+      <div class="skeleton" style="width:56px;height:56px;border-radius:50%;margin:0 auto 18px"></div>
+      <div class="skeleton" style="width:220px;height:22px;margin:0 auto 10px"></div>
+      <div class="skeleton" style="width:280px;height:14px;margin:0 auto"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="skeleton" style="height:80px;border-radius:8px"></div>
+      <div class="skeleton" style="height:80px;border-radius:8px"></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasOrder }}" hint-placeholder-val="{{ false }}">
+  <div class="nmx-fade-in">
+  <div style="text-align:center;margin-bottom:40px">
+    <div style="width:56px;height:56px;border-radius:50%;background:{{ badgeBg }};color:{{ badgeColor }};display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;margin:0 auto 18px">{{ badgeGlyph }}</div>
+    <h1 style="font-size:26px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px">{{ headline }}</h1>
+    <p style="font-size:14px;color:#9fb8ae;margin:0">{{ subhead }}</p>
+    <div class="mono" style="margin-top:10px;font-size:12px;color:#8fa9a0">Pedido N.° {{ orderId }} · {{ orderDate }}</div>
+  </div>
+
+  <div style="background:{{ noticeBg }};border:1px solid {{ noticeBorder }};border-radius:6px;padding:14px 18px;font-size:12.5px;color:{{ noticeColor }};text-align:center;margin-bottom:32px">{{ noticeText }}</div>
+
+  <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:32px">
+    <sc-for list="{{ purchased }}" as="item" hint-placeholder-count="2">
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:18px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+        <div style="width:64px;height:48px;flex:none;border-radius:5px;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03),rgba(255,255,255,.03) 8px,rgba(110,231,183,.06) 8px,rgba(110,231,183,.06) 16px)"></div>
+        <div style="flex:1;min-width:180px">
+          <div style="font-weight:800;font-size:14.5px;margin-bottom:4px">{{ item.name }}</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-if value="{{ isPaid }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ item.portfolioHref }}" style="text-decoration:none;font-size:12px;font-weight:700;padding:9px 16px;border:1.5px solid rgba(110,231,183,.3);border-radius:5px;color:#e2e8f0">Portafolio .docx</a>
+            <a href="{{ item.downloadHref }}" style="text-decoration:none;font-size:12px;font-weight:700;padding:9px 16px;background:#6ee7b7;color:#04140f;border-radius:5px;cursor:pointer">Descargar .xlsx</a>
+          </sc-if>
+          <sc-if value="{{ !isPaid }}" hint-placeholder-val="{{ false }}">
+            <span class="mono" style="font-size:11px;color:#7f9a91;padding:9px 14px;border:1px dashed rgba(110,231,183,.25);border-radius:5px">Disponible al confirmarse el pago</span>
+          </sc-if>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+    <a href="License.dc.html" style="text-decoration:none;font-size:13px;font-weight:700;padding:11px 20px;border:1.5px solid rgba(110,231,183,.3);border-radius:6px;color:#e2e8f0">Ver licencia</a>
+    <a href="Support.dc.html" style="text-decoration:none;font-size:13px;font-weight:700;padding:11px 20px;border:1.5px solid rgba(110,231,183,.3);border-radius:6px;color:#e2e8f0">Contactar soporte</a>
+    <a href="ClientArea.dc.html" style="text-decoration:none;font-size:13px;font-weight:700;padding:11px 20px;background:#ff7a45;color:#241008;border-radius:6px">Ir a mis productos</a>
+  </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ !hasOrder }}" hint-placeholder-val="{{ false }}">
+    <div style="text-align:center;padding:80px 20px;border:1px dashed rgba(110,231,183,.25);border-radius:8px">
+      <div style="font-weight:800;font-size:18px;margin-bottom:10px">No encontramos una compra reciente</div>
+      <p style="font-size:13.5px;color:#9fb8ae;margin:0 0 24px;max-width:44ch;margin-left:auto;margin-right:auto">Es posible que el enlace haya expirado o que aún no hayas completado una compra en este navegador.</p>
+      <a href="Catalog.dc.html" style="text-decoration:none;padding:12px 24px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:13.5px">Ver catálogo</a>
+    </div>
+  </sc-if>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { order: null, loaded: false };
+
+  componentDidMount() {
+    this._init();
+  }
+
+  componentWillUnmount() {
+    if (this._retryTimer) clearTimeout(this._retryTimer);
+  }
+
+  async _init() {
+    if (!window.NMXStore) {
+      this._retryTimer = setTimeout(() => this._init(), 30);
+      return;
+    }
+    const orderCode = new URLSearchParams(window.location.search).get('order');
+    if (!orderCode) {
+      this.setState({ order: null, loaded: true });
+      return;
+    }
+    try {
+      const order = await window.NMXStore.getOrder(orderCode);
+      this.setState({ order, loaded: true });
+    } catch (e) {
+      this.setState({ order: null, loaded: true });
+    }
+  }
+
+  renderVals() {
+    const order = this.state.loaded ? this.state.order : null;
+    const hasOrder = !!(order && order.items && order.items.length);
+    const isPaid = hasOrder && order.status === 'paid';
+
+    const purchased = hasOrder ? order.items.map((it) => ({
+      name: it.name,
+      version: '',
+      downloadHref: window.NMXStore ? window.NMXStore.downloadUrl(it.orderItemId, 'excel') : '#',
+      portfolioHref: window.NMXStore ? window.NMXStore.downloadUrl(it.orderItemId, 'portfolio') : '#'
+    })) : [];
+
+    // Con el proveedor de pago simulado el pedido llega en payment_processing:
+    // la descarga recién se habilita cuando un administrador confirma el pago.
+    const paid = {
+      badgeGlyph: '✓',
+      badgeBg: 'rgba(110,231,183,.12)',
+      badgeColor: '#6ee7b7',
+      headline: 'Compra confirmada',
+      subhead: 'Tus herramientas ya están disponibles para descargar.',
+      noticeBg: 'rgba(255,255,255,.035)',
+      noticeBorder: 'rgba(110,231,183,.14)',
+      noticeColor: '#c7dad2',
+      noticeText: 'Cada descarga consume cupo. El portafolio en PDF es de lectura libre y no consume cupo.'
+    };
+    const pending = {
+      badgeGlyph: '⋯',
+      badgeBg: 'rgba(255,148,102,.14)',
+      badgeColor: '#ff9466',
+      headline: 'Pedido registrado',
+      subhead: 'Tu pedido quedó a la espera de que se confirme el pago.',
+      noticeBg: 'rgba(255,148,102,.07)',
+      noticeBorder: 'rgba(255,148,102,.24)',
+      noticeColor: '#e8c3ae',
+      noticeText: 'No se ha realizado ningún cobro: la pasarela de pago real todavía no está conectada. Un administrador debe confirmar este pedido para habilitar las descargas.'
+    };
+    const view = isPaid ? paid : pending;
+
+    return {
+      isLoading: !this.state.loaded,
+      hasOrder,
+      isPaid,
+      orderId: hasOrder ? order.orderCode : '',
+      orderDate: hasOrder
+        ? new Date(order.paidAt || order.createdAt).toLocaleDateString('es-CL')
+        : '',
+      purchased,
+      ...view
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12.5px;font-weight:700;color:#c7dad2}
+  .field input{padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Manrope',sans-serif}
+</style>
+</helmet>
+
+<dc-import name="Header" active="recursos" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:440px;margin:0 auto;padding:56px 40px 90px">
+  <div style="text-align:center;margin-bottom:28px">
+    <h1 style="font-size:22px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px">Recibe tu recurso gratuito</h1>
+    <p style="font-size:13.5px;color:#9fb8ae;margin:0">{{ resourceName }}</p>
+  </div>
+  <form style="display:flex;flex-direction:column;gap:16px">
+    <div class="field"><label for="rname">Nombre</label><input id="rname" placeholder="Tu nombre"/></div>
+    <div class="field"><label for="remail">Correo electrónico</label><input id="remail" type="email" placeholder="tucorreo@ejemplo.com"/></div>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#b7cfc6">
+      <input type="checkbox" style="margin-top:2px"/>
+      <span>Acepto recibir comunicaciones ocasionales de Nutrimetría. Puedo darme de baja cuando quiera.</span>
+    </label>
+    <a href="{{ accessHref }}" style="text-decoration:none;text-align:center;padding:13px;background:#ff7a45;color:#241008;border-radius:6px;font-weight:700;font-size:14px">Obtener recurso</a>
+  </form>
+  <p style="font-size:11.5px;color:#8fa9a0;text-align:center;margin-top:16px">¿Ya tienes cuenta? <a href="Login.dc.html">Inicia sesión</a></p>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NAMES = { checklist: 'Checklist para consulta nutricional', demo: 'Plantilla gratuita de ejemplo' };
+
+class Component extends DCLogic {
+  renderVals() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id') || 'checklist';
+    return { resourceName: NAMES[id] || NAMES.checklist, accessHref: 'ResourceAccess.dc.html?id=' + id };
+  }
+}
+
+</script>
+</body>
+</html>

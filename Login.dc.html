@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<script>
+  // Completar con las credenciales reales de OAuth cuando estén disponibles.
+  var GOOGLE_CLIENT_ID = '';
+  var APPLE_CLIENT_ID = '';
+</script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" async defer></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12.5px;font-weight:700;color:#c7dad2}
+  .field input{padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Manrope',sans-serif;background:rgba(255,255,255,.04);color:#e2e8f0}
+</style>
+</helmet>
+
+<dc-import name="Header" active="" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:420px;margin:0 auto;padding:64px 40px 100px">
+  <div style="text-align:center;margin-bottom:28px">
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px">Iniciar sesión</h1>
+    <p style="font-size:13.5px;color:#9fb8ae;margin:0">Accede a tus herramientas y tu historial de compras.</p>
+  </div>
+  <form onSubmit="{{ onSubmit }}" style="display:flex;flex-direction:column;gap:16px">
+    <div class="field"><label for="lemail">Correo electrónico</label><input id="lemail" type="email" placeholder="tucorreo@ejemplo.com" value="{{ email }}" onChange="{{ onEmailChange }}"/></div>
+    <div class="field">
+      <label for="lpass">Contraseña</label>
+      <input id="lpass" type="password" placeholder="••••••••" value="{{ password }}" onChange="{{ onPasswordChange }}"/>
+    </div>
+    <a href="ForgotPassword.dc.html" style="font-size:12.5px;font-weight:600;text-decoration:none;align-self:flex-end;margin-top:-8px">¿Olvidaste tu contraseña?</a>
+    <sc-if value="{{ errorMsg }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:12.5px;color:#ff6b5e;font-weight:600">{{ errorMsg }}</div>
+    </sc-if>
+    <button type="submit" disabled="{{ submitting }}" style="text-decoration:none;text-align:center;padding:13px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;border:none;font-family:'Manrope',sans-serif;opacity:{{ submitOpacity }}">{{ submitLabel }}</button>
+  </form>
+
+  <div style="display:flex;align-items:center;gap:12px;margin:22px 0">
+    <div style="flex:1;height:1px;background:rgba(110,231,183,.16)"></div>
+    <span class="mono" style="font-size:11px;color:#7fa398">o</span>
+    <div style="flex:1;height:1px;background:rgba(110,231,183,.16)"></div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <button type="button" onClick="{{ onGoogleLogin }}" style="appearance:none;font-family:'Manrope',sans-serif;text-align:center;padding:12px;background:rgba(255,255,255,.04);border:1.5px solid rgba(110,231,183,.25);color:#e2e8f0;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer">Continuar con Google</button>
+    <button type="button" onClick="{{ onAppleLogin }}" style="appearance:none;font-family:'Manrope',sans-serif;text-align:center;padding:12px;background:rgba(255,255,255,.04);border:1.5px solid rgba(110,231,183,.25);color:#e2e8f0;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer">Continuar con Apple</button>
+  </div>
+
+  <p style="font-size:12.5px;color:#8fa9a0;text-align:center;margin-top:22px">¿No tienes cuenta? <a href="Register.dc.html">Crear cuenta</a></p>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { email: '', password: '', errorMsg: '', submitting: false };
+
+  componentDidMount() {
+    const reason = new URLSearchParams(window.location.search).get('reason');
+    if (reason === 'session_expired') {
+      this.setState({ errorMsg: 'Tu sesión expiró, inicia sesión de nuevo.' });
+    }
+    this._initGoogle();
+    this._initApple();
+  }
+
+  _initGoogle() {
+    if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+      this._googleRetry = setTimeout(() => this._initGoogle(), 200);
+      return;
+    }
+    try {
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: (response) => this._onGoogleCredential(response)
+      });
+    } catch (e) { /* GOOGLE_CLIENT_ID aún sin completar */ }
+  }
+
+  async _onGoogleCredential(response) {
+    try {
+      const user = await window.NMXStore.loginWithGoogle(response.credential);
+      window.location.href = user.role === 'admin' ? 'AdminDashboard.dc.html' : 'ClientArea.dc.html';
+    } catch (err) {
+      this.setState({ errorMsg: err.message || 'No se pudo iniciar sesión con Google.' });
+    }
+  }
+
+  _initApple() {
+    if (!window.AppleID || !window.AppleID.auth) {
+      this._appleRetry = setTimeout(() => this._initApple(), 200);
+      return;
+    }
+    try {
+      window.AppleID.auth.init({
+        clientId: APPLE_CLIENT_ID,
+        scope: 'email',
+        redirectURI: window.location.origin + '/Login.dc.html',
+        usePopup: true
+      });
+    } catch (e) { /* APPLE_CLIENT_ID aún sin completar */ }
+  }
+
+  async _signInWithApple() {
+    try {
+      const data = await window.AppleID.auth.signIn();
+      const user = await window.NMXStore.loginWithApple(data.authorization.id_token);
+      window.location.href = user.role === 'admin' ? 'AdminDashboard.dc.html' : 'ClientArea.dc.html';
+    } catch (err) {
+      this.setState({ errorMsg: (err && err.message) || 'No se pudo iniciar sesión con Apple.' });
+    }
+  }
+
+  async _submit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (this.state.submitting) return;
+    const email = (this.state.email || '').trim();
+    const password = this.state.password || '';
+    if (!email || !password) {
+      this.setState({ errorMsg: 'Ingresa tu correo y contraseña.' });
+      return;
+    }
+    this.setState({ submitting: true, errorMsg: '' });
+    try {
+      const user = await window.NMXStore.login(email, password);
+      window.location.href = user.role === 'admin' ? 'AdminDashboard.dc.html' : 'ClientArea.dc.html';
+    } catch (err) {
+      this.setState({ submitting: false, errorMsg: err.message || 'No se pudo iniciar sesión.' });
+    }
+  }
+
+  renderVals() {
+    return {
+      email: this.state.email,
+      password: this.state.password,
+      errorMsg: this.state.errorMsg,
+      submitting: this.state.submitting,
+      submitOpacity: this.state.submitting ? 0.65 : 1,
+      submitLabel: this.state.submitting ? 'Ingresando…' : 'Iniciar sesión',
+      onEmailChange: (e) => this.setState({ email: e.target.value }),
+      onPasswordChange: (e) => this.setState({ password: e.target.value }),
+      onSubmit: (e) => this._submit(e),
+      onGoogleLogin: () => { if (window.google) window.google.accounts.id.prompt(); },
+      onAppleLogin: () => this._signInWithApple()
+    };
+  }
+}
+</script>
+</body>
+</html>

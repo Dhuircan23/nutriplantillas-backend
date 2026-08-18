@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12.5px;font-weight:700;color:#c7dad2}
+  .field input,.field select,.field textarea{padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Manrope',sans-serif}
+</style>
+</helmet>
+
+<dc-import name="Header" active="" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:1200px;margin:0 auto;padding:32px 40px 72px;display:grid;grid-template-columns:220px 1fr;gap:36px;align-items:start">
+  <dc-import name="ClientNav" active="soporte" hint-size="220px,360px"></dc-import>
+
+  <div style="max-width:640px">
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Soporte</h1>
+
+    <form style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
+      <div class="field"><label>Producto</label><select><option>Calculadora de Necesidades Energéticas</option><option>Registro Antropométrico</option></select></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="field"><label>Versión</label><input value="v1.0"/></div>
+        <div class="field"><label>Sistema operativo</label><input placeholder="Ej. Windows 11"/></div>
+      </div>
+      <div class="field"><label>Versión de Excel</label><input placeholder="Ej. Microsoft 365"/></div>
+      <div class="field"><label>Descripción del problema</label><textarea rows="4" placeholder="Cuéntanos qué ocurrió…"></textarea></div>
+      <div class="field"><label>Adjuntar captura (opcional)</label><input type="file"/></div>
+      <span style="align-self:flex-start;padding:12px 24px;background:#ff7a45;color:#241008;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer">Enviar solicitud</span>
+    </form>
+
+    <h2 style="font-size:15px;font-weight:800;margin:0 0 12px">Mis solicitudes</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:36px">
+      <sc-for list="{{ tickets }}" as="t" hint-placeholder-count="2">
+        <div style="border:1px solid rgba(110,231,183,.16);border-radius:6px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-weight:700;font-size:13px">{{ t.subject }}</div><div class="mono" style="font-size:11px;color:#7fa398">{{ t.date }}</div></div>
+          <span class="mono" style="font-size:10.5px;padding:3px 8px;border-radius:3px;background:{{ t.statusBg }};color:{{ t.statusColor }}">{{ t.status }}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:24px">
+      <h2 style="font-size:15px;font-weight:800;margin:0 0 6px">¿Te falta una calculadora?</h2>
+      <p style="font-size:12.5px;color:#9fb8ae;margin:0 0 16px">Sugiere una herramienta nueva para el catálogo. Leemos todas las sugerencias.</p>
+      <sc-if value="{{ !suggestionSent }}" hint-placeholder-val="{{ true }}">
+        <form onSubmit="{{ onSuggestionSubmit }}" style="display:flex;flex-direction:column;gap:12px">
+          <textarea rows="3" required="{{ true }}" value="{{ suggestionText }}" onChange="{{ onSuggestionChange }}" placeholder="Ej. Una calculadora de necesidades proteicas para ERC…" style="padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Manrope',sans-serif;background:rgba(255,255,255,.04);color:#e2e8f0"></textarea>
+          <button type="submit" style="align-self:flex-start;padding:11px 22px;background:#6ee7b7;color:#04140f;border:none;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Enviar sugerencia</button>
+        </form>
+      </sc-if>
+      <sc-if value="{{ suggestionSent }}" hint-placeholder-val="{{ false }}">
+        <div style="color:#6ee7b7;font-weight:700;font-size:13.5px">¡Gracias! Tu sugerencia quedó registrada ✓</div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { suggestionText: '', suggestionSent: false };
+
+  renderVals() {
+    return {
+      tickets: [
+        {subject:'Error al abrir hoja de resultados', date:'8 jul 2026', status:'Resuelta', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7'},
+        {subject:'Consulta sobre compatibilidad con Mac', date:'2 jul 2026', status:'En proceso', statusBg:'rgba(255,148,102,.14)', statusColor:'#ff9466'}
+      ],
+      suggestionText: this.state.suggestionText,
+      suggestionSent: this.state.suggestionSent,
+      onSuggestionChange: (e) => this.setState({ suggestionText: e.target.value }),
+      onSuggestionSubmit: (e) => {
+        e.preventDefault();
+        if ((this.state.suggestionText || '').trim()) this.setState({ suggestionSent: true });
+      }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

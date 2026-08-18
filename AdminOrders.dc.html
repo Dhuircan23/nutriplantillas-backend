@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:220px 1fr;min-height:100vh">
+  <div style="background:#04140f;padding:20px 14px">
+    <dc-import name="AdminNav" active="pedidos" hint-size="192px,480px"></dc-import>
+  </div>
+
+  <div style="padding:28px 36px 60px">
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Pedidos</h1>
+
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden">
+      <div role="table" style="display:flex;flex-direction:column;min-width:980px">
+        <div role="row" style="display:grid;grid-template-columns:1.3fr 1.5fr 1fr 1fr 1.1fr 1.1fr 1fr;background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:#c7dad2">
+          <div style="padding:12px 16px">N.° pedido</div>
+          <div style="padding:12px 16px">Cliente</div>
+          <div style="padding:12px 16px">Fecha</div>
+          <div style="padding:12px 16px">Total</div>
+          <div style="padding:12px 16px">Pago</div>
+          <div style="padding:12px 16px">Entrega</div>
+          <div style="padding:12px 16px">Detalle</div>
+        </div>
+        <sc-for list="{{ orders }}" as="o" hint-placeholder-count="6">
+          <div role="row" style="display:grid;grid-template-columns:1.3fr 1.5fr 1fr 1fr 1.1fr 1.1fr 1fr;border-top:1px solid rgba(110,231,183,.12);align-items:center;font-size:12.5px">
+            <div style="padding:12px 16px" class="mono">{{ o.number }}</div>
+            <div style="padding:12px 16px;font-weight:700">{{ o.customer }}</div>
+            <div style="padding:12px 16px;color:#8fa9a0" class="mono">{{ o.date }}</div>
+            <div style="padding:12px 16px;font-weight:700">{{ o.total }}</div>
+            <div style="padding:12px 16px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ o.payBg }};color:{{ o.payColor }}">{{ o.payStatus }}</span></div>
+            <div style="padding:12px 16px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ o.delBg }};color:{{ o.delColor }}">{{ o.delStatus }}</span></div>
+            <div style="padding:12px 16px"><a href="AdminOrderDetail.dc.html" style="text-decoration:none;font-size:11.5px;font-weight:700">Ver</a></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session || session.role !== 'admin') {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    if (this._nmxAdminMount) this._nmxAdminMount();
+  }
+  renderVals() {
+    return {
+      orders: [
+        {number:'NP-2026-00842', customer:'Camila Rojas', date:'10 jul 2026', total:'$10.980', payStatus:'Pagado', payBg:'rgba(110,231,183,.12)', payColor:'#6ee7b7', delStatus:'Entregado', delBg:'rgba(110,231,183,.12)', delColor:'#6ee7b7'},
+        {number:'NP-2026-00841', customer:'Ignacio Soto', date:'9 jul 2026', total:'$4.990', payStatus:'Pendiente', payBg:'rgba(255,148,102,.14)', payColor:'#ff9466', delStatus:'En espera', delBg:'#f3f1e9', delColor:'#8a7a5a'},
+        {number:'NP-2026-00840', customer:'Valentina Muñoz', date:'8 jul 2026', total:'$19.990', payStatus:'Pagado', payBg:'rgba(110,231,183,.12)', payColor:'#6ee7b7', delStatus:'Entregado', delBg:'rgba(110,231,183,.12)', delColor:'#6ee7b7'},
+        {number:'NP-2026-00839', customer:'Diego Fuentes', date:'6 jul 2026', total:'$5.990', payStatus:'Rechazado', payBg:'#fde8e6', payColor:'#ff6b5e', delStatus:'No entregado', delBg:'#fde8e6', delColor:'#ff6b5e'},
+        {number:'NP-2026-00838', customer:'Fernanda Vidal', date:'3 jul 2026', total:'$34.990', payStatus:'Pagado', payBg:'rgba(110,231,183,.12)', payColor:'#6ee7b7', delStatus:'Revisión manual', delBg:'#f3f1e9', delColor:'#8a7a5a'},
+        {number:'NP-2026-00837', customer:'Tomás Bravo', date:'29 jun 2026', total:'$5.990', payStatus:'Reembolsado', payBg:'rgba(255,255,255,.06)', payColor:'#b7cfc6', delStatus:'Cancelado', delBg:'rgba(255,255,255,.06)', delColor:'#b7cfc6'}
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .card{background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:20px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12px;font-weight:700;color:#c7dad2}
+  .field input,.field select{padding:10px 13px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13px;font-family:'Manrope',sans-serif}
+  .err{font-size:11px;color:#ff6b5e;font-weight:600}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:220px 1fr;min-height:100vh">
+  <div style="background:#04140f;padding:20px 14px">
+    <dc-import name="AdminNav" active="cupones" hint-size="192px,480px"></dc-import>
+  </div>
+
+  <div style="padding:28px 36px 60px;max-width:700px">
+    <div class="mono" style="font-size:12px;color:#8fa9a0;margin-bottom:16px"><a href="AdminCoupons.dc.html" style="color:#8fa9a0;text-decoration:none">Cupones</a> / Editor</div>
+    <h1 style="font-size:22px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Nuevo cupón</h1>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="field"><label>Código *</label><input placeholder="Ej. BIENVENIDA10"/></div>
+        <div class="field"><label>Tipo de descuento *</label><select><option>Porcentaje</option><option>Monto fijo (CLP)</option></select></div>
+        <div class="field"><label>Valor *</label><input placeholder="Ej. 10"/></div>
+        <div class="field"><label>Compra mínima</label><input placeholder="Opcional"/></div>
+        <div class="field"><label>Fecha inicial *</label><input type="date"/></div>
+        <div class="field"><label>Fecha final *</label><input type="date"/><span class="err">La fecha final debe ser posterior a la fecha inicial</span></div>
+        <div class="field"><label>Límite total de usos</label><input placeholder="Ej. 500"/></div>
+        <div class="field"><label>Límite por usuario</label><input placeholder="Ej. 1"/></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px">Productos y paquetes aplicables *</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:12.5px;margin-bottom:8px">
+        <label style="display:flex;gap:8px"><input type="checkbox"/> Calculadora de Necesidades Energéticas</label>
+        <label style="display:flex;gap:8px"><input type="checkbox"/> Registro Antropométrico</label>
+        <label style="display:flex;gap:8px"><input type="checkbox"/> Pack Estudiante</label>
+        <label style="display:flex;gap:8px"><input type="checkbox"/> Pack Profesional</label>
+      </div>
+      <span class="err">Selecciona al menos un producto o paquete aplicable</span>
+    </div>
+
+    <div class="card" style="margin-bottom:22px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:10px">Estado</div>
+      <select style="padding:10px 13px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13px;font-family:'Manrope',sans-serif">
+        <option>Programado</option><option>Activo</option><option>Pausado</option>
+      </select>
+    </div>
+
+    <div style="background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.14);border-radius:6px;padding:12px 16px;font-size:12px;color:#c7dad2;margin-bottom:22px">Código duplicado detectado: ya existe un cupón activo llamado "BIENVENIDA10" (validación demostrativa).</div>
+
+    <div style="display:flex;gap:12px">
+      <a href="AdminCoupons.dc.html" style="text-decoration:none;padding:12px 24px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:13.5px">Guardar cupón</a>
+      <a href="AdminCoupons.dc.html" style="text-decoration:none;padding:12px 24px;border:1.5px solid rgba(110,231,183,.3);color:#e2e8f0;border-radius:6px;font-weight:700;font-size:13.5px">Cancelar</a>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session || session.role !== 'admin') {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    if (this._nmxAdminMount) this._nmxAdminMount();
+  }
+}
+</script>
+</body>
+</html>

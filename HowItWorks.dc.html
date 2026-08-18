@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#fff;font-family:'Manrope',system-ui,sans-serif;color:#0f1f2b}
+  a{color:#0f5c56} a:hover{color:#0b423e}
+  .mono{font-family:'JetBrains Mono',monospace}
+</style>
+</helmet>
+
+<dc-import name="Header" active="como" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:820px;margin:0 auto;padding:56px 40px 90px">
+  <div class="mono" style="font-size:11px;color:#c9622f;margin-bottom:14px">// GUÍA RÁPIDA</div>
+  <h1 style="font-size:30px;font-weight:800;margin:0 0 18px;letter-spacing:-.4px">Cómo funciona</h1>
+  <p style="font-size:15px;line-height:1.7;color:#4c5a61;margin:0 0 16px">Elige una herramienta en el catálogo, revisa su detalle (funciones, compatibilidad y limitaciones) y completa la compra con pago simulado. Una vez confirmada, el archivo y sus instrucciones quedan disponibles al instante en tu área de cliente.</p>
+  <p style="font-size:15px;line-height:1.7;color:#4c5a61;margin:0">Esta página se ampliará con el detalle paso a paso, capturas de cada etapa y preguntas frecuentes asociadas al flujo de compra.</p>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+</body>
+</html>

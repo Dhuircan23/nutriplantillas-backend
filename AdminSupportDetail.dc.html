@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .card{background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:20px}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:220px 1fr;min-height:100vh">
+  <div style="background:#04140f;padding:20px 14px">
+    <dc-import name="AdminNav" active="soporte" hint-size="192px,480px"></dc-import>
+  </div>
+
+  <div style="padding:28px 36px 60px;max-width:820px">
+    <div class="mono" style="font-size:12px;color:#8fa9a0;margin-bottom:16px"><a href="AdminSupport.dc.html" style="color:#8fa9a0;text-decoration:none">Soporte</a> / S-041</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+      <h1 style="font-size:22px;font-weight:800;margin:0;letter-spacing:-.3px">Solicitud S-041 — Archivo no abre en Excel 2019</h1>
+      <a href="AdminProductEditor.dc.html" style="text-decoration:none;font-size:12.5px;font-weight:700">Ver producto afectado →</a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px" class="mono">
+      <div class="card"><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:3px">Producto / Versión</div><div style="font-size:13px;font-weight:700">Registro Antropométrico · v1.0</div></div>
+      <div class="card"><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:3px">Sistema / Excel</div><div style="font-size:13px;font-weight:700">Windows 10 · Excel 2019</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px">Conversación (demostrativa)</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:rgba(255,255,255,.03);border-radius:6px;padding:12px 14px"><div class="mono" style="font-size:10.5px;color:#8fa9a0;margin-bottom:4px">Camila Rojas — 12 jul, 09:14</div><div style="font-size:13px;color:#c7dad2">El archivo muestra un error al abrir la hoja de resultados en Excel 2019. Adjunto una captura.</div></div>
+        <div style="border:1px dashed rgba(110,231,183,.25);border-radius:6px;padding:14px;font-size:12px;color:#8fa9a0;text-align:center">captura_adjunta_demostrativa.png</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px">Responder</div>
+      <textarea rows="3" placeholder="Escribe una respuesta…" style="width:100%;box-sizing:border-box;border:1px solid rgba(110,231,183,.25);border-radius:6px;padding:10px;font-size:13px;font-family:'Manrope',sans-serif;margin-bottom:10px"></textarea>
+      <div style="display:flex;gap:10px">
+        <span style="font-size:12.5px;font-weight:700;padding:9px 16px;background:#6ee7b7;color:#04140f;border-radius:6px;cursor:pointer">Enviar respuesta</span>
+        <select style="padding:9px 12px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:12.5px;font-family:'Manrope',sans-serif"><option>Nuevo</option><option>En revisión</option><option>Esperando al cliente</option><option>Solucionado</option><option>Cerrado</option></select>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:12px">Notas internas</div>
+      <textarea rows="2" placeholder="Sin notas registradas" style="width:100%;box-sizing:border-box;border:1px solid rgba(110,231,183,.25);border-radius:6px;padding:10px;font-size:12.5px;font-family:'Manrope',sans-serif"></textarea>
+    </div>
+
+    <div style="background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.14);border-radius:8px;padding:14px 18px">
+      <div class="mono" style="font-size:11px;color:#8a7a5a;margin-bottom:6px">// PROBLEMAS RELACIONADOS</div>
+      <div style="font-size:12.5px;color:#c7dad2">S-039 y S-036 reportan el mismo error de fórmula en Registro Antropométrico v1.0 — corregido en v1.1 (pendiente de publicar).</div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session || session.role !== 'admin') {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    if (this._nmxAdminMount) this._nmxAdminMount();
+  }
+}
+</script>
+</body>
+</html>
