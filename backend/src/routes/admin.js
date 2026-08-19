@@ -12,6 +12,17 @@ const router = express.Router();
 // Todo lo administrativo exige rol admin verificado en el backend. Ocultar
 // botones en el frontend no es una medida de seguridad.
 router.use(requireAdmin);
+router.get('/orders', async (req, res) => {
+  const result = await db.query(
+    `SELECT o.id, o.order_code, o.status, o.total_clp, o.created_at, o.paid_at,
+            u.email AS customer_email,
+            (SELECT COUNT(*) FROM order_items oi WHERE oi.order_id = o.id) AS item_count
+     FROM orders o JOIN users u ON u.id = o.user_id
+     ORDER BY o.created_at DESC
+     LIMIT 200`
+  );
+  res.json({ orders: result.rows });
+});
 
 // POST /api/admin/reconcile
 // Dispara la reconciliación de pedidos pendientes a demanda, sin esperar al
