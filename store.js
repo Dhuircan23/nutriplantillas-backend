@@ -174,6 +174,11 @@
     var base = API_BASE + '/api/downloads/' + encodeURIComponent(orderItemId);
     return assetType ? base + '/' + encodeURIComponent(assetType) : base;
   }
+    async function adminListOrders() {
+    return (await apiFetch('/api/admin/orders')).orders;
+  }
+  async function adminConfirmManualPayment(orderCode) {
+    return await apiFetch('/api/admin/orders/' + encodeURIComponent(orderCode) + '/confirm-manual', { method: 'POST' });
 
   global.NMXStore = {
     API_BASE: API_BASE,
@@ -197,6 +202,8 @@
     getOrder: getOrder,
     getMyOrders: getMyOrders,
     initPayment: initPayment,
+    adminListOrders: adminListOrders,
+    adminConfirmManualPayment: adminConfirmManualPayment,
     downloadUrl: downloadUrl
   };
 })(window);
