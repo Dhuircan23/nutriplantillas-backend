@@ -24,30 +24,46 @@
   </div>
 
   <div style="padding:28px 36px 60px">
-    <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Pedidos</h1>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap">
+      <h1 style="font-size:24px;font-weight:800;margin:0;letter-spacing:-.3px">Pedidos</h1>
+      <span class="mono" style="font-size:11px;color:#8fa9a0">Proveedor de pago activo: {{ providerNote }}</span>
+    </div>
+    <p style="font-size:12.5px;color:#8fa9a0;margin:0 0 22px">Sin Transbank conectado, confirma aquí a mano los pedidos que ya te pagaron por otro medio.</p>
+
+    <sc-if value="{{ confirmMsg }}" hint-placeholder-val="{{ false }}">
+      <div style="background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.25);border-radius:6px;padding:11px 16px;font-size:12.5px;color:#6ee7b7;margin-bottom:16px">{{ confirmMsg }}</div>
+    </sc-if>
 
     <div style="background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden">
       <div role="table" style="display:flex;flex-direction:column;min-width:980px">
-        <div role="row" style="display:grid;grid-template-columns:1.3fr 1.5fr 1fr 1fr 1.1fr 1.1fr 1fr;background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:#c7dad2">
+        <div role="row" style="display:grid;grid-template-columns:1.3fr 1.7fr 1fr 1fr 1.2fr 1.3fr;background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:#c7dad2">
           <div style="padding:12px 16px">N.° pedido</div>
           <div style="padding:12px 16px">Cliente</div>
           <div style="padding:12px 16px">Fecha</div>
           <div style="padding:12px 16px">Total</div>
           <div style="padding:12px 16px">Pago</div>
-          <div style="padding:12px 16px">Entrega</div>
-          <div style="padding:12px 16px">Detalle</div>
+          <div style="padding:12px 16px">Acción</div>
         </div>
         <sc-for list="{{ orders }}" as="o" hint-placeholder-count="6">
-          <div role="row" style="display:grid;grid-template-columns:1.3fr 1.5fr 1fr 1fr 1.1fr 1.1fr 1fr;border-top:1px solid rgba(110,231,183,.12);align-items:center;font-size:12.5px">
+          <div role="row" style="display:grid;grid-template-columns:1.3fr 1.7fr 1fr 1fr 1.2fr 1.3fr;border-top:1px solid rgba(110,231,183,.12);align-items:center;font-size:12.5px">
             <div style="padding:12px 16px" class="mono">{{ o.number }}</div>
             <div style="padding:12px 16px;font-weight:700">{{ o.customer }}</div>
             <div style="padding:12px 16px;color:#8fa9a0" class="mono">{{ o.date }}</div>
             <div style="padding:12px 16px;font-weight:700">{{ o.total }}</div>
             <div style="padding:12px 16px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ o.payBg }};color:{{ o.payColor }}">{{ o.payStatus }}</span></div>
-            <div style="padding:12px 16px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ o.delBg }};color:{{ o.delColor }}">{{ o.delStatus }}</span></div>
-            <div style="padding:12px 16px"><a href="AdminOrderDetail.dc.html" style="text-decoration:none;font-size:11.5px;font-weight:700">Ver</a></div>
+            <div style="padding:12px 16px">
+              <sc-if value="{{ o.canConfirm }}" hint-placeholder-val="{{ false }}">
+                <button type="button" disabled="{{ o.confirming }}" onClick="{{ o.onConfirm }}" style="appearance:none;font-family:inherit;font-size:11.5px;font-weight:700;padding:7px 14px;background:#6ee7b7;color:#04140f;border:none;border-radius:5px;cursor:pointer;opacity:{{ o.confirmOpacity }}">{{ o.confirmLabel }}</button>
+              </sc-if>
+              <sc-if value="{{ !o.canConfirm }}" hint-placeholder-val="{{ true }}">
+                <span class="mono" style="font-size:10.5px;color:#7f9a91">—</span>
+              </sc-if>
+            </div>
           </div>
         </sc-for>
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:32px 16px;text-align:center;color:#8fa9a0;font-size:13px">Aún no hay pedidos.</div>
+        </sc-if>
       </div>
     </div>
   </div>
@@ -55,7 +71,20 @@
 
 </x-dc>
 <script type="text/x-dc" data-dc-script>
+const STATUS_LABEL = {
+  pending: { label: 'Pendiente', bg: 'rgba(255,148,102,.14)', color: '#ff9466' },
+  payment_processing: { label: 'Esperando confirmación', bg: 'rgba(255,148,102,.14)', color: '#ff9466' },
+  authorized: { label: 'Autorizado', bg: 'rgba(255,148,102,.14)', color: '#ff9466' },
+  paid: { label: 'Pagado', bg: 'rgba(110,231,183,.12)', color: '#6ee7b7' },
+  failed: { label: 'Fallido', bg: '#fde8e6', color: '#ff6b5e' },
+  cancelled: { label: 'Cancelado', bg: 'rgba(255,255,255,.06)', color: '#b7cfc6' },
+  refunded: { label: 'Reembolsado', bg: 'rgba(255,255,255,.06)', color: '#b7cfc6' }
+};
+const CONFIRMABLE = ['pending', 'payment_processing', 'authorized'];
+
 class Component extends DCLogic {
+  state = { orders: [], loaded: false, confirmingCode: null, confirmMsg: '' };
+
   async componentDidMount() {
     if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
     const session = await window.NMXStore.getSession();
@@ -64,17 +93,54 @@ class Component extends DCLogic {
       return;
     }
     if (this._nmxAdminMount) this._nmxAdminMount();
+    this._loadOrders();
   }
+
+  async _loadOrders() {
+    try {
+      const orders = await window.NMXStore.adminListOrders();
+      this.setState({ orders, loaded: true });
+    } catch (e) {
+      this.setState({ loaded: true, confirmMsg: 'No se pudieron cargar los pedidos.' });
+    }
+  }
+
+  async _confirm(orderCode) {
+    this.setState({ confirmingCode: orderCode, confirmMsg: '' });
+    try {
+      await window.NMXStore.adminConfirmManualPayment(orderCode);
+      this.setState({ confirmingCode: null, confirmMsg: 'Pedido ' + orderCode + ' confirmado. La descarga ya quedó habilitada para el cliente.' });
+      this._loadOrders();
+    } catch (e) {
+      this.setState({ confirmingCode: null, confirmMsg: (e && e.message) || 'No se pudo confirmar el pedido.' });
+    }
+  }
+
   renderVals() {
+    const orders = this.state.orders.map((o) => {
+      const st = STATUS_LABEL[o.status] || { label: o.status, bg: 'rgba(255,255,255,.06)', color: '#b7cfc6' };
+      const canConfirm = CONFIRMABLE.includes(o.status);
+      const confirming = this.state.confirmingCode === o.order_code;
+      return {
+        number: o.order_code,
+        customer: o.customer_email,
+        date: new Date(o.created_at).toLocaleDateString('es-CL'),
+        total: '$' + Number(o.total_clp).toLocaleString('es-CL'),
+        payStatus: st.label,
+        payBg: st.bg,
+        payColor: st.color,
+        canConfirm,
+        confirming,
+        confirmOpacity: confirming ? 0.6 : 1,
+        confirmLabel: confirming ? 'Confirmando…' : 'Confirmar pago',
+        onConfirm: () => this._confirm(o.order_code)
+      };
+    });
     return {
-      orders: [
-        {number:'NP-2026-00842', customer:'Camila Rojas', date:'10 jul 2026', total:'$10.980', payStatus:'Pagado', payBg:'rgba(110,231,183,.12)', payColor:'#6ee7b7', delStatus:'Entregado', delBg:'rgba(110,231,183,.12)', delColor:'#6ee7b7'},
-        {number:'NP-2026-00841', customer:'Ignacio Soto', date:'9 jul 2026', total:'$4.990', payStatus:'Pendiente', payBg:'rgba(255,148,102,.14)', payColor:'#ff9466', delStatus:'En espera', delBg:'#f3f1e9', delColor:'#8a7a5a'},
-        {number:'NP-2026-00840', customer:'Valentina Muñoz', date:'8 jul 2026', total:'$19.990', payStatus:'Pagado', payBg:'rgba(110,231,183,.12)', payColor:'#6ee7b7', delStatus:'Entregado', delBg:'rgba(110,231,183,.12)', delColor:'#6ee7b7'},
-        {number:'NP-2026-00839', customer:'Diego Fuentes', date:'6 jul 2026', total:'$5.990', payStatus:'Rechazado', payBg:'#fde8e6', payColor:'#ff6b5e', delStatus:'No entregado', delBg:'#fde8e6', delColor:'#ff6b5e'},
-        {number:'NP-2026-00838', customer:'Fernanda Vidal', date:'3 jul 2026', total:'$34.990', payStatus:'Pagado', payBg:'rgba(110,231,183,.12)', payColor:'#6ee7b7', delStatus:'Revisión manual', delBg:'#f3f1e9', delColor:'#8a7a5a'},
-        {number:'NP-2026-00837', customer:'Tomás Bravo', date:'29 jun 2026', total:'$5.990', payStatus:'Reembolsado', payBg:'rgba(255,255,255,.06)', payColor:'#b7cfc6', delStatus:'Cancelado', delBg:'rgba(255,255,255,.06)', delColor:'#b7cfc6'}
-      ]
+      orders,
+      isEmpty: this.state.loaded && orders.length === 0,
+      confirmMsg: this.state.confirmMsg,
+      providerNote: 'manual (sin Transbank)'
     };
   }
 }
