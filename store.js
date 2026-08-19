@@ -177,10 +177,11 @@
     async function adminListOrders() {
     return (await apiFetch('/api/admin/orders')).orders;
   }
-  async function adminConfirmManualPayment(orderCode) {
+    async function adminConfirmManualPayment(orderCode) {
     return await apiFetch('/api/admin/orders/' + encodeURIComponent(orderCode) + '/confirm-manual', { method: 'POST' });
+  }
 
-  global.NMXStore = {
+    global.NMXStore = {
     API_BASE: API_BASE,
     getProduct: getProduct,
     getAllProducts: getAllProducts,
