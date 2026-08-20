@@ -13,14 +13,6 @@ const { roleForEmail } = require('../utils/roleForEmail');
 
 const router = express.Router();
 
-// COOKIE_SAME_SITE por defecto es 'lax', que funciona si el frontend y este
-// backend quedan en el mismo dominio raíz (ej. app.tudominio.cl y
-// api.tudominio.cl son subdominios del mismo sitio para estos efectos).
-// Si en producción terminan en dominios completamente distintos (ej. hosting
-// gratuito con dominios por defecto de dos proveedores distintos), hay que
-// setear COOKIE_SAME_SITE=none — y ESO exige `secure: true` sí o sí, porque
-// los navegadores rechazan directamente una cookie "SameSite=None" que no
-// sea "Secure" (no se puede tener None sin HTTPS).
 const sameSite = process.env.COOKIE_SAME_SITE || 'lax';
 const secure = sameSite === 'none' ? true : process.env.NODE_ENV === 'production';
 
@@ -28,19 +20,17 @@ const COOKIE_OPTS = {
   httpOnly: true,
   secure,
   sameSite,
-  maxAge: getSessionDurationMs(), // misma duración que la sesión en la base y el JWT
+  maxAge: getSessionDurationMs(),
 };
 
 function isValidEmail(email) {
   return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-// Bloqueo progresivo: mientras más intentos fallidos seguidos, más largo el
-// bloqueo. Devuelve milisegundos de bloqueo, o null si todavía no corresponde.
 function computeLockMs(failedAttempts) {
-  if (failedAttempts >= 12) return 60 * 60 * 1000; // 1 hora
-  if (failedAttempts >= 8) return 15 * 60 * 1000; // 15 minutos
-  if (failedAttempts >= 5) return 60 * 1000; // 1 minuto
+  if (failedAttempts >= 12) return 60 * 60 * 1000;
+  if (failedAttempts >= 8) return 15 * 60 * 1000;
+  if (failedAttempts >= 5) return 60 * 1000;
   return null;
 }
 
@@ -109,7 +99,6 @@ router.post('/login', async (req, res) => {
     return res.status(401).json(genericError);
   }
 
-  // Login correcto: resetea el contador de intentos fallidos.
   await db.query(
     'UPDATE users SET failed_login_attempts = 0, locked_until = NULL WHERE id = $1',
     [user.id]
@@ -127,16 +116,84 @@ router.post('/logout', async (req, res) => {
   res.json({ ok: true });
 });
 
-// Cierra TODAS las sesiones activas del usuario (todos los dispositivos), no
-// solo la actual. Útil si se sospecha que el token quedó comprometido.
 router.post('/logout-all', requireAuth, async (req, res) => {
   await revokeAllSessions(req.user.id);
   res.clearCookie('nmx_token', { ...COOKIE_OPTS, maxAge: undefined });
   res.json({ ok: true });
 });
 
-router.get('/me', requireAuth, (req, res) => {
-  res.json({ user: { email: req.user.email, role: req.user.role } });
+router.get('/me', requireAuth, async (req, res) => {
+  const result = await db.query(
+    `SELECT email, role, name, country, profession, marketing_opt_in, product_updates_opt_in
+     FROM users WHERE id = $1`,
+    [req.user.id]
+  );
+  const u = result.rows[0];
+  res.json({
+    user: {
+      email: u.email,
+      role: u.role,
+      name: u.name || '',
+      country: u.country || '',
+      profession: u.profession || '',
+      marketingOptIn: u.marketing_opt_in,
+      productUpdatesOptIn: u.product_updates_opt_in,
+    },
+  });
+});
+
+router.patch('/me', requireAuth, async (req, res) => {
+  const { name, country, profession, marketingOptIn, productUpdatesOptIn } = req.body || {};
+  if (name !== undefined && (typeof name !== 'string' || name.length > 120)) {
+    return res.status(400).json({ error: 'Nombre inválido.' });
+  }
+  if (country !== undefined && (typeof country !== 'string' || country.length > 80)) {
+    return res.status(400).json({ error: 'País inválido.' });
+  }
+  if (profession !== undefined && (typeof profession !== 'string' || profession.length > 120)) {
+    return res.status(400).json({ error: 'Profesión inválida.' });
+  }
+
+  await db.query(
+    `UPDATE users SET
+       name = COALESCE($1, name),
+       country = COALESCE($2, country),
+       profession = COALESCE($3, profession),
+       marketing_opt_in = COALESCE($4, marketing_opt_in),
+       product_updates_opt_in = COALESCE($5, product_updates_opt_in)
+     WHERE id = $6`,
+    [
+      name !== undefined ? name.trim() : null,
+      country !== undefined ? country.trim() : null,
+      profession !== undefined ? profession.trim() : null,
+      typeof marketingOptIn === 'boolean' ? marketingOptIn : null,
+      typeof productUpdatesOptIn === 'boolean' ? productUpdatesOptIn : null,
+      req.user.id,
+    ]
+  );
+  res.json({ ok: true });
+});
+
+router.post('/change-password', requireAuth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body || {};
+  if (typeof newPassword !== 'string' || newPassword.length < 8) {
+    return res.status(400).json({ error: 'La nueva contraseña debe tener al menos 8 caracteres.' });
+  }
+
+  const result = await db.query('SELECT password_hash FROM users WHERE id = $1', [req.user.id]);
+  const hash = result.rows[0] && result.rows[0].password_hash;
+  if (!hash) {
+    return res.status(400).json({
+      error: 'Esta cuenta se creó con Google o Apple y no tiene contraseña propia.',
+    });
+  }
+
+  const ok = await bcrypt.compare(String(currentPassword || ''), hash);
+  if (!ok) return res.status(401).json({ error: 'La contraseña actual no es correcta.' });
+
+  const newHash = await bcrypt.hash(newPassword, 12);
+  await db.query('UPDATE users SET password_hash = $1 WHERE id = $2', [newHash, req.user.id]);
+  res.json({ ok: true });
 });
 
 module.exports = router;
