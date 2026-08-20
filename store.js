@@ -6,21 +6,8 @@
 
   var BUYNOW_KEY = 'nmx_buynow_v1';
 
-  // Sesión en memoria cacheada por getSession() (ver más abajo) — se limpia acá
-  // mismo cuando el interceptor detecta un 401 real de sesión expirada/revocada.
   var _cachedSession = null;
 
-  // Interceptor central de errores HTTP. Todas las funciones de este archivo pasan
-  // por acá — no se debe duplicar este manejo en las páginas ni en otras funciones.
-  //   401 -> sesión expirada/revocada: limpia el cache en memoria y redirige a Login
-  //          con ?reason=session_expired. Excepción: getSession() (opts.isSessionCheck)
-  //          llama a /api/auth/me para *averiguar* si hay sesión — un 401 ahí es un
-  //          resultado normal ("no hay sesión"), no un evento de expiración, así que
-  //          nunca debe disparar la redirección (si no, páginas públicas como Home
-  //          rebotarían a Login solo por chequear el estado del Header).
-  //   429   -> bloqueo por intentos fallidos / rate limit: no redirige, se deja pasar
-  //          el error tal cual para que el formulario muestre el mensaje del backend.
-  //   500 / red caída -> mensaje genérico, sin detalles técnicos.
   async function apiFetch(path, opts) {
     opts = opts || {};
     var headers = opts.headers || {};
@@ -74,7 +61,6 @@
   }
   async function getAllProducts() { return (await apiFetch('/api/products')).products; }
 
-  // GET /api/products — la API ya devuelve todo el contenido junto (editorial + precio real).
   async function getCatalog() {
     var apiProducts = (await apiFetch('/api/products')).products;
     return apiProducts.map(function (p) {
@@ -118,6 +104,16 @@
     try { global.dispatchEvent(new Event('nmx:cart-changed')); } catch (e) {}
   }
 
+  async function updateProfile(fields) {
+    return await apiFetch('/api/auth/me', { method: 'PATCH', body: JSON.stringify(fields) });
+  }
+  async function changePassword(currentPassword, newPassword) {
+    return await apiFetch('/api/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword: currentPassword, newPassword: newPassword })
+    });
+  }
+
   async function addToCart(productId) {
     await apiFetch('/api/cart', { method: 'POST', body: JSON.stringify({ productId: productId }) });
     try { global.dispatchEvent(new Event('nmx:cart-changed')); } catch (e) {}
@@ -136,8 +132,6 @@
     try { return (await getCartItems()).length; } catch (e) { return 0; }
   }
 
-  // "Comprar ahora" solo necesita sobrevivir la navegación de la ficha NMX -> Checkout.dc.html,
-  // no forma parte del contrato del backend — se guarda aparte del carrito real.
   function setBuyNow(productId) {
     try { global.sessionStorage.setItem(BUYNOW_KEY, JSON.stringify([productId])); } catch (e) {}
   }
@@ -167,21 +161,19 @@
   async function initPayment(orderCode) {
     return await apiFetch('/api/payments/' + encodeURIComponent(orderCode) + '/init', { method: 'POST' });
   }
-  // assetType: 'excel' (el libro comprado) o 'portfolio' (su portafolio DOCX).
-  // El backend deriva el archivo del SKU del producto; acá solo se elige cual de
-  // los dos, nunca un nombre ni una ruta.
+  async function adminListOrders() {
+    return (await apiFetch('/api/admin/orders')).orders;
+  }
+  async function adminConfirmManualPayment(orderCode) {
+    return await apiFetch('/api/admin/orders/' + encodeURIComponent(orderCode) + '/confirm-manual', { method: 'POST' });
+  }
+
   function downloadUrl(orderItemId, assetType) {
     var base = API_BASE + '/api/downloads/' + encodeURIComponent(orderItemId);
     return assetType ? base + '/' + encodeURIComponent(assetType) : base;
   }
-    async function adminListOrders() {
-    return (await apiFetch('/api/admin/orders')).orders;
-  }
-    async function adminConfirmManualPayment(orderCode) {
-    return await apiFetch('/api/admin/orders/' + encodeURIComponent(orderCode) + '/confirm-manual', { method: 'POST' });
-  }
 
-    global.NMXStore = {
+  global.NMXStore = {
     API_BASE: API_BASE,
     getProduct: getProduct,
     getAllProducts: getAllProducts,
@@ -192,6 +184,8 @@
     loginWithApple: loginWithApple,
     register: register,
     logout: logout,
+    updateProfile: updateProfile,
+    changePassword: changePassword,
     addToCart: addToCart,
     removeFromCart: removeFromCart,
     getCartItems: getCartItems,
