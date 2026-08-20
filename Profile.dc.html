@@ -27,24 +27,32 @@
 
   <div style="max-width:560px">
     <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Perfil</h1>
-    <form style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
-      <div class="field"><label>Nombre</label><input value="Camila Rojas"/></div>
-      <div class="field"><label>Correo electrónico</label><input value="camila.rojas@ejemplo.com"/></div>
-      <div class="field"><label>País</label><input value="Chile"/></div>
-      <div class="field"><label>Profesión (opcional)</label><input value="Nutricionista"/></div>
-      <span style="align-self:flex-start;padding:11px 22px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer">Guardar cambios</span>
+
+    <sc-if value="{{ profileMsg }}" hint-placeholder-val="{{ false }}">
+      <div style="background:{{ profileMsgBg }};border:1px solid {{ profileMsgBorder }};border-radius:6px;padding:11px 16px;font-size:12.5px;color:{{ profileMsgColor }};margin-bottom:16px">{{ profileMsg }}</div>
+    </sc-if>
+
+    <form onSubmit="{{ onSaveProfile }}" style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
+      <div class="field"><label>Nombre</label><input value="{{ name }}" onChange="{{ onNameChange }}"/></div>
+      <div class="field"><label>Correo electrónico</label><input value="{{ email }}" disabled="{{ true }}" style="opacity:.6;cursor:not-allowed"/></div>
+      <div class="field"><label>País</label><input value="{{ country }}" onChange="{{ onCountryChange }}"/></div>
+      <div class="field"><label>Profesión (opcional)</label><input value="{{ profession }}" onChange="{{ onProfessionChange }}"/></div>
+      <button type="submit" disabled="{{ savingProfile }}" style="align-self:flex-start;padding:11px 22px;background:#6ee7b7;color:#04140f;border:none;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit;opacity:{{ saveProfileOpacity }}">{{ saveProfileLabel }}</button>
     </form>
 
     <h2 style="font-size:15px;font-weight:800;margin:0 0 14px">Contraseña</h2>
-    <form style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
-      <div class="field"><label>Contraseña actual</label><input type="password" placeholder="••••••••"/></div>
-      <div class="field"><label>Nueva contraseña</label><input type="password" placeholder="••••••••"/></div>
-      <span style="align-self:flex-start;padding:11px 22px;border:1.5px solid #6ee7b7;color:#6ee7b7;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer">Actualizar contraseña</span>
+    <sc-if value="{{ passwordMsg }}" hint-placeholder-val="{{ false }}">
+      <div style="background:{{ passwordMsgBg }};border:1px solid {{ passwordMsgBorder }};border-radius:6px;padding:11px 16px;font-size:12.5px;color:{{ passwordMsgColor }};margin-bottom:16px">{{ passwordMsg }}</div>
+    </sc-if>
+    <form onSubmit="{{ onChangePassword }}" style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
+      <div class="field"><label>Contraseña actual</label><input type="password" placeholder="••••••••" value="{{ currentPassword }}" onChange="{{ onCurrentPasswordChange }}"/></div>
+      <div class="field"><label>Nueva contraseña</label><input type="password" placeholder="••••••••" value="{{ newPassword }}" onChange="{{ onNewPasswordChange }}"/></div>
+      <button type="submit" disabled="{{ savingPassword }}" style="align-self:flex-start;padding:11px 22px;background:transparent;border:1.5px solid #6ee7b7;color:#6ee7b7;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit;opacity:{{ savePasswordOpacity }}">{{ savePasswordLabel }}</button>
     </form>
 
     <h2 style="font-size:15px;font-weight:800;margin:0 0 14px">Preferencias de comunicación</h2>
-    <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:#c7dad2;margin-bottom:8px"><input type="checkbox" checked/> Novedades de nuevos productos</label>
-    <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:#c7dad2"><input type="checkbox" checked/> Avisos de actualización de mis productos</label>
+    <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:#c7dad2;margin-bottom:8px"><input type="checkbox" checked="{{ marketingOptIn }}" onChange="{{ onToggleMarketing }}"/> Novedades de nuevos productos</label>
+    <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:#c7dad2"><input type="checkbox" checked="{{ productUpdatesOptIn }}" onChange="{{ onToggleProductUpdates }}"/> Avisos de actualización de mis productos</label>
   </div>
 </div>
 
@@ -53,12 +61,94 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
+  state = {
+    loaded: false, name: '', email: '', country: '', profession: '',
+    marketingOptIn: true, productUpdatesOptIn: true,
+    savingProfile: false, profileMsg: '', profileMsgKind: 'ok',
+    currentPassword: '', newPassword: '', savingPassword: false, passwordMsg: '', passwordMsgKind: 'ok'
+  };
+
   async componentDidMount() {
     if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
     const session = await window.NMXStore.getSession();
-    if (!session) {
-      window.location.href = 'Login.dc.html';
+    if (!session) { window.location.href = 'Login.dc.html'; return; }
+    this.setState({
+      loaded: true,
+      name: session.name || '',
+      email: session.email || '',
+      country: session.country || '',
+      profession: session.profession || '',
+      marketingOptIn: session.marketingOptIn !== false,
+      productUpdatesOptIn: session.productUpdatesOptIn !== false
+    });
+  }
+
+  async _saveProfile(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    this.setState({ savingProfile: true, profileMsg: '' });
+    try {
+      await window.NMXStore.updateProfile({
+        name: this.state.name, country: this.state.country, profession: this.state.profession
+      });
+      this.setState({ savingProfile: false, profileMsg: 'Cambios guardados.', profileMsgKind: 'ok' });
+    } catch (err) {
+      this.setState({ savingProfile: false, profileMsg: (err && err.message) || 'No se pudo guardar.', profileMsgKind: 'error' });
     }
+  }
+
+  async _changePassword(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (this.state.newPassword.length < 8) {
+      this.setState({ passwordMsg: 'La nueva contraseña debe tener al menos 8 caracteres.', passwordMsgKind: 'error' });
+      return;
+    }
+    this.setState({ savingPassword: true, passwordMsg: '' });
+    try {
+      await window.NMXStore.changePassword(this.state.currentPassword, this.state.newPassword);
+      this.setState({ savingPassword: false, currentPassword: '', newPassword: '', passwordMsg: 'Contraseña actualizada.', passwordMsgKind: 'ok' });
+    } catch (err) {
+      this.setState({ savingPassword: false, passwordMsg: (err && err.message) || 'No se pudo actualizar la contraseña.', passwordMsgKind: 'error' });
+    }
+  }
+
+  async _togglePref(key, value) {
+    this.setState({ [key]: value });
+    try { await window.NMXStore.updateProfile({ [key === 'marketingOptIn' ? 'marketingOptIn' : 'productUpdatesOptIn']: value }); }
+    catch (e) { this.setState({ [key]: !value }); }
+  }
+
+  renderVals() {
+    const s = this.state;
+    const msgStyle = (kind) => kind === 'error'
+      ? { bg: 'rgba(255,148,102,.08)', border: 'rgba(255,148,102,.28)', color: '#ff9466' }
+      : { bg: 'rgba(110,231,183,.08)', border: 'rgba(110,231,183,.25)', color: '#6ee7b7' };
+    const pMsg = msgStyle(s.profileMsgKind);
+    const wMsg = msgStyle(s.passwordMsgKind);
+    return {
+      name: s.name, email: s.email, country: s.country, profession: s.profession,
+      onNameChange: (e) => this.setState({ name: e.target.value }),
+      onCountryChange: (e) => this.setState({ country: e.target.value }),
+      onProfessionChange: (e) => this.setState({ profession: e.target.value }),
+      onSaveProfile: (e) => this._saveProfile(e),
+      savingProfile: s.savingProfile,
+      saveProfileOpacity: s.savingProfile ? 0.6 : 1,
+      saveProfileLabel: s.savingProfile ? 'Guardando…' : 'Guardar cambios',
+      profileMsg: s.profileMsg, profileMsgBg: pMsg.bg, profileMsgBorder: pMsg.border, profileMsgColor: pMsg.color,
+
+      currentPassword: s.currentPassword, newPassword: s.newPassword,
+      onCurrentPasswordChange: (e) => this.setState({ currentPassword: e.target.value }),
+      onNewPasswordChange: (e) => this.setState({ newPassword: e.target.value }),
+      onChangePassword: (e) => this._changePassword(e),
+      savingPassword: s.savingPassword,
+      savePasswordOpacity: s.savingPassword ? 0.6 : 1,
+      savePasswordLabel: s.savingPassword ? 'Actualizando…' : 'Actualizar contraseña',
+      passwordMsg: s.passwordMsg, passwordMsgBg: wMsg.bg, passwordMsgBorder: wMsg.border, passwordMsgColor: wMsg.color,
+
+      marketingOptIn: s.marketingOptIn,
+      productUpdatesOptIn: s.productUpdatesOptIn,
+      onToggleMarketing: (e) => this._togglePref('marketingOptIn', e.target.checked),
+      onToggleProductUpdates: (e) => this._togglePref('productUpdatesOptIn', e.target.checked)
+    };
   }
 }
 </script>
