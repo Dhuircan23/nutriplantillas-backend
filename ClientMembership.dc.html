@@ -26,6 +26,19 @@
   <div>
     <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Membresía</h1>
 
+    <div style="border:1px solid {{ cardBorder }};border-radius:8px;padding:22px;margin-bottom:28px;background:{{ cardBg }}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div style="font-weight:800;font-size:16px;color:{{ statusColor }}">{{ statusLabel }}</div>
+        <sc-if value="{{ status === 'none' }}" hint-placeholder-val="{{ false }}">
+          <button type="button" disabled="{{ submitting }}" onClick="{{ onSubscribe }}" style="appearance:none;font-family:inherit;padding:9px 16px;background:#6ee7b7;color:#04140f;border:none;border-radius:5px;font-weight:700;font-size:12.5px;cursor:pointer;opacity:{{ btnOpacity }}">{{ btnLabel }}</button>
+        </sc-if>
+      </div>
+      <p style="font-size:13px;color:#c7dad2;margin:0">{{ statusDesc }}</p>
+      <sc-if value="{{ errorMsg }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:12px;color:#ff6b5e;font-weight:600;margin-top:10px">{{ errorMsg }}</div>
+      </sc-if>
+    </div>
+
     <h2 style="font-size:16px;font-weight:800;margin:0 0 12px">Historial de compras</h2>
     <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden;margin-bottom:8px">
       <div role="table" style="display:flex;flex-direction:column">
@@ -66,17 +79,28 @@ const STATUS_LABEL = {
 };
 
 class Component extends DCLogic {
-  state = { orders: [], loaded: false };
+  state = { orders: [], loaded: false, membership: 'none', expiresAt: null, submitting: false, errorMsg: '' };
 
   async componentDidMount() {
     if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
     const session = await window.NMXStore.getSession();
     if (!session) { window.location.href = 'Login.dc.html'; return; }
+    this.setState({ membership: session.membershipStatus || 'none', expiresAt: session.membershipExpiresAt });
     try {
       const orders = await window.NMXStore.getMyOrders();
       this.setState({ orders, loaded: true });
     } catch (e) {
       this.setState({ orders: [], loaded: true });
+    }
+  }
+
+  async _subscribe() {
+    this.setState({ submitting: true, errorMsg: '' });
+    try {
+      await window.NMXStore.subscribeMembership();
+      this.setState({ submitting: false, membership: 'pending' });
+    } catch (err) {
+      this.setState({ submitting: false, errorMsg: (err && err.message) || 'No se pudo enviar la solicitud.' });
     }
   }
 
@@ -87,12 +111,25 @@ class Component extends DCLogic {
         number: o.order_code || o.orderCode,
         date: new Date(o.created_at || o.createdAt).toLocaleDateString('es-CL'),
         total: '$' + Number(o.total_clp || 0).toLocaleString('es-CL'),
-        status: st.label,
-        statusBg: st.bg,
-        statusColor: st.color
+        status: st.label, statusBg: st.bg, statusColor: st.color
       };
     });
-    return { orders, isEmpty: this.state.loaded && orders.length === 0 };
+
+    const status = this.state.membership;
+    const view = {
+      active: { label: 'Membresía activa · 15% de descuento', color: '#6ee7b7', border: 'rgba(110,231,183,.25)', bg: 'rgba(110,231,183,.06)', desc: 'Vigente hasta ' + (this.state.expiresAt ? new Date(this.state.expiresAt).toLocaleDateString('es-CL') : '') + '. El descuento ya se aplica en tu carrito.' },
+      pending: { label: 'Solicitud pendiente', color: '#ff9466', border: 'rgba(255,148,102,.28)', bg: 'rgba(255,148,102,.07)', desc: 'Un administrador confirmará tu pago y activará el descuento en las próximas horas.' },
+      none: { label: 'Sin membresía', color: '#e2e8f0', border: 'rgba(110,231,183,.16)', bg: 'transparent', desc: '$2.990 CLP al mes por un 15% de descuento en cualquier compra.' }
+    }[status] || { label: 'Sin membresía', color: '#e2e8f0', border: 'rgba(110,231,183,.16)', bg: 'transparent', desc: '' };
+
+    return {
+      orders, isEmpty: this.state.loaded && orders.length === 0,
+      status, statusLabel: view.label, statusColor: view.color, cardBorder: view.border, cardBg: view.bg, statusDesc: view.desc,
+      submitting: this.state.submitting, btnOpacity: this.state.submitting ? 0.65 : 1,
+      btnLabel: this.state.submitting ? 'Enviando…' : 'Activar $2.990/mes',
+      errorMsg: this.state.errorMsg,
+      onSubscribe: () => this._subscribe()
+    };
   }
 }
 
