@@ -15,6 +15,7 @@
 <meta name="twitter:description" content="Herramientas originales de Excel para estudiantes y profesionales de nutrición, con instrucciones, fuentes, pruebas y portafolio.">
 <meta name="twitter:image" content="https://www.nutrimetria.cc/assets/img/og-cover.png">
 <script src="./support.js"></script>
+<script src="./nutrimetria-inventory.js"></script>
 </head>
 <body>
 <x-dc>
@@ -208,7 +209,7 @@
     </div>
     <div class="rg-featured" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
       <sc-for list="{{ featured }}" as="prod" hint-placeholder-count="6">
-        <div class="glass" style="border-radius:8px;overflow:hidden;display:flex;flex-direction:column">
+        <div class="glass" style="border-radius:8px;overflow:hidden;display:flex;flex-direction:column;{{ prod.cardBorder }}" style-hover="transform:translateY(-3px);transition:transform .15s">
           <div style="height:130px;position:relative;overflow:hidden;background:#0a251c">
             {{ prod.coverEl }}
           </div>
@@ -278,11 +279,17 @@
     </div>
     <div class="rg-packages" style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px">
       <sc-for list="{{ packages }}" as="pk" hint-placeholder-count="4">
-        <div class="glass" style="border-radius:8px;padding:22px 18px;display:flex;flex-direction:column;gap:10px">
+        <div class="glass" style="border-radius:8px;padding:22px 18px;display:flex;flex-direction:column;gap:10px;position:relative;border:1.5px solid {{ pk.borderColor }}" style-hover="transform:translateY(-3px);transition:transform .15s">
+          <sc-if value="{{ pk.highlight }}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute;top:-11px;left:18px;background:#ff7a45;color:#241008;font-size:10px;font-weight:800;padding:3px 9px;border-radius:3px;letter-spacing:.3px">MÁS ELEGIDO</span>
+          </sc-if>
           <div style="font-weight:800;font-size:15.5px;color:#fff">{{ pk.name }}</div>
           <div style="font-size:12.5px;color:#9fb8ae;line-height:1.5;min-height:52px">{{ pk.desc }}</div>
-          <div style="font-weight:800;font-size:19px;margin-top:6px;color:#fff">{{ pk.price }}</div>
-          <a href="Packages.dc.html" style="text-decoration:none;margin-top:10px;text-align:center;padding:10px;border:1.5px solid #6ee7b7;color:#6ee7b7;border-radius:5px;font-weight:700;font-size:13px">Ver detalle</a>
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <span style="font-weight:800;font-size:19px;color:#fff">{{ pk.price }}</span>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#34d399">Ahorras {{ pk.savings }}</div>
+          <a href="Packages.dc.html" style="text-decoration:none;margin-top:6px;text-align:center;padding:11px;border-radius:6px;font-weight:700;font-size:13px;{{ pk.btnStyle }}">{{ pk.btnLabel }}</a>
         </div>
       </sc-for>
     </div>
@@ -463,8 +470,6 @@ class Component extends DCLogic {
     if (this._dodecaObserver) this._dodecaObserver.disconnect();
   }
 
-  // Dodecaedro wireframe estilo Graphify — abre/rota hacia donde apunta el cursor en toda
-  // la ventana (no solo sobre el canvas), como el hero, pero sin drag: solo seguimiento de mouse.
   _setupDodecaCanvas() {
     const canvas = document.getElementById('nmxDodecaCanvas');
     if (!canvas) { this._dodecaRetry = setTimeout(() => this._setupDodecaCanvas(), 60); return; }
@@ -486,7 +491,6 @@ class Component extends DCLogic {
     this._dodecaObserver = new IntersectionObserver((entries) => { this._dodecaVisible = entries[0].isIntersecting; }, { threshold: 0 });
     this._dodecaObserver.observe(canvas);
 
-    // Vértices de un dodecaedro regular (proporción áurea).
     const phi = (1 + Math.sqrt(5)) / 2;
     const a = 1, b = 1 / phi, c = phi;
     const raw = [];
@@ -574,7 +578,6 @@ class Component extends DCLogic {
     this._dodecaRaf = requestAnimationFrame(loop);
   }
 
-  // Sistema de pestañas aislado del mockup del Hero — namespacing "mockup*" para no chocar con las tabs de la ficha NMX.
   _selectMockupTab(tab) {
     if (tab === this.state.activeMockupTab) return;
     this.setState({ activeMockupTab: tab, mockupVisible: false });
@@ -601,7 +604,6 @@ class Component extends DCLogic {
     window.addEventListener('resize', resize);
     this._onResize = resize;
 
-    // Pausa el requestAnimationFrame fuera de viewport para no gastar GPU en mobile mientras se hace scroll.
     this._heroVisible = true;
     this._heroObserver = new IntersectionObserver((entries) => { this._heroVisible = entries[0].isIntersecting; }, { threshold: 0 });
     this._heroObserver.observe(canvas);
@@ -765,7 +767,7 @@ class Component extends DCLogic {
     }));
     const addedIds = this.state.addedIds;
     const inv = window.NMXInventory;
-    const FEATURED_IDS = ['nmx01', 'nmx14i', 'nmx20', 'nmx43', 'nmx13', 'nmx28i'];
+    const FEATURED_IDS = ['nmx01', 'nmx21', 'nmx14i', 'nmx20', 'nmx43', 'nmx13', 'nmx28i'];
     const featuredSource = inv ? FEATURED_IDS.map((id) => inv.get(id)).filter(Boolean) : [];
     return {
       newsletterEmail, newsletterSent, onNewsletterEmailChange, onNewsletterSubmit,
@@ -800,8 +802,6 @@ class Component extends DCLogic {
         'Casos de prueba incluidos para validar el archivo.',
         'Historial de versiones documentado.'
       ],
-      // Destacados derivados de la FUENTE DE DATOS UNICA (nutrimetria-inventory.js).
-      // Un motor de cada fase con motor propio + los dos mas vendibles de registro.
       featured: featuredSource.map((p) => {
         const isAdded = !!addedIds[p.id];
         return {
@@ -813,9 +813,10 @@ class Component extends DCLogic {
           version: p.version === 'NO_CONFIRMADO' ? 'versión no confirmada' : p.version,
           compat: 'Sin macros',
           price: p.priceLabel,
-          badge: p.phaseName.replace(/^Fase \d+ · /, ''),
-          badgeBg: 'rgba(110,231,183,.12)',
-          badgeColor: '#6ee7b7',
+          badge: (p.id === 'nmx01' || p.id === 'nmx21') ? 'Más vendido' : p.phaseName.replace(/^Fase \d+ · /, ''),
+          badgeBg: (p.id === 'nmx01' || p.id === 'nmx21') ? 'rgba(255,148,102,.16)' : 'rgba(110,231,183,.12)',
+          badgeColor: (p.id === 'nmx01' || p.id === 'nmx21') ? '#ff9466' : '#6ee7b7',
+          cardBorder: (p.id === 'nmx01' || p.id === 'nmx21') ? 'border:1.5px solid #6ee7b7' : 'border:1px solid rgba(255,255,255,.08)',
           coverSrc: p.cover,
           coverEl: React.createElement('img', {
             src: p.cover, alt: p.name,
@@ -843,10 +844,10 @@ class Component extends DCLogic {
         {n:'08', title:'Registro de cambios', desc:'Historial de versiones y mejoras.'}
       ],
       packages: [
-        {name:'Pack Estudiante', desc:'Para prácticas, tareas y aprendizaje guiado.', price:'$12.990 CLP'},
-        {name:'Pack Consulta Nutricional', desc:'Para organizar evaluaciones y registros básicos.', price:'$19.990 CLP'},
-        {name:'Pack Antropometría', desc:'Para seguimiento de mediciones y composición corporal.', price:'$14.990 CLP'},
-        {name:'Pack Profesional', desc:'Colección ampliada de herramientas para consulta.', price:'$34.990 CLP'}
+        {name:'Pack Estudiante', desc:'Para prácticas, tareas y aprendizaje guiado.', price:'$27.990 CLP', savings:'$20.940 CLP', highlight:true, borderColor:'#6ee7b7', btnStyle:'background:#6ee7b7;color:#04140f;border:none', btnLabel:'Ver oferta →'},
+        {name:'Pack Consulta Nutricional', desc:'Para organizar evaluaciones y registros básicos.', price:'$24.990 CLP', savings:'$12.960 CLP', highlight:false, borderColor:'rgba(255,255,255,.12)', btnStyle:'border:1.5px solid #6ee7b7;color:#6ee7b7;background:transparent', btnLabel:'Ver detalle →'},
+        {name:'Pack Antropometría', desc:'Para seguimiento de mediciones y composición corporal.', price:'$17.990 CLP', savings:'$8.970 CLP', highlight:false, borderColor:'rgba(255,255,255,.12)', btnStyle:'border:1.5px solid #6ee7b7;color:#6ee7b7;background:transparent', btnLabel:'Ver detalle →'},
+        {name:'Pack Profesional', desc:'Colección ampliada de herramientas para consulta.', price:'$23.990 CLP', savings:'$13.960 CLP', highlight:false, borderColor:'rgba(255,255,255,.12)', btnStyle:'border:1.5px solid #6ee7b7;color:#6ee7b7;background:transparent', btnLabel:'Ver detalle →'}
       ],
       memberBenefits: [
         'Acceso a una biblioteca seleccionada',
