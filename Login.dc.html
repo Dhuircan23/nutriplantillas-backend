@@ -38,7 +38,10 @@
     <div class="field"><label for="lemail">Correo electrónico</label><input id="lemail" type="email" placeholder="tucorreo@ejemplo.com" value="{{ email }}" onChange="{{ onEmailChange }}"/></div>
     <div class="field">
       <label for="lpass">Contraseña</label>
-      <input id="lpass" type="password" placeholder="••••••••" value="{{ password }}" onChange="{{ onPasswordChange }}"/>
+      <div style="position:relative">
+        <input id="lpass" type="{{ passwordFieldType }}" placeholder="••••••••" value="{{ password }}" onChange="{{ onPasswordChange }}" style="width:100%;padding-right:42px;box-sizing:border-box"/>
+        <button type="button" onClick="{{ onTogglePassword }}" aria-label="Mostrar u ocultar contraseña" style="position:absolute;right:8px;top:0;height:100%;display:flex;align-items:center;background:none;border:none;cursor:pointer;color:#8fa9a0;padding:0">{{ passwordToggleIcon }}</button>
+      </div>
     </div>
     <a href="ForgotPassword.dc.html" style="font-size:12.5px;font-weight:600;text-decoration:none;align-self:flex-end;margin-top:-8px">¿Olvidaste tu contraseña?</a>
     <sc-if value="{{ errorMsg }}" hint-placeholder-val="{{ false }}">
@@ -66,7 +69,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { email: '', password: '', errorMsg: '', submitting: false };
+  state = { email: '', password: '', errorMsg: '', submitting: false, showPassword: false };
 
   componentDidMount() {
     const reason = new URLSearchParams(window.location.search).get('reason');
@@ -150,6 +153,9 @@ class Component extends DCLogic {
       submitting: this.state.submitting,
       submitOpacity: this.state.submitting ? 0.65 : 1,
       submitLabel: this.state.submitting ? 'Ingresando…' : 'Iniciar sesión',
+      passwordFieldType: this.state.showPassword ? 'text' : 'password',
+      passwordToggleIcon: this.state.showPassword ? '🙈' : '👁',
+      onTogglePassword: () => this.setState((s) => ({ showPassword: !s.showPassword })),
       onEmailChange: (e) => this.setState({ email: e.target.value }),
       onPasswordChange: (e) => this.setState({ password: e.target.value }),
       onSubmit: (e) => this._submit(e),
