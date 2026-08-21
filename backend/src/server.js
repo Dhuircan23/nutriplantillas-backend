@@ -106,6 +106,7 @@ app.use('/api/auth/reset-password', authLimiter);
 app.use('/api/auth/oauth', authLimiter);
 app.use('/api/auth/oauth', oauthRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/membership', membershipRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', ordersLimiter, ordersRoutes);
