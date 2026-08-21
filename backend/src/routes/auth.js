@@ -1,5 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const db = require('../db');
 const {
   createSession,
@@ -10,6 +11,8 @@ const {
 } = require('../middleware/auth');
 const { getSessionDurationMs } = require('../utils/sessionDuration');
 const { roleForEmail } = require('../utils/roleForEmail');
+const { sendVerificationEmail } = require('../services/emailService');
+const { getPrimaryFrontendUrl } = require('../utils/origins');
 
 const router = express.Router();
 
@@ -27,6 +30,17 @@ function isValidEmail(email) {
   return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function isStrongPassword(password) {
+  return (
+    typeof password === 'string' &&
+    password.length >= 10 &&
+    password.length <= 40 &&
+    /[A-Z]/.test(password) &&
+    /[a-z]/.test(password) &&
+    /[0-9]/.test(password)
+  );
+}
+
 function computeLockMs(failedAttempts) {
   if (failedAttempts >= 12) return 60 * 60 * 1000;
   if (failedAttempts >= 8) return 15 * 60 * 1000;
@@ -35,10 +49,12 @@ function computeLockMs(failedAttempts) {
 }
 
 router.post('/register', async (req, res) => {
-  const { email, password } = req.body || {};
+  const { email, password, name, phone } = req.body || {};
   if (!isValidEmail(email)) return res.status(400).json({ error: 'Correo inválido.' });
-  if (typeof password !== 'string' || password.length < 8) {
-    return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres.' });
+  if (!isStrongPassword(password)) {
+    return res.status(400).json({
+      error: 'La contraseña debe tener entre 10 y 40 caracteres, con al menos una mayúscula, una minúscula y un número.',
+    });
   }
 
   const existing = await db.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase()]);
@@ -48,14 +64,53 @@ router.post('/register', async (req, res) => {
 
   const passwordHash = await bcrypt.hash(password, 12);
   const role = roleForEmail(email);
+  const verificationToken = crypto.randomBytes(32).toString('hex');
   const result = await db.query(
-    'INSERT INTO users (email, password_hash, role) VALUES ($1, $2, $3) RETURNING id, email, role',
-    [email.toLowerCase(), passwordHash, role]
+    'INSERT INTO users (email, password_hash, role, name, phone, verification_token, verification_sent_at) VALUES ($1, $2, $3, $4, $5, $6, now()) RETURNING id, email, role',
+    [
+      email.toLowerCase(),
+      passwordHash,
+      role,
+      typeof name === 'string' ? name.trim().slice(0, 120) || null : null,
+      typeof phone === 'string' ? phone.trim().slice(0, 30) || null : null,
+      verificationToken,
+    ]
   );
   const user = result.rows[0];
   const token = await createSession(user);
   res.cookie('nmx_token', token, COOKIE_OPTS);
+  const verifyUrl = `${getPrimaryFrontendUrl()}/VerifyEmail.dc.html?token=${verificationToken}`;
+  sendVerificationEmail(user.email, verifyUrl).catch((e) => console.error('Error enviando correo de verificación:', e.message));
   res.status(201).json({ user: { email: user.email, role: user.role } });
+});
+
+router.get('/verify-email', async (req, res) => {
+  const token = String(req.query.token || '');
+  if (!token) return res.status(400).json({ error: 'Falta el token de verificación.' });
+  const result = await db.query(
+    'UPDATE users SET email_verified = true, verification_token = NULL WHERE verification_token = $1 RETURNING email',
+    [token]
+  );
+  if (result.rows.length === 0) {
+    return res.status(400).json({ error: 'El enlace de verificación no es válido o ya fue usado.' });
+  }
+  res.json({ ok: true, email: result.rows[0].email });
+});
+
+router.post('/resend-verification', requireAuth, async (req, res) => {
+  const result = await db.query('SELECT email, email_verified FROM users WHERE id = $1', [req.user.id]);
+  const user = result.rows[0];
+  if (!user) return res.status(404).json({ error: 'Usuario no encontrado.' });
+  if (user.email_verified) return res.json({ ok: true, alreadyVerified: true });
+
+  const verificationToken = crypto.randomBytes(32).toString('hex');
+  await db.query('UPDATE users SET verification_token = $1, verification_sent_at = now() WHERE id = $2', [
+    verificationToken,
+    req.user.id,
+  ]);
+  const verifyUrl = `${getPrimaryFrontendUrl()}/VerifyEmail.dc.html?token=${verificationToken}`;
+  await sendVerificationEmail(user.email, verifyUrl).catch((e) => console.error('Error enviando correo de verificación:', e.message));
+  res.json({ ok: true });
 });
 
 router.post('/login', async (req, res) => {
@@ -124,7 +179,7 @@ router.post('/logout-all', requireAuth, async (req, res) => {
 
 router.get('/me', requireAuth, async (req, res) => {
   const result = await db.query(
-    `SELECT email, role, name, country, profession, marketing_opt_in, product_updates_opt_in
+    `SELECT email, role, name, country, profession, marketing_opt_in, product_updates_opt_in, email_verified
      FROM users WHERE id = $1`,
     [req.user.id]
   );
@@ -138,6 +193,7 @@ router.get('/me', requireAuth, async (req, res) => {
       profession: u.profession || '',
       marketingOptIn: u.marketing_opt_in,
       productUpdatesOptIn: u.product_updates_opt_in,
+      emailVerified: u.email_verified,
     },
   });
 });
