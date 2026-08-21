@@ -11,7 +11,7 @@ const {
 } = require('../middleware/auth');
 const { getSessionDurationMs } = require('../utils/sessionDuration');
 const { roleForEmail } = require('../utils/roleForEmail');
-const { sendVerificationEmail } = require('../services/emailService');
+const { sendVerificationEmail, sendPasswordResetEmail } = require('../services/emailService');
 const { getPrimaryFrontendUrl } = require('../utils/origins');
 
 const router = express.Router();
@@ -162,6 +162,59 @@ router.post('/login', async (req, res) => {
   const token = await createSession(user);
   res.cookie('nmx_token', token, COOKIE_OPTS);
   res.json({ user: { email: user.email, role: user.role } });
+});
+
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body || {};
+  if (!isValidEmail(email)) return res.status(400).json({ error: 'Correo inválido.' });
+
+  const result = await db.query(
+    'SELECT id, email, password_hash FROM users WHERE email = $1',
+    [email.toLowerCase()]
+  );
+  const user = result.rows[0];
+  if (user && user.password_hash) {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    await db.query(
+      "UPDATE users SET reset_token = $1, reset_token_expires_at = now() + interval '1 hour' WHERE id = $2",
+      [resetToken, user.id]
+    );
+    const resetUrl = `${getPrimaryFrontendUrl()}/ResetPassword.dc.html?token=${resetToken}`;
+    sendPasswordResetEmail(user.email, resetUrl).catch((e) =>
+      console.error('Error enviando correo de recuperación:', e.message)
+    );
+  }
+  res.json({ ok: true });
+});
+
+router.post('/reset-password', async (req, res) => {
+  const { token, newPassword } = req.body || {};
+  if (typeof token !== 'string' || !token) {
+    return res.status(400).json({ error: 'Falta el token de recuperación.' });
+  }
+  if (!isStrongPassword(newPassword)) {
+    return res.status(400).json({
+      error: 'La contraseña debe tener entre 10 y 40 caracteres, con al menos una mayúscula, una minúscula y un número.',
+    });
+  }
+
+  const result = await db.query(
+    'SELECT id FROM users WHERE reset_token = $1 AND reset_token_expires_at > now()',
+    [token]
+  );
+  const user = result.rows[0];
+  if (!user) {
+    return res.status(400).json({ error: 'El enlace de recuperación no es válido o ya expiró.' });
+  }
+
+  const newHash = await bcrypt.hash(newPassword, 12);
+  await db.query(
+    `UPDATE users SET password_hash = $1, reset_token = NULL, reset_token_expires_at = NULL,
+       failed_login_attempts = 0, locked_until = NULL
+     WHERE id = $2`,
+    [newHash, user.id]
+  );
+  res.json({ ok: true });
 });
 
 router.post('/logout', async (req, res) => {
