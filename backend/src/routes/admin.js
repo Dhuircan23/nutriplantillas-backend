@@ -9,9 +9,8 @@ const { logSecurityEvent } = require('../services/auditLog');
 
 const router = express.Router();
 
-// Todo lo administrativo exige rol admin verificado en el backend. Ocultar
-// botones en el frontend no es una medida de seguridad.
 router.use(requireAdmin);
+
 router.get('/orders', async (req, res) => {
   const result = await db.query(
     `SELECT o.id, o.order_code, o.status, o.total_clp, o.created_at, o.paid_at,
@@ -24,21 +23,77 @@ router.get('/orders', async (req, res) => {
   res.json({ orders: result.rows });
 });
 
-// POST /api/admin/reconcile
-// Dispara la reconciliación de pedidos pendientes a demanda, sin esperar al
-// intervalo automático. Útil si alguien reporta "pagué y no me llegó nada".
+router.get('/stats', async (req, res) => {
+  const revenue = await db.query(
+    `SELECT COALESCE(SUM(total_clp), 0)::int AS revenue, COUNT(*)::int AS paid_orders
+     FROM orders WHERE status = 'paid'`
+  );
+  const ordersCount = await db.query('SELECT COUNT(*)::int AS c FROM orders');
+  const salesCount = await db.query(
+    `SELECT COUNT(*)::int AS c FROM order_items oi
+     JOIN orders o ON o.id = oi.order_id WHERE o.status = 'paid'`
+  );
+  const customersCount = await db.query(
+    `SELECT COUNT(DISTINCT user_id)::int AS c FROM orders WHERE status = 'paid'`
+  );
+  const monthly = await db.query(
+    `SELECT to_char(date_trunc('month', paid_at), 'YYYY-MM') AS month,
+            COALESCE(SUM(total_clp), 0)::int AS revenue
+     FROM orders WHERE status = 'paid' AND paid_at >= now() - interval '12 months'
+     GROUP BY 1 ORDER BY 1`
+  );
+  const topProducts = await db.query(
+    `SELECT oi.product_id, oi.product_name AS name, COUNT(*)::int AS sales
+     FROM order_items oi JOIN orders o ON o.id = oi.order_id
+     WHERE o.status = 'paid'
+     GROUP BY oi.product_id, oi.product_name
+     ORDER BY sales DESC LIMIT 5`
+  );
+  res.json({
+    revenueClp: revenue.rows[0].revenue,
+    paidOrders: revenue.rows[0].paid_orders,
+    ordersCount: ordersCount.rows[0].c,
+    salesCount: salesCount.rows[0].c,
+    customersCount: customersCount.rows[0].c,
+    monthlySales: monthly.rows,
+    topProducts: topProducts.rows,
+  });
+});
+
+router.get('/customers', async (req, res) => {
+  const result = await db.query(
+    `SELECT u.id, u.email, u.name, u.country,
+            COUNT(o.id) FILTER (WHERE o.status = 'paid')::int AS paid_orders,
+            COALESCE(SUM(o.total_clp) FILTER (WHERE o.status = 'paid'), 0)::int AS total_spent_clp,
+            MAX(o.created_at) AS last_order_at
+     FROM users u
+     LEFT JOIN orders o ON o.user_id = u.id
+     WHERE u.role = 'client'
+     GROUP BY u.id
+     ORDER BY paid_orders DESC, u.id DESC
+     LIMIT 300`
+  );
+  res.json({ customers: result.rows });
+});
+
+router.get('/products', async (req, res) => {
+  const result = await db.query(
+    `SELECT p.id, p.sku, p.name, p.category, p.price_clp, p.version, p.active, p.updated_label,
+            COUNT(oi.id) FILTER (WHERE o.status = 'paid')::int AS sales
+     FROM products p
+     LEFT JOIN order_items oi ON oi.product_id = p.id
+     LEFT JOIN orders o ON o.id = oi.order_id
+     GROUP BY p.id
+     ORDER BY p.sku`
+  );
+  res.json({ products: result.rows });
+});
+
 router.post('/reconcile', async (req, res) => {
   const summary = await reconcilePendingOrders();
   res.json({ summary });
 });
 
-// POST /api/admin/orders/:orderCode/confirm-manual
-// Confirma a mano un pedido del proveedor de pago simulado. Es la única forma
-// de completar la cadena compra -> permiso -> descarga mientras Transbank NO
-// está conectado, y deja rastro de quién lo confirmó.
-//
-// Guardas: solo con el proveedor manual activo, solo desde un estado no pagado,
-// y nunca sobre un pedido ya pagado (evita duplicar cupos de descarga).
 router.post('/orders/:orderCode/confirm-manual', async (req, res) => {
   const provider = getPaymentProvider();
   if (provider.name !== 'manual') {
@@ -64,7 +119,6 @@ router.post('/orders/:orderCode/confirm-manual', async (req, res) => {
 
   await markOrderPaid(order.id, order.user_id);
 
-  // Rastro de la acción administrativa: quién confirmó qué pedido y por cuánto.
   logSecurityEvent(
     'admin_manual_payment',
     `admin=${req.user.id} pedido=${req.params.orderCode} monto=${order.total_clp}`,
@@ -74,9 +128,6 @@ router.post('/orders/:orderCode/confirm-manual', async (req, res) => {
   res.json({ ok: true, orderCode: req.params.orderCode, status: ORDER_STATUS.PAID });
 });
 
-// GET /api/admin/download-events
-// Últimos intentos de descarga, para investigar abusos o un "no puedo bajar mi
-// archivo". Solo devuelve metadatos: nunca tokens, cookies ni credenciales.
 router.get('/download-events', async (req, res) => {
   const onlyDenied = req.query.denied === 'true';
   const limit = Math.min(Number(req.query.limit) || 100, 500);
