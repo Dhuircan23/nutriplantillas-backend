@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12.5px;font-weight:700;color:#c7dad2}
+  .field input,.field select,.field textarea{padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Manrope',sans-serif;background:rgba(255,255,255,.04);color:#e2e8f0}
+</style>
+</helmet>
+
+<dc-import name="Header" active="" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:640px;margin:0 auto;padding:40px 40px 80px">
+  <h1 style="font-size:26px;font-weight:800;margin:0 0 10px;letter-spacing:-.3px">Contacto</h1>
+  <p style="font-size:13.5px;color:#9fb8ae;margin:0 0 28px;line-height:1.6">Consultas comerciales, dudas sobre una herramienta o soporte con un producto ya comprado.</p>
+
+  <sc-if value="{{ !sent }}" hint-placeholder-val="{{ true }}">
+    <form onSubmit="{{ onSubmit }}" style="display:flex;flex-direction:column;gap:16px">
+      <div class="field"><label>Nombre</label><input required="{{ true }}" value="{{ name }}" onChange="{{ onNameChange }}"/></div>
+      <div class="field"><label>Correo electrónico</label><input type="email" required="{{ true }}" value="{{ email }}" onChange="{{ onEmailChange }}"/></div>
+      <div class="field">
+        <label>Motivo</label>
+        <select value="{{ reason }}" onChange="{{ onReasonChange }}">
+          <option value="soporte">Soporte de un producto comprado</option>
+          <option value="comercial">Consulta comercial</option>
+          <option value="prensa">Prensa</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="field"><label>Mensaje</label><textarea rows="5" required="{{ true }}" value="{{ message }}" onChange="{{ onMessageChange }}" placeholder="Cuéntanos en qué te podemos ayudar…"></textarea></div>
+      <button type="submit" style="align-self:flex-start;padding:12px 24px;background:#6ee7b7;color:#04140f;border:none;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit">Enviar mensaje</button>
+    </form>
+  </sc-if>
+
+  <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+    <div style="border:1px solid rgba(110,231,183,.25);border-radius:8px;padding:22px;background:rgba(110,231,183,.06)">
+      <div style="color:#6ee7b7;font-weight:800;font-size:15px;margin-bottom:6px">Mensaje enviado ✓</div>
+      <p style="font-size:13px;color:#c7dad2;margin:0;line-height:1.6">Gracias, {{ name }}. Te responderemos a {{ email }} a la brevedad.</p>
+    </div>
+  </sc-if>
+
+  <div style="margin-top:28px;display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:#8fa9a0">
+    <div>Si compraste una herramienta y necesitas ayuda técnica, también puedes usar el <a href="Support.dc.html">formulario de soporte</a> desde tu cuenta.</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <a href="mailto:Dhuircan23@gmail.com">Dhuircan23@gmail.com</a>
+      <a href="https://wa.me/56964361341" target="_blank" rel="noopener">WhatsApp: +56 9 6436 1341</a>
+    </div>
+  </div>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { name: '', email: '', reason: 'soporte', message: '', sent: false };
+
+  renderVals() {
+    const s = this.state;
+    return {
+      name: s.name, email: s.email, reason: s.reason, message: s.message, sent: s.sent,
+      onNameChange: (e) => this.setState({ name: e.target.value }),
+      onEmailChange: (e) => this.setState({ email: e.target.value }),
+      onReasonChange: (e) => this.setState({ reason: e.target.value }),
+      onMessageChange: (e) => this.setState({ message: e.target.value }),
+      onSubmit: (e) => {
+        e.preventDefault();
+        if (s.name.trim() && s.email.trim() && s.message.trim()) this.setState({ sent: true });
+      }
+    };
+  }
+}
+
+</script>
+</body>
+</html>
