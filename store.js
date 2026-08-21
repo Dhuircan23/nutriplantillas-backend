@@ -127,6 +127,12 @@
       body: JSON.stringify({ currentPassword: currentPassword, newPassword: newPassword })
     });
   }
+  async function forgotPassword(email) {
+    return await apiFetch('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email: email }) });
+  }
+  async function resetPassword(token, newPassword) {
+    return await apiFetch('/api/auth/reset-password', { method: 'POST', body: JSON.stringify({ token: token, newPassword: newPassword }) });
+  }
 
   async function addToCart(productId) {
     await apiFetch('/api/cart', { method: 'POST', body: JSON.stringify({ productId: productId }) });
