@@ -20,6 +20,7 @@
 </helmet>
 
 <dc-import name="Header" active="paquetes" cart-count="2" hint-size="100%,64px"></dc-import>
+<script src="./store.js"></script>
 
 <div style="max-width:1280px;margin:0 auto;padding:44px 40px 24px;text-align:center">
   <div class="mono" style="color:#ff8f62;font-size:11px;margin-bottom:12px">// COLECCIONES CON DESCUENTO REAL</div>
@@ -45,7 +46,7 @@
             <div style="display:flex;gap:8px;font-size:12.5px;color:#c7dad2"><span style="color:#6ee7b7;flex:none">✓</span>{{ it }}</div>
           </sc-for>
         </div>
-        <a href="Cart.dc.html" style="text-decoration:none;text-align:center;padding:11px;border-radius:6px;font-weight:700;font-size:13px;{{ pk.btnStyle }}">Agregar al carrito</a>
+        <a href="{{ pk.href }}" style="text-decoration:none;text-align:center;padding:11px;border-radius:6px;font-weight:700;font-size:13px;{{ pk.btnStyle }};opacity:{{ pk.btnOpacity }}" onClick="{{ pk.onAdd }}">{{ pk.btnLabel }}</a>
       </div>
     </sc-for>
   </div>
@@ -74,7 +75,7 @@
       </sc-for>
     </div>
   </div>
-  <p style="font-size:12px;color:#8fa9a0;margin-top:14px">Los productos aún no finalizados aparecen como "Próximamente" dentro de cada paquete y no forman parte de una compra activa hasta su publicación.</p>
+  <p style="font-size:12px;color:#8fa9a0;margin-top:14px">Al agregar un paquete, se agregan al carrito los productos reales que lo componen, al precio de cada uno — el carrito calcula el total exacto.</p>
 </div>
 
 <dc-import name="Footer" hint-size="100%,420px"></dc-import>
@@ -82,21 +83,68 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
+  state = { addingKey: null };
+
+  async _addPackage(key, productIds, e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (!window.NMXStore) return;
+    const session = await window.NMXStore.getSession();
+    if (!session) { window.location.href = 'Login.dc.html'; return; }
+    this.setState({ addingKey: key });
+    try {
+      for (const id of productIds) {
+        await window.NMXStore.addToCart(id);
+      }
+      window.location.href = 'Cart.dc.html';
+    } catch (err) {
+      this.setState({ addingKey: null });
+    }
+  }
+
   renderVals() {
+    // Cada paquete agrega sus productos reales al carrito real (mismo precio
+    // e inventario que la tienda) — no es un SKU aparte, es un atajo para
+    // agregar varios NMX de una vez. El ahorro se calcula sobre el precio real
+    // de cada producto incluido, tomado del catálogo (nutrimetria-inventory.js).
+    const RAW = [
+      { key: 'estudiante', name: 'Pack Estudiante', desc: 'Para prácticas, tareas y aprendizaje guiado.', price: 27990, borderColor: '#6ee7b7', highlight: true,
+        items: [ { id: 'nmx01', label: 'Calculadora Energética (NMX-01)', real: 7990 }, { id: 'nmx13', label: 'Recordatorio de 24 Horas (NMX-13)', real: 5990 }, { id: 'nmxp1', label: 'Guía del Paquete (NMX-P1)', real: 4990 }, { id: 'nmx21', label: 'Distribución Alimentaria INTA 2018 (NMX-21)', real: 7990 }, { id: 'nmx14m', label: 'Evaluación Pediátrica OMS/MINSAL + UDD (NMX-14-MINSAL-UDD)', real: 7990 }, { id: 'nmx12', label: 'Calculadora de Grasa y Composición Corporal (NMX-12)', real: 6990 }, { id: 'nmx36', label: 'Calculadora Especializada de Plicometría (NMX-36)', real: 6990 } ] },
+      { key: 'antropometria', name: 'Pack Antropometría', desc: 'Para seguimiento de mediciones y composición corporal.', price: 17990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
+        items: [ { id: 'nmx20', label: 'Formulario Integral de Evaluación (NMX-20)', real: 7990 }, { id: 'nmx06', label: 'Registro y Seguimiento de Composición Corporal (NMX-06)', real: 5990 }, { id: 'nmx41', label: 'Software Acompañante para Plicómetro (NMX-41)', real: 5990 }, { id: 'nmx10', label: 'Motor de Requerimiento Energético, MET y Efecto Térmico (NMX-10)', real: 6990 } ] },
+      { key: 'consulta', name: 'Pack Consulta Nutricional', desc: 'Para organizar evaluaciones y registros básicos.', price: 24990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
+        items: [ { id: 'nmx03', label: 'Historia Clínica Nutricional Completa (NMX-03)', real: 7990 }, { id: 'nmx13', label: 'Recordatorio de 24 Horas (NMX-13)', real: 5990 }, { id: 'nmx20', label: 'Formulario Integral de Evaluación (NMX-20)', real: 7990 }, { id: 'nmx21', label: 'Distribución Alimentaria INTA 2018 (NMX-21)', real: 7990 }, { id: 'nmx07', label: 'Gestor de Creación de Dietas (NMX-07)', real: 7990 } ] },
+      { key: 'profesional', name: 'Pack Profesional', desc: 'Colección ampliada de herramientas para consulta.', price: 23990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
+        items: [ { id: 'nmx01', label: 'Calculadora Energética (NMX-01)', real: 7990 }, { id: 'nmx21', label: 'Distribución Alimentaria INTA 2018 (NMX-21)', real: 7990 }, { id: 'nmx12', label: 'Calculadora de Grasa y Composición Corporal (NMX-12)', real: 6990 }, { id: 'nmx11', label: 'Planificador Integrado de Entrenamiento y Nutrición (NMX-11)', real: 6990 }, { id: 'nmx43', label: 'Biblioteca UDD y Banco Clínico-Formativo (NMX-43)', real: 7990 } ] }
+    ];
+
+    const money = (n) => '$' + n.toLocaleString('es-CL') + ' CLP';
+    const packages = RAW.map((p) => {
+      const realTotal = p.items.reduce((sum, it) => sum + it.real, 0);
+      const savings = Math.max(0, realTotal - p.price);
+      const adding = this.state.addingKey === p.key;
+      return {
+        name: p.name, desc: p.desc,
+        price: money(p.price),
+        savings: money(savings),
+        borderColor: p.borderColor, highlight: p.highlight,
+        btnStyle: p.highlight ? 'background:#6ee7b7;color:#04140f;border:none' : 'border:1.5px solid #6ee7b7;color:#6ee7b7;background:rgba(255,255,255,.04)',
+        btnOpacity: adding ? 0.65 : 1,
+        btnLabel: adding ? 'Agregando…' : 'Agregar al carrito',
+        href: 'Cart.dc.html',
+        items: p.items.map((it) => it.label),
+        onAdd: (e) => this._addPackage(p.key, p.items.map((it) => it.id), e)
+      };
+    });
+
     return {
-      packages: [
-        {name:'Pack Estudiante', desc:'Para prácticas, tareas y aprendizaje guiado.', price:'$12.990 CLP', savings:'$1.480 CLP', borderColor:'rgba(110,231,183,.16)', highlight:false, btnStyle:'border:1.5px solid #6ee7b7;color:#6ee7b7;background:rgba(255,255,255,.04)', items:['Calculadora energética','Registro antropométrico','Recordatorio de 24 horas','Guía de uso']},
-        {name:'Pack Antropometría', desc:'Para seguimiento de mediciones y composición corporal.', price:'$14.990 CLP', savings:'$2.470 CLP', borderColor:'#6ee7b7', highlight:true, btnStyle:'background:#6ee7b7;color:#04140f', items:['Registro antropométrico','Seguimiento corporal','Calculadora de composición corporal','Plantilla de gráficos']},
-        {name:'Pack Consulta Nutricional', desc:'Para organizar evaluaciones y registros básicos.', price:'$19.990 CLP', savings:'$3.460 CLP', borderColor:'rgba(110,231,183,.16)', highlight:false, btnStyle:'border:1.5px solid #6ee7b7;color:#6ee7b7;background:rgba(255,255,255,.04)', items:['Historia clínica','Recordatorio de 24 horas','Registro antropométrico','Documentos de apoyo']},
-        {name:'Pack Profesional', desc:'Colección ampliada de herramientas para consulta.', price:'$34.990 CLP', savings:'$8.920 CLP', borderColor:'rgba(110,231,183,.16)', highlight:false, btnStyle:'border:1.5px solid #6ee7b7;color:#6ee7b7;background:rgba(255,255,255,.04)', items:['Todo Pack Consulta Nutricional','Nutrición deportiva (Próximamente)','Organización profesional','Soporte prioritario']}
-      ],
+      packages,
       comparisonRows: [
-        {label:'Archivos incluidos', estudiante:'4', antropometria:'4', consulta:'5', profesional:'9+'},
+        {label:'Archivos incluidos', estudiante:'7', antropometria:'4', consulta:'5', profesional:'5'},
         {label:'Actualizaciones', estudiante:'Incluidas 6 meses', antropometria:'Incluidas 6 meses', consulta:'Incluidas 12 meses', profesional:'Incluidas 12 meses'},
         {label:'Soporte', estudiante:'Por correo', antropometria:'Por correo', consulta:'Prioritario', profesional:'Prioritario'},
         {label:'Tipo de licencia', estudiante:'Individual', antropometria:'Individual', consulta:'Individual', profesional:'Individual / Profesional'},
         {label:'Público recomendado', estudiante:'Estudiantes', antropometria:'Profesionales en consulta', consulta:'Profesionales en consulta', profesional:'Consulta con alto volumen'},
-        {label:'Ahorro real', estudiante:'$1.480 CLP', antropometria:'$2.470 CLP', consulta:'$3.460 CLP', profesional:'$8.920 CLP'}
+        {label:'Ahorro real', estudiante:'$20.940 CLP', antropometria:'$8.970 CLP', consulta:'$12.960 CLP', profesional:'$13.960 CLP'}
       ]
     };
   }
