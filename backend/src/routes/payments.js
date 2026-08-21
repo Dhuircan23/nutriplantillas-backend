@@ -10,13 +10,6 @@ const router = express.Router();
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:4000';
 const FRONTEND_URL = getPrimaryFrontendUrl();
 
-// POST /api/payments/:orderCode/init
-// Inicia un intento de pago a través del PaymentProvider activo.
-//   - PAYMENT_PROVIDER=manual (por defecto): no cobra. Deja el pedido en
-//     payment_processing y devuelve instrucciones. Solo un admin puede
-//     confirmarlo (ver POST /api/admin/orders/:orderCode/confirm-manual).
-//   - PAYMENT_PROVIDER=webpay: devuelve { url, token } para el POST de
-//     redirección a Transbank. NO activo por defecto.
 router.post('/:orderCode/init', requireAuth, async (req, res) => {
   const orderResult = await db.query(
     'SELECT id, user_id, status, total_clp FROM orders WHERE order_code = $1',
@@ -32,11 +25,16 @@ router.post('/:orderCode/init', requireAuth, async (req, res) => {
   const provider = getPaymentProvider();
 
   try {
+    const emailResult = await db.query('SELECT email FROM users WHERE id = $1', [req.user.id]);
+    const email = emailResult.rows[0] && emailResult.rows[0].email;
+
     const attempt = await provider.createTransaction({
       orderCode: req.params.orderCode,
       amountClp: order.total_clp,
+      email,
       returnUrl: `${BACKEND_URL}/api/payments/webpay/return`,
-      // Referencia opaca: no se manda el id interno del usuario a un tercero.
+      flowReturnUrl: `${BACKEND_URL}/api/payments/flow/return`,
+      flowConfirmationUrl: `${BACKEND_URL}/api/payments/flow/confirm`,
       sessionRef: `ord-${req.params.orderCode}`,
     });
 
@@ -48,8 +46,6 @@ router.post('/:orderCode/init', requireAuth, async (req, res) => {
         attempt.token || null,
         attempt.buyOrder || null,
         provider.name,
-        // El proveedor manual queda esperando confirmación; el redirigido sigue
-        // 'pending' hasta que Transbank conteste, para no bloquear un reintento.
         provider.name === 'manual' ? ORDER_STATUS.PAYMENT_PROCESSING : order.status,
         order.id,
       ]
@@ -62,22 +58,13 @@ router.post('/:orderCode/init', requireAuth, async (req, res) => {
         instructions: attempt.instructions,
       });
     }
-    res.json({ provider: provider.name, url: attempt.redirectUrl, token: attempt.token });
+    res.json({ provider: provider.name, url: attempt.redirectUrl, token: attempt.token, method: attempt.method });
   } catch (e) {
     console.error('Error iniciando pago:', provider.name, e.message);
     res.status(502).json({ error: 'No se pudo iniciar el pago.' });
   }
 });
 
-// GET/POST /api/payments/webpay/return
-// Retorno del navegador del comprador desde Transbank. Solo aplica al proveedor
-// webpay. Está exento de la verificación CSRF porque no confía en la cookie de
-// sesión: valida el pago con token_ws contra la API del proveedor.
-//
-// Tres casos según la documentación de Transbank:
-//   1. token_ws presente        -> el pago se completó, hay que confirmar.
-//   2. TBK_TOKEN presente       -> el comprador anuló antes de pagar.
-//   3. Ninguno de los dos       -> timeout / conexión caída.
 async function handleWebpayReturn(req, res) {
   const params = { ...req.query, ...req.body };
   const { token_ws, TBK_TOKEN, TBK_ORDEN_COMPRA } = params;
@@ -127,9 +114,6 @@ async function handleWebpayReturn(req, res) {
   }
 }
 
-// Marca un pedido como pagado y limpia del carrito solo los productos de ese
-// pedido. Es el único lugar que mueve un pedido a 'paid' — así la condición que
-// habilita las descargas tiene una sola puerta de entrada.
 async function markOrderPaid(orderId, userId) {
   const client = await db.pool.connect();
   try {
@@ -157,6 +141,59 @@ async function markOrderPaid(orderId, userId) {
 
 router.get('/webpay/return', handleWebpayReturn);
 router.post('/webpay/return', handleWebpayReturn);
+
+async function verifyAndMarkFlow(token) {
+  const { getStatus } = require('../services/flow');
+  const result = await getStatus(token);
+  const statusCode = Number(result.status);
+  const approved = statusCode === 2;
+
+  const orderResult = await db.query(
+    'SELECT id, user_id, order_code, status FROM orders WHERE webpay_token = $1',
+    [token]
+  );
+  const order = orderResult.rows[0];
+  if (!order) return { order: null, approved: false };
+
+  if (order.status === ORDER_STATUS.PAID) return { order, approved: true, already: true };
+
+  if (approved) {
+    await markOrderPaid(order.id, order.user_id);
+  } else if (statusCode === 3 || statusCode === 4) {
+    await db.query('UPDATE orders SET status = $1 WHERE id = $2', [ORDER_STATUS.FAILED, order.id]);
+  }
+  return { order, approved };
+}
+
+async function handleFlowReturn(req, res) {
+  const token = (req.query && req.query.token) || (req.body && req.body.token);
+  if (!token) return res.redirect(`${FRONTEND_URL}/Checkout.dc.html?payment=error`);
+  try {
+    const { order, approved } = await verifyAndMarkFlow(token);
+    if (!order) return res.redirect(`${FRONTEND_URL}/Checkout.dc.html?payment=error`);
+    if (!approved) return res.redirect(`${FRONTEND_URL}/Checkout.dc.html?payment=declined`);
+    return res.redirect(`${FRONTEND_URL}/Confirmation.dc.html?order=${order.order_code}`);
+  } catch (e) {
+    console.error('Error confirmando pago Flow (return):', e.message);
+    return res.redirect(`${FRONTEND_URL}/Checkout.dc.html?payment=error`);
+  }
+}
+
+async function handleFlowConfirm(req, res) {
+  const token = (req.body && req.body.token) || (req.query && req.query.token);
+  if (!token) return res.status(400).send('missing token');
+  try {
+    await verifyAndMarkFlow(token);
+    res.status(200).send('OK');
+  } catch (e) {
+    console.error('Error confirmando pago Flow (webhook):', e.message);
+    res.status(500).send('error');
+  }
+}
+
+router.get('/flow/return', handleFlowReturn);
+router.post('/flow/return', handleFlowReturn);
+router.post('/flow/confirm', handleFlowConfirm);
 
 module.exports = router;
 module.exports.markOrderPaid = markOrderPaid;
