@@ -221,6 +221,8 @@
     logout: logout,
     updateProfile: updateProfile,
     changePassword: changePassword,
+    forgotPassword: forgotPassword,
+    resetPassword: resetPassword,
     addToCart: addToCart,
     removeFromCart: removeFromCart,
     getCartItems: getCartItems,
