@@ -21,6 +21,7 @@
   <a href="AdminVersions.dc.html" style="text-decoration:none;font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:5px;color:{{ cVersiones }};background:{{ bVersiones }}">Versiones</a>
   <a href="AdminOrders.dc.html" style="text-decoration:none;font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:5px;color:{{ cPedidos }};background:{{ bPedidos }}">Pedidos</a>
   <a href="AdminCustomers.dc.html" style="text-decoration:none;font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:5px;color:{{ cClientes }};background:{{ bClientes }}">Clientes</a>
+  <a href="AdminMemberships.dc.html" style="text-decoration:none;font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:5px;color:{{ cMembresias }};background:{{ bMembresias }}">Membresías</a>
   <a href="AdminCoupons.dc.html" style="text-decoration:none;font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:5px;color:{{ cCupones }};background:{{ bCupones }}">Cupones</a>
   <a href="AdminSupport.dc.html" style="text-decoration:none;font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:5px;color:{{ cSoporte }};background:{{ bSoporte }}">Soporte</a>
 
@@ -40,13 +41,14 @@ class Component extends DCLogic {
     const activeBg = 'rgba(127,216,205,.14)';
     const mk = (key) => ({ color: active === key ? teal : gray, bg: active === key ? activeBg : 'transparent' });
     const dashboard = mk('dashboard'), productos = mk('productos'), versiones = mk('versiones'),
-      pedidos = mk('pedidos'), clientes = mk('clientes'), cupones = mk('cupones'), soporte = mk('soporte');
+    pedidos = mk('pedidos'), clientes = mk('clientes'), membresias = mk('membresias'), cupones = mk('cupones'), soporte = mk('soporte');
     return {
       cDashboard: dashboard.color, bDashboard: dashboard.bg,
       cProductos: productos.color, bProductos: productos.bg,
       cVersiones: versiones.color, bVersiones: versiones.bg,
       cPedidos: pedidos.color, bPedidos: pedidos.bg,
       cClientes: clientes.color, bClientes: clientes.bg,
+      cMembresias: membresias.color, bMembresias: membresias.bg,
       cCupones: cupones.color, bCupones: cupones.bg,
       cSoporte: soporte.color, bSoporte: soporte.bg,
       onLogout: () => {
