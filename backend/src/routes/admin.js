@@ -141,5 +141,28 @@ router.get('/download-events', async (req, res) => {
   );
   res.json({ events: result.rows });
 });
+router.get('/memberships', async (req, res) => {
+  const result = await db.query(
+    `SELECT id, email, name, membership_status, membership_requested_at, membership_expires_at, membership_discount_percent
+     FROM users
+     WHERE membership_status IN ('pending', 'active')
+     ORDER BY membership_status = 'pending' DESC, membership_requested_at DESC NULLS LAST`
+  );
+  res.json({ memberships: result.rows });
+});
 
+router.post('/memberships/:userId/confirm', async (req, res) => {
+  const userId = Number(req.params.userId);
+  const result = await db.query(
+    `UPDATE users SET membership_status = 'active', membership_expires_at = now() + interval '1 month'
+     WHERE id = $1 AND membership_status = 'pending'
+     RETURNING id, email, membership_expires_at`,
+    [userId]
+  );
+  if (result.rows.length === 0) {
+    return res.status(404).json({ error: 'No hay una solicitud de membresía pendiente para este usuario.' });
+  }
+  logSecurityEvent('admin_membership_confirm', `admin=${req.user.id} usuario=${userId}`, req);
+  res.json({ ok: true, user: result.rows[0] });
+});
 module.exports = router;
