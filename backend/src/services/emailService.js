@@ -34,4 +34,22 @@ async function sendVerificationEmail(toEmail, verifyUrl) {
   return { sent: true };
 }
 
-module.exports = { sendVerificationEmail };
+module.exports = { sendVerificationEmail, sendPasswordResetEmail };
+
+async function sendPasswordResetEmail(toEmail, resetUrl) {
+  const transport = getTransport();
+  if (!transport) {
+    console.log(`[email no configurado] Enlace de recuperación para ${toEmail}: ${resetUrl}`);
+    return { sent: false };
+  }
+  await transport.sendMail({
+    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    to: toEmail,
+    subject: 'Recupera tu contraseña — NutriPlantillas',
+    html: `<p>Recibimos una solicitud para restablecer tu contraseña en NutriPlantillas.</p>
+           <p>Si fuiste tú, haz clic en el siguiente enlace (válido por 1 hora):</p>
+           <p><a href="${resetUrl}">${resetUrl}</a></p>
+           <p>Si no fuiste tú, ignora este correo: tu contraseña actual sigue funcionando.</p>`,
+  });
+  return { sent: true };
+}
