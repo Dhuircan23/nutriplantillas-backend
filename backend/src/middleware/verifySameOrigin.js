@@ -18,11 +18,15 @@ const { logSecurityEvent } = require('../services/auditLog');
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
-// Rutas exentas: Transbank hace un POST de retorno desde su propio dominio, que
-// legítimamente no tiene un Origin de nuestra lista. Es seguro porque ese
-// endpoint no confía en la cookie de sesión — valida el pago con token_ws
-// contra la API de Transbank.
-const EXEMPT_PATHS = [/^\/api\/payments\/webpay\/return$/];
+// Rutas exentas: Transbank y Flow hacen un POST/GET de retorno desde su propio
+// dominio, que legítimamente no tiene un Origin de nuestra lista. Es seguro
+// porque estos endpoints no confían en la cookie de sesión: validan el pago
+// contra la API del proveedor usando el token que llega en la URL/body.
+const EXEMPT_PATHS = [
+  /^\/api\/payments\/webpay\/return$/,
+  /^\/api\/payments\/flow\/return$/,
+  /^\/api\/payments\/flow\/confirm$/,
+];
 
 function isExempt(path) {
   return EXEMPT_PATHS.some((re) => re.test(path));
@@ -46,10 +50,6 @@ function verifySameOrigin(req, res, next) {
   const referer = req.headers.referer || null;
   const candidate = origin || (referer ? originOf(referer) : null);
 
-  // Sin Origin ni Referer: puede ser curl o un cliente server-to-server. Se
-  // permite solo si no hay cookie de sesión — es decir, si la petición no se
-  // está apoyando en credenciales ambientales del navegador. Un ataque CSRF
-  // siempre lleva cookie y siempre lleva Origin.
   if (!candidate) {
     const hasSessionCookie = !!(req.cookies && req.cookies.nmx_token);
     if (!hasSessionCookie) return next();
