@@ -2,7 +2,7 @@
 // historial de versiones) ahora vive en el backend/Postgres — GET /api/products y
 // GET /api/products/:id lo devuelven junto con el precio real.
 (function (global) {
-  var API_BASE = 'https://api.nutrimetria.cc';
+  var API_BASE = 'https://nutriplantillas-backend1-production.up.railway.app';
 
   var BUYNOW_KEY = 'nmx_buynow_v1';
 
@@ -167,6 +167,15 @@
   async function adminConfirmManualPayment(orderCode) {
     return await apiFetch('/api/admin/orders/' + encodeURIComponent(orderCode) + '/confirm-manual', { method: 'POST' });
   }
+  async function adminGetStats() {
+    return await apiFetch('/api/admin/stats');
+  }
+  async function adminGetCustomers() {
+    return (await apiFetch('/api/admin/customers')).customers;
+  }
+  async function adminGetProducts() {
+    return (await apiFetch('/api/admin/products')).products;
+  }
 
   function downloadUrl(orderItemId, assetType) {
     var base = API_BASE + '/api/downloads/' + encodeURIComponent(orderItemId);
@@ -199,6 +208,9 @@
     initPayment: initPayment,
     adminListOrders: adminListOrders,
     adminConfirmManualPayment: adminConfirmManualPayment,
+    adminGetStats: adminGetStats,
+    adminGetCustomers: adminGetCustomers,
+    adminGetProducts: adminGetProducts,
     downloadUrl: downloadUrl
   };
 })(window);
