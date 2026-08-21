@@ -133,7 +133,15 @@
   async function resetPassword(token, newPassword) {
     return await apiFetch('/api/auth/reset-password', { method: 'POST', body: JSON.stringify({ token: token, newPassword: newPassword }) });
   }
-
+  async function subscribeMembership() {
+    return await apiFetch('/api/membership/subscribe', { method: 'POST' });
+  }
+  async function adminListMemberships() {
+    return (await apiFetch('/api/admin/memberships')).memberships;
+  }
+  async function adminConfirmMembership(userId) {
+    return await apiFetch('/api/admin/memberships/' + encodeURIComponent(userId) + '/confirm', { method: 'POST' });
+  }
   async function addToCart(productId) {
     await apiFetch('/api/cart', { method: 'POST', body: JSON.stringify({ productId: productId }) });
     try { global.dispatchEvent(new Event('nmx:cart-changed')); } catch (e) {}
@@ -223,6 +231,9 @@
     changePassword: changePassword,
     forgotPassword: forgotPassword,
     resetPassword: resetPassword,
+    subscribeMembership: subscribeMembership,
+    adminListMemberships: adminListMemberships,
+    adminConfirmMembership: adminConfirmMembership,
     addToCart: addToCart,
     removeFromCart: removeFromCart,
     getCartItems: getCartItems,
