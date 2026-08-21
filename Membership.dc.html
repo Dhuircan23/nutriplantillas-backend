@@ -10,6 +10,7 @@
 <helmet data-dc-atomics>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
 <style>
   body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
   a{color:#6ee7b7} a:hover{color:#9ff4d1}
@@ -19,15 +20,76 @@
 
 <dc-import name="Header" active="membresia" cart-count="2" hint-size="100%,64px"></dc-import>
 
-<div style="max-width:640px;margin:0 auto;padding:100px 40px 140px;text-align:center">
-  <div class="mono" style="color:#7fd8cd;font-size:11px;margin-bottom:14px">NUTRIMETRÍA</div>
-  <h1 style="font-size:26px;font-weight:800;margin:0 0 14px;letter-spacing:-.3px">No hay planes de suscripción</h1>
-  <p style="font-size:14px;color:#9fb8ae;line-height:1.65;margin:0 0 28px">Cada una de las 32 herramientas NUTRIMETRÍA se compra de forma individual. No existe una membresía ni un acceso continuo a toda la biblioteca.</p>
-  <a href="Catalog.dc.html" style="display:inline-block;text-decoration:none;padding:13px 28px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:14px">Ver herramientas</a>
+<div style="max-width:560px;margin:0 auto;padding:80px 40px 120px;text-align:center">
+  <div class="mono" style="color:#7fd8cd;font-size:11px;margin-bottom:14px">NUTRIMETRÍA MEMBRESÍA</div>
+  <h1 style="font-size:28px;font-weight:800;margin:0 0 12px;letter-spacing:-.3px">15% de descuento en cada compra</h1>
+  <p style="font-size:14px;color:#9fb8ae;line-height:1.65;margin:0 0 8px">$2.990 CLP al mes. Aplica automáticamente al precio real de cualquier herramienta o paquete mientras esté activa.</p>
+  <p style="font-size:12px;color:#8fa9a0;margin:0 0 32px">Sin Transbank conectado todavía, la activación es manual: un administrador confirma tu solicitud y queda vigente por 30 días.</p>
+
+  <sc-if value="{{ status === 'active' }}" hint-placeholder-val="{{ false }}">
+    <div style="border:1px solid rgba(110,231,183,.25);border-radius:8px;padding:24px;background:rgba(110,231,183,.06)">
+      <div style="color:#6ee7b7;font-weight:800;font-size:16px;margin-bottom:6px">Membresía activa ✓</div>
+      <p style="font-size:13px;color:#c7dad2;margin:0">Vigente hasta {{ expiresLabel }}. El 15% de descuento ya se aplica en tu carrito.</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ status === 'pending' }}" hint-placeholder-val="{{ false }}">
+    <div style="border:1px solid rgba(255,148,102,.28);border-radius:8px;padding:24px;background:rgba(255,148,102,.07)">
+      <div style="color:#ff9466;font-weight:800;font-size:16px;margin-bottom:6px">Solicitud enviada</div>
+      <p style="font-size:13px;color:#e8c3ae;margin:0">Un administrador confirmará tu pago y activará el descuento en las próximas horas.</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ status === 'none' }}" hint-placeholder-val="{{ true }}">
+    <sc-if value="{{ errorMsg }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:12.5px;color:#ff6b5e;font-weight:600;margin-bottom:14px">{{ errorMsg }}</div>
+    </sc-if>
+    <button type="button" disabled="{{ submitting }}" onClick="{{ onSubscribe }}" style="appearance:none;font-family:inherit;padding:14px 32px;background:#6ee7b7;color:#04140f;border:none;border-radius:6px;font-weight:800;font-size:14.5px;cursor:pointer;opacity:{{ btnOpacity }}">{{ btnLabel }}</button>
+  </sc-if>
+
+  <sc-if value="{{ status === 'guest' }}" hint-placeholder-val="{{ false }}">
+    <a href="Login.dc.html" style="display:inline-block;text-decoration:none;padding:14px 32px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:800;font-size:14.5px">Inicia sesión para activarla</a>
+  </sc-if>
 </div>
 
 <dc-import name="Footer" hint-size="100%,420px"></dc-import>
 
 </x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { status: 'guest', expiresAt: null, submitting: false, errorMsg: '' };
+
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session) { this.setState({ status: 'guest' }); return; }
+    this.setState({ status: session.membershipStatus || 'none', expiresAt: session.membershipExpiresAt });
+  }
+
+  async _subscribe() {
+    this.setState({ submitting: true, errorMsg: '' });
+    try {
+      await window.NMXStore.subscribeMembership();
+      this.setState({ submitting: false, status: 'pending' });
+    } catch (err) {
+      this.setState({ submitting: false, errorMsg: (err && err.message) || 'No se pudo enviar la solicitud.' });
+    }
+  }
+
+  renderVals() {
+    const s = this.state;
+    return {
+      status: s.status,
+      expiresLabel: s.expiresAt ? new Date(s.expiresAt).toLocaleDateString('es-CL') : '',
+      errorMsg: s.errorMsg,
+      submitting: s.submitting,
+      btnOpacity: s.submitting ? 0.65 : 1,
+      btnLabel: s.submitting ? 'Enviando…' : 'Activar membresía · $2.990/mes',
+      onSubscribe: () => this._subscribe()
+    };
+  }
+}
+
+</script>
 </body>
 </html>
