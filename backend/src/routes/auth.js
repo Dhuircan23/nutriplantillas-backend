@@ -232,11 +232,13 @@ router.post('/logout-all', requireAuth, async (req, res) => {
 
 router.get('/me', requireAuth, async (req, res) => {
   const result = await db.query(
-    `SELECT email, role, name, country, profession, marketing_opt_in, product_updates_opt_in, email_verified
+    `SELECT email, role, name, country, profession, marketing_opt_in, product_updates_opt_in, email_verified,
+            membership_status, membership_expires_at, membership_discount_percent
      FROM users WHERE id = $1`,
     [req.user.id]
   );
   const u = result.rows[0];
+  const membershipActive = u.membership_status === 'active' && u.membership_expires_at && new Date(u.membership_expires_at) > new Date();
   res.json({
     user: {
       email: u.email,
@@ -247,6 +249,9 @@ router.get('/me', requireAuth, async (req, res) => {
       marketingOptIn: u.marketing_opt_in,
       productUpdatesOptIn: u.product_updates_opt_in,
       emailVerified: u.email_verified,
+      membershipStatus: membershipActive ? 'active' : (u.membership_status === 'pending' ? 'pending' : 'none'),
+      membershipExpiresAt: u.membership_expires_at,
+      membershipDiscountPercent: u.membership_discount_percent,
     },
   });
 });
