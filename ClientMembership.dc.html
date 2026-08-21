@@ -24,44 +24,33 @@
   <dc-import name="ClientNav" active="membresia" hint-size="220px,360px"></dc-import>
 
   <div>
-    <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Membresía</h1>
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 10px;letter-spacing:-.3px">Membresía</h1>
+    <div style="background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.14);border-radius:6px;padding:14px 16px;font-size:12.5px;color:#c7dad2;margin-bottom:28px">
+      NUTRIMETRÍA no ofrece planes de suscripción: cada herramienta se compra de forma individual. Aquí ves tu historial real de compras.
+    </div>
 
-    <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:22px;margin-bottom:24px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
-        <div>
-          <div class="mono" style="font-size:10.5px;color:#8fa9a0;text-transform:uppercase;margin-bottom:4px">Plan actual</div>
-          <div style="font-size:18px;font-weight:800">Plan Anual</div>
+    <h2 style="font-size:16px;font-weight:800;margin:0 0 12px">Historial de compras</h2>
+    <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden;margin-bottom:8px">
+      <div role="table" style="display:flex;flex-direction:column">
+        <div role="row" style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:#c7dad2">
+          <div style="padding:10px 14px">Pedido</div>
+          <div style="padding:10px 14px">Fecha</div>
+          <div style="padding:10px 14px">Monto</div>
+          <div style="padding:10px 14px">Estado</div>
         </div>
-        <span class="mono" style="font-size:10.5px;background:rgba(110,231,183,.12);color:#6ee7b7;padding:4px 10px;border-radius:3px">Activa</span>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px" class="mono">
-        <div><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:2px">Renovación</div><div style="font-size:13px;font-weight:700">14 de marzo, 2027</div></div>
-        <div><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:2px">Valor</div><div style="font-size:13px;font-weight:700">$89.990 CLP / año</div></div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <span style="font-size:12px;font-weight:700;padding:9px 16px;border:1.5px solid rgba(110,231,183,.3);border-radius:5px;color:#e2e8f0;cursor:pointer">Modificar plan</span>
-        <span style="font-size:12px;font-weight:700;padding:9px 16px;border:1.5px solid #ff6b5e;border-radius:5px;color:#ff6b5e;cursor:pointer">Cancelar membresía</span>
+        <sc-for list="{{ orders }}" as="o" hint-placeholder-count="3">
+          <div role="row" style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;border-top:1px solid rgba(110,231,183,.12);font-size:12.5px;align-items:center">
+            <div style="padding:10px 14px" class="mono">{{ o.number }}</div>
+            <div style="padding:10px 14px;color:#8fa9a0" class="mono">{{ o.date }}</div>
+            <div style="padding:10px 14px;font-weight:700">{{ o.total }}</div>
+            <div style="padding:10px 14px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ o.statusBg }};color:{{ o.statusColor }}">{{ o.status }}</span></div>
+          </div>
+        </sc-for>
       </div>
     </div>
-
-    <h2 style="font-size:16px;font-weight:800;margin:0 0 12px">Productos incluidos en tu plan</h2>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:28px">
-      <sc-for list="{{ included }}" as="i" hint-placeholder-count="5">
-        <div style="display:flex;justify-content:space-between;border:1px solid rgba(110,231,183,.16);border-radius:6px;padding:10px 14px;font-size:13px">
-          <span>{{ i.name }}</span><span class="mono" style="font-size:10.5px;color:{{ i.color }}">{{ i.status }}</span>
-        </div>
-      </sc-for>
-    </div>
-
-    <h2 style="font-size:16px;font-weight:800;margin:0 0 12px">Historial de pagos</h2>
-    <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden">
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead><tr style="background:rgba(255,255,255,.03)"><th style="text-align:left;padding:10px 14px;font-weight:700;color:#c7dad2">Fecha</th><th style="text-align:left;padding:10px 14px;font-weight:700;color:#c7dad2">Monto</th><th style="text-align:left;padding:10px 14px;font-weight:700;color:#c7dad2">Estado</th></tr></thead>
-        <tbody>
-          <tr style="border-top:1px solid rgba(110,231,183,.12)"><td style="padding:10px 14px" class="mono">14 mar 2026</td><td style="padding:10px 14px">$89.990 CLP</td><td style="padding:10px 14px;color:#34d399;font-weight:700">Pagado</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center;color:#8fa9a0;font-size:13px;padding:20px 0">Todavía no tienes compras. <a href="Catalog.dc.html">Explora las herramientas</a>.</div>
+    </sc-if>
   </div>
 </div>
 
@@ -69,24 +58,44 @@
 
 </x-dc>
 <script type="text/x-dc" data-dc-script>
+const STATUS_LABEL = {
+  pending: { label: 'Pendiente', bg: 'rgba(255,148,102,.14)', color: '#ff9466' },
+  payment_processing: { label: 'Esperando pago', bg: 'rgba(255,148,102,.14)', color: '#ff9466' },
+  authorized: { label: 'Autorizado', bg: 'rgba(255,148,102,.14)', color: '#ff9466' },
+  paid: { label: 'Pagado', bg: 'rgba(110,231,183,.12)', color: '#6ee7b7' },
+  failed: { label: 'Fallido', bg: '#fde8e6', color: '#ff6b5e' },
+  cancelled: { label: 'Cancelado', bg: 'rgba(255,255,255,.06)', color: '#b7cfc6' },
+  refunded: { label: 'Reembolsado', bg: 'rgba(255,255,255,.06)', color: '#b7cfc6' }
+};
+
 class Component extends DCLogic {
+  state = { orders: [], loaded: false };
+
   async componentDidMount() {
     if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
     const session = await window.NMXStore.getSession();
-    if (!session) {
-      window.location.href = 'Login.dc.html';
+    if (!session) { window.location.href = 'Login.dc.html'; return; }
+    try {
+      const orders = await window.NMXStore.getMyOrders();
+      this.setState({ orders, loaded: true });
+    } catch (e) {
+      this.setState({ orders: [], loaded: true });
     }
   }
+
   renderVals() {
-    return {
-      included: [
-        {name:'Calculadora energética', status:'Incluido', color:'#34d399'},
-        {name:'Registro antropométrico', status:'Incluido', color:'#34d399'},
-        {name:'Recordatorio 24h', status:'Incluido', color:'#34d399'},
-        {name:'Seguimiento corporal', status:'Incluido', color:'#34d399'},
-        {name:'Nutrición deportiva', status:'Próximamente', color:'#b8730f'}
-      ]
-    };
+    const orders = (this.state.orders || []).map((o) => {
+      const st = STATUS_LABEL[o.status] || { label: o.status, bg: 'rgba(255,255,255,.06)', color: '#b7cfc6' };
+      return {
+        number: o.order_code || o.orderCode,
+        date: new Date(o.created_at || o.createdAt).toLocaleDateString('es-CL'),
+        total: '$' + Number(o.total_clp || 0).toLocaleString('es-CL'),
+        status: st.label,
+        statusBg: st.bg,
+        statusColor: st.color
+      };
+    });
+    return { orders, isEmpty: this.state.loaded && orders.length === 0 };
   }
 }
 
