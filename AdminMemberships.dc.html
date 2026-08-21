@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:220px 1fr;min-height:100vh">
+  <div style="background:#04140f;padding:20px 14px">
+    <dc-import name="AdminNav" active="membresias" hint-size="192px,480px"></dc-import>
+  </div>
+
+  <div style="padding:28px 36px 60px">
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px">Membresías</h1>
+    <p style="font-size:12.5px;color:#8fa9a0;margin:0 0 22px">Sin Transbank conectado, confirma aquí a mano las solicitudes de membresía ($2.990/mes, 15% de descuento).</p>
+
+    <sc-if value="{{ confirmMsg }}" hint-placeholder-val="{{ false }}">
+      <div style="background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.25);border-radius:6px;padding:11px 16px;font-size:12.5px;color:#6ee7b7;margin-bottom:16px">{{ confirmMsg }}</div>
+    </sc-if>
+
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden">
+      <div role="table" style="display:flex;flex-direction:column;min-width:820px">
+        <div role="row" style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1.2fr;background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:#c7dad2">
+          <div style="padding:12px 16px">Cliente</div>
+          <div style="padding:12px 16px">Estado</div>
+          <div style="padding:12px 16px">Solicitada</div>
+          <div style="padding:12px 16px">Vence</div>
+          <div style="padding:12px 16px">Acción</div>
+        </div>
+        <sc-for list="{{ memberships }}" as="m" hint-placeholder-count="4">
+          <div role="row" style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1.2fr;border-top:1px solid rgba(110,231,183,.12);align-items:center;font-size:12.5px">
+            <div style="padding:12px 16px;font-weight:700">{{ m.email }}</div>
+            <div style="padding:12px 16px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ m.statusBg }};color:{{ m.statusColor }}">{{ m.statusLabel }}</span></div>
+            <div style="padding:12px 16px;color:#8fa9a0" class="mono">{{ m.requested }}</div>
+            <div style="padding:12px 16px;color:#8fa9a0" class="mono">{{ m.expires }}</div>
+            <div style="padding:12px 16px">
+              <sc-if value="{{ m.canConfirm }}" hint-placeholder-val="{{ false }}">
+                <button type="button" disabled="{{ m.confirming }}" onClick="{{ m.onConfirm }}" style="appearance:none;font-family:inherit;font-size:11.5px;font-weight:700;padding:7px 14px;background:#6ee7b7;color:#04140f;border:none;border-radius:5px;cursor:pointer;opacity:{{ m.confirmOpacity }}">{{ m.confirmLabel }}</button>
+              </sc-if>
+              <sc-if value="{{ !m.canConfirm }}" hint-placeholder-val="{{ true }}">
+                <span class="mono" style="font-size:10.5px;color:#7f9a91">—</span>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:32px 16px;text-align:center;color:#8fa9a0;font-size:13px">No hay solicitudes ni membresías activas.</div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { memberships: [], loaded: false, confirmingId: null, confirmMsg: '' };
+
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session || session.role !== 'admin') { window.location.href = 'Login.dc.html'; return; }
+    if (this._nmxAdminMount) this._nmxAdminMount();
+    this._load();
+  }
+
+  async _load() {
+    try {
+      const memberships = await window.NMXStore.adminListMemberships();
+      this.setState({ memberships, loaded: true });
+    } catch (e) {
+      this.setState({ loaded: true, confirmMsg: 'No se pudieron cargar las membresías.' });
+    }
+  }
+
+  async _confirm(userId) {
+    this.setState({ confirmingId: userId, confirmMsg: '' });
+    try {
+      await window.NMXStore.adminConfirmMembership(userId);
+      this.setState({ confirmingId: null, confirmMsg: 'Membresía activada por 1 mes.' });
+      this._load();
+    } catch (e) {
+      this.setState({ confirmingId: null, confirmMsg: (e && e.message) || 'No se pudo confirmar.' });
+    }
+  }
+
+  renderVals() {
+    const memberships = this.state.memberships.map((m) => {
+      const pending = m.membership_status === 'pending';
+      const confirming = this.state.confirmingId === m.id;
+      return {
+        email: m.email,
+        statusLabel: pending ? 'Pendiente' : 'Activa',
+        statusBg: pending ? 'rgba(255,148,102,.14)' : 'rgba(110,231,183,.12)',
+        statusColor: pending ? '#ff9466' : '#6ee7b7',
+        requested: m.membership_requested_at ? new Date(m.membership_requested_at).toLocaleDateString('es-CL') : '—',
+        expires: m.membership_expires_at ? new Date(m.membership_expires_at).toLocaleDateString('es-CL') : '—',
+        canConfirm: pending,
+        confirming,
+        confirmOpacity: confirming ? 0.6 : 1,
+        confirmLabel: confirming ? 'Confirmando…' : 'Activar',
+        onConfirm: () => this._confirm(m.id)
+      };
+    });
+    return { memberships, isEmpty: this.state.loaded && memberships.length === 0, confirmMsg: this.state.confirmMsg };
+  }
+}
+
+</script>
+</body>
+</html>
