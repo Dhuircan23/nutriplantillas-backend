@@ -24,10 +24,11 @@
   </div>
 
   <div style="padding:28px 36px 60px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <h1 style="font-size:24px;font-weight:800;margin:0;letter-spacing:-.3px">Versiones</h1>
       <a href="AdminPublishVersion.dc.html" style="text-decoration:none;font-size:13px;font-weight:700;padding:10px 18px;background:#6ee7b7;color:#04140f;border-radius:6px">+ Nueva versión</a>
     </div>
+    <div style="background:rgba(255,148,102,.07);border:1px solid rgba(255,148,102,.22);border-radius:6px;padding:11px 16px;font-size:12px;color:#e8c3ae;margin-bottom:22px" class="mono">FUNCIÓN NO IMPLEMENTADA — El historial de versiones por producto todavía no está implementado: cada NMX hoy tiene una sola versión activa.</div>
 
     <div style="background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden">
       <div role="table" style="display:flex;flex-direction:column;min-width:920px">
@@ -49,6 +50,9 @@
             <div style="padding:12px 16px"><a href="AdminVersionDetail.dc.html" style="text-decoration:none;font-size:11.5px;font-weight:700">Ver detalle</a></div>
           </div>
         </sc-for>
+        <sc-if value="{{ true }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:26px 16px;text-align:center;color:#8fa9a0;font-size:13px">Sin historial — función no implementada.</div>
+        </sc-if>
       </div>
     </div>
   </div>
@@ -68,14 +72,7 @@ class Component extends DCLogic {
   }
   renderVals() {
     return {
-      versions: [
-        {product:'Calculadora de Necesidades Energéticas', version:'v1.0', date:'12 jul 2026', status:'Publicada', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7', compat:'Windows, Web'},
-        {product:'Registro Antropométrico', version:'v1.1', date:'—', status:'Lista para publicar', statusBg:'rgba(110,231,183,.06)', statusColor:'#6ee7b7', compat:'Windows, Mac, Web'},
-        {product:'Registro Antropométrico', version:'v1.0', date:'2 jun 2026', status:'Publicada', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7', compat:'Windows, Web'},
-        {product:'Seguimiento de Composición Corporal', version:'v0.9', date:'—', status:'En pruebas', statusBg:'rgba(255,148,102,.14)', statusColor:'#ff9466', compat:'Windows'},
-        {product:'Calculadora de Composición Corporal Antigua', version:'v1.0', date:'20 may 2026', status:'Retirada', statusBg:'#fde8e6', statusColor:'#ff6b5e', compat:'Windows'},
-        {product:'Historia Clínica Nutricional', version:'v0.1', date:'—', status:'Revisión metodológica', statusBg:'#f3f1e9', statusColor:'#8a7a5a', compat:'Sin definir'}
-      ]
+      versions: []
     };
   }
 }
