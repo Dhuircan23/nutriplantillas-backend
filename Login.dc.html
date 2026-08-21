@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <script src="./store.js"></script>
 <script>
+  // Completar con las credenciales reales de OAuth cuando estén disponibles.
   var GOOGLE_CLIENT_ID = '889022887607-cok3l2meq9seith9jpkt7e1b0vnog2nv.apps.googleusercontent.com';
   var APPLE_CLIENT_ID = '';
 </script>
@@ -57,7 +58,6 @@
 
   <div style="display:flex;flex-direction:column;gap:10px">
     <button type="button" onClick="{{ onGoogleLogin }}" style="appearance:none;font-family:'Manrope',sans-serif;text-align:center;padding:12px;background:rgba(255,255,255,.04);border:1.5px solid rgba(110,231,183,.25);color:#e2e8f0;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer">Continuar con Google</button>
-    <button type="button" onClick="{{ onAppleLogin }}" style="appearance:none;font-family:'Manrope',sans-serif;text-align:center;padding:12px;background:rgba(255,255,255,.04);border:1.5px solid rgba(110,231,183,.25);color:#e2e8f0;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer">Continuar con Apple</button>
   </div>
 
   <p style="font-size:12.5px;color:#8fa9a0;text-align:center;margin-top:22px">¿No tienes cuenta? <a href="Register.dc.html">Crear cuenta</a></p>
