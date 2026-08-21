@@ -25,7 +25,6 @@
     <nav style="display:flex;align-items:center;gap:22px;font-size:13px;font-weight:600;color:#9fb8ae;white-space:nowrap">
       <a href="Catalog.dc.html" style="text-decoration:none;color:{{ navColorTienda }};border-bottom:2px solid {{ navBorderTienda }};padding-bottom:18px;margin-bottom:-18px">Tienda</a>
       <a href="Packages.dc.html" style="text-decoration:none;color:{{ navColorPaquetes }};border-bottom:2px solid {{ navBorderPaquetes }};padding-bottom:18px;margin-bottom:-18px">Paquetes</a>
-      <a href="Membership.dc.html" style="text-decoration:none;color:{{ navColorMembresia }};border-bottom:2px solid {{ navBorderMembresia }};padding-bottom:18px;margin-bottom:-18px">Membresía</a>
       <a href="Resources.dc.html" style="text-decoration:none;color:{{ navColorRecursos }};border-bottom:2px solid {{ navBorderRecursos }};padding-bottom:18px;margin-bottom:-18px">Recursos</a>
       <a href="Docs.dc.html" style="text-decoration:none;color:{{ navColorDocs }};border-bottom:2px solid {{ navBorderDocs }};padding-bottom:18px;margin-bottom:-18px">Documentación</a>
       <a href="HowItWorks.dc.html" style="text-decoration:none;color:{{ navColorComo }};border-bottom:2px solid {{ navBorderComo }};padding-bottom:18px;margin-bottom:-18px">Cómo funciona</a>
@@ -74,7 +73,6 @@
   <nav style="position:sticky;top:64px;z-index:39;background:rgba(4,20,15,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(110,231,183,.14);padding:8px 24px 18px;display:flex;flex-direction:column;font-family:'Manrope',system-ui,sans-serif">
     <a href="Catalog.dc.html" style="text-decoration:none;color:#eef7f3;font-weight:600;font-size:15px;padding:12px 0;border-bottom:1px solid rgba(110,231,183,.12)">Tienda</a>
     <a href="Packages.dc.html" style="text-decoration:none;color:#eef7f3;font-weight:600;font-size:15px;padding:12px 0;border-bottom:1px solid rgba(110,231,183,.12)">Paquetes</a>
-    <a href="Membership.dc.html" style="text-decoration:none;color:#eef7f3;font-weight:600;font-size:15px;padding:12px 0;border-bottom:1px solid rgba(110,231,183,.12)">Membresía</a>
     <a href="Resources.dc.html" style="text-decoration:none;color:#eef7f3;font-weight:600;font-size:15px;padding:12px 0;border-bottom:1px solid rgba(110,231,183,.12)">Recursos</a>
     <a href="Docs.dc.html" style="text-decoration:none;color:#eef7f3;font-weight:600;font-size:15px;padding:12px 0;border-bottom:1px solid rgba(110,231,183,.12)">Documentación</a>
     <a href="HowItWorks.dc.html" style="text-decoration:none;color:#eef7f3;font-weight:600;font-size:15px;padding:12px 0;border-bottom:1px solid rgba(110,231,183,.12)">Cómo funciona</a>
@@ -131,7 +129,6 @@ class Component extends DCLogic {
     });
     const tienda = mk('tienda');
     const paquetes = mk('paquetes');
-    const membresia = mk('membresia');
     const recursos = mk('recursos');
     const docs = mk('docs');
     const como = mk('como');
@@ -149,7 +146,6 @@ class Component extends DCLogic {
       },
       navColorTienda: tienda.color, navBorderTienda: tienda.border,
       navColorPaquetes: paquetes.color, navBorderPaquetes: paquetes.border,
-      navColorMembresia: membresia.color, navBorderMembresia: membresia.border,
       navColorRecursos: recursos.color, navBorderRecursos: recursos.border,
       navColorDocs: docs.color, navBorderDocs: docs.border,
       navColorComo: como.color, navBorderComo: como.border,
