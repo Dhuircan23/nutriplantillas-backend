@@ -32,12 +32,12 @@
         <div style="font-size:24px;font-weight:800">{{ productCount }}</div>
       </div>
       <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:18px">
-        <div class="mono" style="font-size:10.5px;color:#8fa9a0;text-transform:uppercase;margin-bottom:6px">Membresía</div>
-        <div style="font-size:15px;font-weight:800;color:#34d399">Activa — Plan Anual</div>
+        <div class="mono" style="font-size:10.5px;color:#8fa9a0;text-transform:uppercase;margin-bottom:6px">Correo</div>
+        <div style="font-size:15px;font-weight:800;color:{{ emailVerifiedColor }}">{{ emailVerifiedLabel }}</div>
       </div>
       <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:18px">
-        <div class="mono" style="font-size:10.5px;color:#8fa9a0;text-transform:uppercase;margin-bottom:6px">Descargas pendientes</div>
-        <div style="font-size:24px;font-weight:800">0</div>
+        <div class="mono" style="font-size:10.5px;color:#8fa9a0;text-transform:uppercase;margin-bottom:6px">Total gastado</div>
+        <div style="font-size:24px;font-weight:800">{{ totalSpent }}</div>
       </div>
     </div>
 
@@ -90,11 +90,16 @@ class Component extends DCLogic {
       name: 'Pedido ' + (o.order_code || o.orderCode),
       date: o.paid_at ? 'Pagado el ' + new Date(o.paid_at).toLocaleDateString('es-CL') : ''
     }));
+    const verified = !!(this.state.session && this.state.session.emailVerified);
+    const totalSpentClp = paidOrders.reduce((sum, o) => sum + Number(o.total_clp || 0), 0);
     return {
       greetingName: this.state.session ? this.state.session.email : '',
       greetingSep: this.state.session ? ', ' : '',
       productCount: paidOrders.length,
-      recentPurchases
+      recentPurchases,
+      emailVerifiedLabel: verified ? 'Verificado' : 'Sin verificar',
+      emailVerifiedColor: verified ? '#34d399' : '#ff9466',
+      totalSpent: '$' + totalSpentClp.toLocaleString('es-CL')
     };
   }
 }
