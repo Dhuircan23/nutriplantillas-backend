@@ -14,98 +14,20 @@
   body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
   a{color:#6ee7b7} a:hover{color:#9ff4d1}
   .mono{font-family:'JetBrains Mono',monospace}
-  @media (max-width:768px){
-    .rg-mem-plans{grid-template-columns:1fr !important}
-    .rg-mem-benefits{grid-template-columns:repeat(2,1fr) !important}
-    .rg-mem-library{grid-template-columns:repeat(2,1fr) !important}
-  }
-  @media (max-width:480px){
-    .rg-mem-benefits,.rg-mem-library{grid-template-columns:1fr !important}
-  }
 </style>
 </helmet>
 
 <dc-import name="Header" active="membresia" cart-count="2" hint-size="100%,64px"></dc-import>
 
-<div style="background:#04140f;color:#fff;padding:56px 40px">
-  <div style="max-width:900px;margin:0 auto;text-align:center">
-    <div class="mono" style="color:#7fd8cd;font-size:11px;margin-bottom:14px">NUTRIMETRÍA EXCEL LAB MEMBERSHIP</div>
-    <h1 style="font-size:30px;font-weight:800;margin:0 0 14px;letter-spacing:-.4px">Acceso continuo a la biblioteca de herramientas.</h1>
-    <p style="font-size:14.5px;color:#c7d2d5;line-height:1.65;max-width:600px;margin:0 auto">La inclusión de cada producto depende del plan vigente. Antes de pagar te mostramos exactamente qué archivos incluye tu suscripción.</p>
-  </div>
-</div>
-
-<div style="max-width:1100px;margin:0 auto;padding:56px 40px 24px">
-  <div class="rg-mem-plans" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:48px">
-    <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:28px">
-      <div style="font-weight:800;font-size:17px;margin-bottom:6px">Plan Mensual</div>
-      <div style="font-size:12.5px;color:#9fb8ae;margin-bottom:18px">Ideal para probar la biblioteca sin compromiso.</div>
-      <div style="font-weight:800;font-size:28px;margin-bottom:4px">$9.990 CLP<span style="font-size:13px;font-weight:600;color:#8fa9a0">/mes</span></div>
-      <div class="mono" style="font-size:11px;color:#8fa9a0;margin-bottom:20px">Renovación automática mensual</div>
-      <a href="Checkout.dc.html" style="display:block;text-decoration:none;text-align:center;padding:12px;border:1.5px solid #6ee7b7;color:#6ee7b7;border-radius:6px;font-weight:700;font-size:13.5px">Elegir plan mensual</a>
-    </div>
-    <div style="border:1.5px solid #6ee7b7;border-radius:8px;padding:28px;position:relative">
-      <span class="mono" style="position:absolute;top:-11px;left:24px;background:#ff7a45;color:#241008;font-size:10px;padding:3px 9px;border-radius:3px">MEJOR VALOR</span>
-      <div style="font-weight:800;font-size:17px;margin-bottom:6px">Plan Anual</div>
-      <div style="font-size:12.5px;color:#9fb8ae;margin-bottom:18px">Para quienes usan Excel Lab de forma constante.</div>
-      <div style="font-weight:800;font-size:28px;margin-bottom:4px">$89.990 CLP<span style="font-size:13px;font-weight:600;color:#8fa9a0">/año</span></div>
-      <div class="mono" style="font-size:11px;color:#34d399;margin-bottom:20px">Equivale a $7.499 CLP/mes</div>
-      <a href="Checkout.dc.html" style="display:block;text-decoration:none;text-align:center;padding:12px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:13.5px">Elegir plan anual</a>
-    </div>
-  </div>
-
-  <h2 style="font-size:20px;font-weight:800;margin:0 0 20px">Beneficios incluidos</h2>
-  <div class="rg-mem-benefits" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px">
-    <sc-for list="{{ benefits }}" as="b" hint-placeholder-count="6">
-      <div style="border:1px solid rgba(110,231,183,.16);border-radius:6px;padding:16px">
-        <div style="font-weight:700;font-size:13.5px;margin-bottom:6px">{{ b.title }}</div>
-        <div style="font-size:12.5px;color:#9fb8ae;line-height:1.5">{{ b.desc }}</div>
-      </div>
-    </sc-for>
-  </div>
-
-  <div style="background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.14);border-radius:8px;padding:22px 24px;margin-bottom:56px">
-    <div class="mono" style="font-size:11px;color:#8fa9a0;margin-bottom:10px">// BIBLIOTECA INCLUIDA — julio 2026 (contenido demostrativo)</div>
-    <div class="rg-mem-library" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-      <sc-for list="{{ libraryItems }}" as="li" hint-placeholder-count="8">
-        <div style="display:flex;justify-content:space-between;background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.14);border-radius:5px;padding:10px 12px;font-size:12.5px">
-          <span>{{ li.name }}</span>
-          <span class="mono" style="font-size:10px;color:{{ li.color }}">{{ li.status }}</span>
-        </div>
-      </sc-for>
-    </div>
-  </div>
+<div style="max-width:640px;margin:0 auto;padding:100px 40px 140px;text-align:center">
+  <div class="mono" style="color:#7fd8cd;font-size:11px;margin-bottom:14px">NUTRIMETRÍA</div>
+  <h1 style="font-size:26px;font-weight:800;margin:0 0 14px;letter-spacing:-.3px">No hay planes de suscripción</h1>
+  <p style="font-size:14px;color:#9fb8ae;line-height:1.65;margin:0 0 28px">Cada una de las 32 herramientas NUTRIMETRÍA se compra de forma individual. No existe una membresía ni un acceso continuo a toda la biblioteca.</p>
+  <a href="Catalog.dc.html" style="display:inline-block;text-decoration:none;padding:13px 28px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:14px">Ver herramientas</a>
 </div>
 
 <dc-import name="Footer" hint-size="100%,420px"></dc-import>
 
 </x-dc>
-<script type="text/x-dc" data-dc-script>
-class Component extends DCLogic {
-  renderVals() {
-    return {
-      benefits: [
-        {title:'Biblioteca seleccionada', desc:'Acceso a un conjunto curado de herramientas Excel Lab.'},
-        {title:'Nuevas versiones incluidas', desc:'Las actualizaciones de productos incluidos no tienen costo adicional.'},
-        {title:'Recursos complementarios', desc:'Guías y materiales de apoyo exclusivos para miembros.'},
-        {title:'Historial de descargas', desc:'Accede a tus descargas anteriores desde tu cuenta.'},
-        {title:'Notificaciones de actualización', desc:'Aviso cuando una herramienta que usas se actualiza.'},
-        {title:'Precio especial en lanzamientos', desc:'Condición preferente al salir nuevas herramientas.'}
-      ],
-      libraryItems: [
-        {name:'Calculadora energética', status:'Incluido', color:'#34d399'},
-        {name:'Registro antropométrico', status:'Incluido', color:'#34d399'},
-        {name:'Recordatorio 24h', status:'Incluido', color:'#34d399'},
-        {name:'Seguimiento corporal', status:'Incluido', color:'#34d399'},
-        {name:'Historia clínica', status:'Incluido', color:'#34d399'},
-        {name:'Nutrición deportiva', status:'Próximamente', color:'#b8730f'},
-        {name:'Tabla dietosintética', status:'Próximamente', color:'#b8730f'},
-        {name:'Organización profesional', status:'No incluido', color:'#8fa9a0'}
-      ]
-    };
-  }
-}
-
-</script>
 </body>
 </html>
