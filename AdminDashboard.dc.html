@@ -25,11 +25,9 @@
   </div>
 
   <div style="padding:28px 36px 60px">
-    <div style="background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.14);border-radius:6px;padding:10px 16px;font-size:12px;color:#8a7a5a;margin-bottom:22px" class="mono">ACCESO DEMOSTRATIVO — sin autenticación real. Todas las cifras de esta página son datos ficticios de ejemplo.</div>
-
     <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Dashboard</h1>
 
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:28px">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px">
       <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
         <div class="card">
           <div class="mono" style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:6px">{{ k.label }}</div>
@@ -40,31 +38,36 @@
 
     <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-bottom:28px">
       <div class="card">
-        <div style="font-weight:800;font-size:14.5px;margin-bottom:16px">Ventas del periodo (demostrativo)</div>
+        <div style="font-weight:800;font-size:14.5px;margin-bottom:16px">Ingresos pagados por mes (últimos 12 meses)</div>
         <div style="display:flex;align-items:flex-end;gap:8px;height:140px">
           <sc-for list="{{ salesBars }}" as="b" hint-placeholder-count="12">
-            <div style="flex:1;background:#6ee7b7;border-radius:3px 3px 0 0;height:{{ b.height }}"></div>
+            <div title="{{ b.label }}" style="flex:1;background:#6ee7b7;border-radius:3px 3px 0 0;height:{{ b.height }}"></div>
           </sc-for>
         </div>
-        <div class="mono" style="display:flex;justify-content:space-between;font-size:10px;color:#8fa9a0;margin-top:8px"><span>Ene</span><span>Jun</span><span>Dic</span></div>
+        <div class="mono" style="display:flex;justify-content:space-between;font-size:10px;color:#8fa9a0;margin-top:8px"><span>{{ firstMonthLabel }}</span><span>{{ lastMonthLabel }}</span></div>
       </div>
       <div class="card">
-        <div style="font-weight:800;font-size:14.5px;margin-bottom:14px">Productos más consultados</div>
+        <div style="font-weight:800;font-size:14.5px;margin-bottom:14px">Productos más vendidos</div>
         <div style="display:flex;flex-direction:column;gap:10px">
-          <sc-for list="{{ topViewed }}" as="p" hint-placeholder-count="5">
-            <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:#c7dad2">{{ p.name }}</span><span class="mono" style="color:#8fa9a0">{{ p.views }}</span></div>
-          </sc-for>
+          <sc-if value="{{ hasTopProducts }}" hint-placeholder-val="{{ true }}">
+            <sc-for list="{{ topViewed }}" as="p" hint-placeholder-count="5">
+              <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:#c7dad2">{{ p.name }}</span><span class="mono" style="color:#8fa9a0">{{ p.views }}</span></div>
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{ !hasTopProducts }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12.5px;color:#8fa9a0">Aún no hay ventas pagadas.</div>
+          </sc-if>
         </div>
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:20px;margin-bottom:28px">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px">
-          <div style="font-weight:800;font-size:14.5px">Pedidos recientes</div>
-          <a href="AdminOrders.dc.html" style="font-size:12px;font-weight:700;text-decoration:none">Ver todos →</a>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:10px">
+    <div class="card" style="margin-bottom:28px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px">
+        <div style="font-weight:800;font-size:14.5px">Pedidos recientes</div>
+        <a href="AdminOrders.dc.html" style="font-size:12px;font-weight:700;text-decoration:none">Ver todos →</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-if value="{{ hasRecentOrders }}" hint-placeholder-val="{{ true }}">
           <sc-for list="{{ recentOrders }}" as="o" hint-placeholder-count="4">
             <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(110,231,183,.12);padding-top:10px">
               <div><div class="mono" style="font-size:11.5px;font-weight:700">{{ o.number }}</div><div style="font-size:11.5px;color:#8fa9a0">{{ o.customer }}</div></div>
@@ -72,30 +75,10 @@
               <span style="font-weight:700;font-size:12.5px">{{ o.total }}</span>
             </div>
           </sc-for>
-        </div>
-      </div>
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px">
-          <div style="font-weight:800;font-size:14.5px">Soporte prioritario</div>
-          <a href="AdminSupport.dc.html" style="font-size:12px;font-weight:700;text-decoration:none">Ver todo →</a>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <sc-for list="{{ supportTickets }}" as="t" hint-placeholder-count="3">
-            <div style="border-top:1px solid rgba(110,231,183,.12);padding-top:10px">
-              <div style="font-size:12.5px;font-weight:700;margin-bottom:2px">{{ t.subject }}</div>
-              <span class="mono" style="font-size:10px;padding:2px 7px;border-radius:3px;background:{{ t.priorityBg }};color:{{ t.priorityColor }}">{{ t.priority }}</span>
-            </div>
-          </sc-for>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:28px">
-      <div style="font-weight:800;font-size:14.5px;margin-bottom:14px">Actualizaciones pendientes</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <sc-for list="{{ pendingUpdates }}" as="u" hint-placeholder-count="2">
-          <div style="display:flex;justify-content:space-between;font-size:12.5px;border-top:1px solid rgba(110,231,183,.12);padding-top:8px"><span>{{ u.name }}</span><span class="mono" style="color:#ff9466">{{ u.status }}</span></div>
-        </sc-for>
+        </sc-if>
+        <sc-if value="{{ !hasRecentOrders }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12.5px;color:#8fa9a0">Aún no hay pedidos.</div>
+        </sc-if>
       </div>
     </div>
 
@@ -105,8 +88,8 @@
         <a href="AdminProductEditor.dc.html" style="text-decoration:none;font-size:12.5px;font-weight:700;padding:9px 16px;background:#6ee7b7;color:#04140f;border-radius:6px">Crear producto</a>
         <a href="AdminPublishVersion.dc.html" style="text-decoration:none;font-size:12.5px;font-weight:700;padding:9px 16px;border:1.5px solid rgba(110,231,183,.3);border-radius:6px;color:#e2e8f0">Publicar versión</a>
         <a href="AdminOrders.dc.html" style="text-decoration:none;font-size:12.5px;font-weight:700;padding:9px 16px;border:1.5px solid rgba(110,231,183,.3);border-radius:6px;color:#e2e8f0">Revisar pedido</a>
-        <a href="AdminCoupons.dc.html" style="text-decoration:none;font-size:12.5px;font-weight:700;padding:9px 16px;border:1.5px solid rgba(110,231,183,.3);border-radius:6px;color:#e2e8f0">Crear cupón</a>
-        <a href="AdminSupport.dc.html" style="text-decoration:none;font-size:12.5px;font-weight:700;padding:9px 16px;border:1.5px solid rgba(110,231,183,.3);border-radius:6px;color:#e2e8f0">Responder soporte</a>
+        <a href="AdminProducts.dc.html" style="text-decoration:none;font-size:12.5px;font-weight:700;padding:9px 16px;border:1.5px solid rgba(110,231,183,.3);border-radius:6px;color:#e2e8f0">Ver productos</a>
+        <a href="AdminCustomers.dc.html" style="text-decoration:none;font-size:12.5px;font-weight:700;padding:9px 16px;border:1.5px solid rgba(110,231,183,.3);border-radius:6px;color:#e2e8f0">Ver clientes</a>
         <a href="Home.dc.html" style="text-decoration:none;font-size:12.5px;font-weight:700;padding:9px 16px;border:1.5px solid rgba(110,231,183,.3);border-radius:6px;color:#e2e8f0">Ver tienda</a>
       </div>
     </div>
@@ -116,6 +99,8 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
+  state = { loaded: false, stats: null };
+
   async componentDidMount() {
     if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
     const session = await window.NMXStore.getSession();
@@ -124,39 +109,57 @@ class Component extends DCLogic {
       return;
     }
     if (this._nmxAdminMount) this._nmxAdminMount();
+    try {
+      const [stats, orders] = await Promise.all([
+        window.NMXStore.adminGetStats(),
+        window.NMXStore.adminListOrders()
+      ]);
+      this.setState({ loaded: true, stats, orders: orders.slice(0, 4) });
+    } catch (e) {
+      this.setState({ loaded: true, stats: null, orders: [] });
+    }
   }
+
   renderVals() {
+    const s = this.state.stats;
+    const money = (n) => '$' + Number(n || 0).toLocaleString('es-CL');
+    const monthly = (s && s.monthlySales) || [];
+    const maxRevenue = Math.max(1, ...monthly.map((m) => m.revenue));
+    const monthLabel = (m) => {
+      const [y, mo] = m.month.split('-');
+      return new Date(Number(y), Number(mo) - 1, 1).toLocaleDateString('es-CL', { month: 'short' });
+    };
+    const ORDER_STATUS_LABEL = {
+      pending: { label: 'Pendiente', bg: 'rgba(255,148,102,.14)', color: '#ff9466' },
+      payment_processing: { label: 'Esperando pago', bg: 'rgba(255,148,102,.14)', color: '#ff9466' },
+      authorized: { label: 'Autorizado', bg: 'rgba(255,148,102,.14)', color: '#ff9466' },
+      paid: { label: 'Pagado', bg: 'rgba(110,231,183,.12)', color: '#6ee7b7' },
+      failed: { label: 'Fallido', bg: '#fde8e6', color: '#ff6b5e' },
+      cancelled: { label: 'Cancelado', bg: 'rgba(255,255,255,.06)', color: '#b7cfc6' },
+      refunded: { label: 'Reembolsado', bg: 'rgba(255,255,255,.06)', color: '#b7cfc6' }
+    };
+    const recentOrders = (this.state.orders || []).map((o) => {
+      const st = ORDER_STATUS_LABEL[o.status] || { label: o.status, bg: 'rgba(255,255,255,.06)', color: '#b7cfc6' };
+      return { number: o.order_code, customer: o.customer_email, total: money(o.total_clp), status: st.label, statusBg: st.bg, statusColor: st.color };
+    });
+
     return {
-      kpis: [
-        {label:'Ingresos del periodo', value:'$1.842.300'},
-        {label:'Ventas', value:'186'},
-        {label:'Pedidos', value:'172'},
-        {label:'Clientes', value:'134'},
-        {label:'Membresías activas', value:'28'}
+      kpis: s ? [
+        { label: 'Ingresos pagados', value: money(s.revenueClp) },
+        { label: 'Ventas pagadas', value: String(s.salesCount) },
+        { label: 'Pedidos totales', value: String(s.ordersCount) },
+        { label: 'Clientes que compraron', value: String(s.customersCount) }
+      ] : [
+        { label: 'Ingresos pagados', value: '—' }, { label: 'Ventas pagadas', value: '—' },
+        { label: 'Pedidos totales', value: '—' }, { label: 'Clientes que compraron', value: '—' }
       ],
-      salesBars: Array.from({length:12}).map((_,i)=>({height:(30+Math.round(Math.sin(i)*20+20))+'px'})),
-      topViewed: [
-        {name:'Calculadora de Necesidades Energéticas', views:'2.340'},
-        {name:'Registro Antropométrico', views:'1.980'},
-        {name:'Recordatorio de 24 Horas', views:'1.410'},
-        {name:'Historia Clínica Nutricional', views:'980'},
-        {name:'Seguimiento de Composición Corporal', views:'760'}
-      ],
-      recentOrders: [
-        {number:'NP-2026-00842', customer:'Camila Rojas', total:'$10.980', status:'Pagado', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7'},
-        {number:'NP-2026-00841', customer:'Ignacio Soto', total:'$4.990', status:'Pendiente', statusBg:'rgba(255,148,102,.14)', statusColor:'#ff9466'},
-        {number:'NP-2026-00840', customer:'Valentina Muñoz', total:'$19.990', status:'Pagado', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7'},
-        {number:'NP-2026-00839', customer:'Diego Fuentes', total:'$5.990', status:'Rechazado', statusBg:'#fde8e6', statusColor:'#ff6b5e'}
-      ],
-      supportTickets: [
-        {subject:'Archivo no abre en Excel 2019', priority:'Crítica', priorityBg:'#fde8e6', priorityColor:'#ff6b5e'},
-        {subject:'Duda sobre licencia de equipo', priority:'Media', priorityBg:'rgba(255,148,102,.14)', priorityColor:'#ff9466'},
-        {subject:'Error de fórmula en hoja de resultados', priority:'Alta', priorityBg:'rgba(255,148,102,.14)', priorityColor:'#ff9466'}
-      ],
-      pendingUpdates: [
-        {name:'Registro Antropométrico — v1.1 en revisión', status:'Pendiente de publicar'},
-        {name:'Calculadora de Composición Corporal — corrección de fórmula', status:'En pruebas'}
-      ]
+      salesBars: monthly.length ? monthly.map((m) => ({ label: m.month, height: Math.max(6, Math.round((m.revenue / maxRevenue) * 140)) + 'px' })) : Array.from({ length: 12 }).map(() => ({ label: '', height: '6px' })),
+      firstMonthLabel: monthly.length ? monthLabel(monthly[0]) : '—',
+      lastMonthLabel: monthly.length ? monthLabel(monthly[monthly.length - 1]) : '—',
+      topViewed: s ? s.topProducts.map((p) => ({ name: p.name, views: String(p.sales) })) : [],
+      hasTopProducts: !!(s && s.topProducts.length),
+      recentOrders,
+      hasRecentOrders: recentOrders.length > 0
     };
   }
 }
