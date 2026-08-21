@@ -25,6 +25,7 @@
 
   <div style="padding:28px 36px 60px">
     <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Soporte</h1>
+    <div style="background:rgba(255,148,102,.07);border:1px solid rgba(255,148,102,.22);border-radius:6px;padding:11px 16px;font-size:12px;color:#e8c3ae;margin:14px 0 22px" class="mono">FUNCIÓN NO IMPLEMENTADA — El sistema de tickets de soporte todavía no está implementado: no existe backend para recibir ni gestionar solicitudes.</div>
 
     <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
       <select style="padding:9px 12px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:12.5px;font-family:'Manrope',sans-serif"><option>Todos los productos</option></select>
@@ -52,13 +53,12 @@
             <div style="padding:12px 16px"><a href="AdminSupportDetail.dc.html" style="text-decoration:none;font-size:11.5px;font-weight:700">Ver</a></div>
           </div>
         </sc-for>
+        <sc-if value="{{ true }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:26px 16px;text-align:center;color:#8fa9a0;font-size:13px">Sin tickets — función no implementada.</div>
+        </sc-if>
       </div>
     </div>
 
-    <div style="background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.14);border-radius:8px;padding:16px 20px">
-      <div class="mono" style="font-size:11px;color:#8a7a5a;margin-bottom:8px">// PROBLEMAS REPETIDOS DETECTADOS (demostrativo)</div>
-      <div style="font-size:12.5px;color:#c7dad2">3 solicitudes relacionadas con "Registro Antropométrico v1.0" mencionan error de fórmula de percentil — ya corregido en v1.1, pendiente de publicación.</div>
-    </div>
   </div>
 </div>
 
@@ -76,14 +76,7 @@ class Component extends DCLogic {
   }
   renderVals() {
     return {
-      tickets: [
-        {number:'S-041', customer:'Camila Rojas', subject:'Archivo no abre en Excel 2019', product:'Reg. Antropométrico', priority:'Crítica', prioBg:'#fde8e6', prioColor:'#ff6b5e', status:'Nuevo', statusBg:'rgba(255,255,255,.06)', statusColor:'#b7cfc6'},
-        {number:'S-040', customer:'Ignacio Soto', subject:'Duda sobre licencia de equipo', product:'General', priority:'Media', prioBg:'rgba(255,148,102,.14)', prioColor:'#ff9466', status:'En revisión', statusBg:'rgba(255,148,102,.14)', statusColor:'#ff9466'},
-        {number:'S-039', customer:'Valentina Muñoz', subject:'Error de fórmula en hoja de resultados', product:'Reg. Antropométrico', priority:'Alta', prioBg:'rgba(255,148,102,.14)', prioColor:'#ff9466', status:'Esperando al cliente', statusBg:'#f3f1e9', statusColor:'#8a7a5a'},
-        {number:'S-038', customer:'Diego Fuentes', subject:'Consulta por compatibilidad Mac', product:'Calc. Energética', priority:'Baja', prioBg:'rgba(255,255,255,.06)', prioColor:'#b7cfc6', status:'Solucionado', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7'},
-        {number:'S-037', customer:'Fernanda Vidal', subject:'Solicitud de factura', product:'General', priority:'Baja', prioBg:'rgba(255,255,255,.06)', prioColor:'#b7cfc6', status:'Cerrado', statusBg:'rgba(255,255,255,.06)', statusColor:'#b7cfc6'},
-        {number:'S-036', customer:'Tomás Bravo', subject:'Error de fórmula de percentil', product:'Reg. Antropométrico', priority:'Alta', prioBg:'rgba(255,148,102,.14)', prioColor:'#ff9466', status:'Solucionado', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7'}
-      ]
+      tickets: []
     };
   }
 }
