@@ -6,9 +6,6 @@ const { generateOrderCode } = require('../utils/orderCode');
 const router = express.Router();
 router.use(requireAuth);
 
-// POST /api/orders
-// body opcional: { productIds: ["nmx01"] } para el flujo "comprar ahora".
-// Sin body, usa el carrito actual del usuario (igual que getCheckoutItems() del prototipo).
 router.post('/', async (req, res) => {
   const client = await db.pool.connect();
   try {
@@ -35,11 +32,21 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'No hay productos para generar el pedido.' });
     }
 
+    const memberResult = await client.query(
+      'SELECT membership_status, membership_expires_at, membership_discount_percent FROM users WHERE id = $1',
+      [req.user.id]
+    );
+    const mem = memberResult.rows[0];
+    const memberActive = mem.membership_status === 'active' && mem.membership_expires_at && new Date(mem.membership_expires_at) > new Date();
+    const discountPct = memberActive ? mem.membership_discount_percent : 0;
+    if (discountPct > 0) {
+      productRows = productRows.map((p) => ({ ...p, price_clp: Math.round(p.price_clp * (100 - discountPct) / 100) }));
+    }
+
     const total = productRows.reduce((sum, p) => sum + p.price_clp, 0);
 
     await client.query('BEGIN');
 
-    // El código de pedido es UNIQUE; reintenta en el caso (muy improbable) de colisión.
     let order;
     for (let attempt = 0; attempt < 5; attempt++) {
       try {
@@ -52,7 +59,7 @@ router.post('/', async (req, res) => {
         order = orderResult.rows[0];
         break;
       } catch (e) {
-        if (e.code === '23505' && attempt < 4) continue; // unique_violation, reintenta
+        if (e.code === '23505' && attempt < 4) continue;
         throw e;
       }
     }
@@ -66,10 +73,6 @@ router.post('/', async (req, res) => {
     }
 
     await client.query('COMMIT');
-
-    // El carrito NO se limpia acá a propósito: solo se limpia cuando el pago
-    // efectivamente se confirma (ver payments.js), para no perder los items
-    // si el usuario abandona o falla el pago.
     res.status(201).json({ order: { ...order, items: productRows } });
   } catch (e) {
     await client.query('ROLLBACK');
@@ -98,8 +101,6 @@ router.get('/:orderCode', async (req, res) => {
   const order = orderResult.rows[0];
   if (!order) return res.status(404).json({ error: 'Pedido no encontrado.' });
 
-  // Ownership check: solo el dueño del pedido o un admin pueden verlo.
-  // Esto es lo que reemplaza el fallback inseguro de Confirmation.dc.html.
   if (order.user_id !== req.user.id && req.user.role !== 'admin') {
     return res.status(403).json({ error: 'No tienes acceso a este pedido.' });
   }
