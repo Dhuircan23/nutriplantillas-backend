@@ -97,12 +97,48 @@ class WebpayProvider extends PaymentProvider {
   }
 }
 
-// Selector del proveedor activo. Cuando Transbank se apruebe para producción,
-// basta con PAYMENT_PROVIDER=webpay y credenciales reales — sin tocar órdenes,
-// carrito, permisos ni descargas.
+// Proveedor Flow (https://www.flow.cl). Alternativa a Transbank: afiliación
+// online más rápida, acepta tarjetas y transferencia. Requiere
+// PAYMENT_PROVIDER=flow explícito + FLOW_API_KEY/FLOW_SECRET_KEY reales — sin
+// ellos, createTransaction falla con un error claro en vez de cobrar nada.
+class FlowProvider extends PaymentProvider {
+  get name() {
+    return 'flow';
+  }
+
+  async createTransaction({ orderCode, amountClp, email, flowReturnUrl, flowConfirmationUrl }) {
+    const { createPayment } = require('./flow');
+    const payment = await createPayment({
+      commerceOrder: orderCode,
+      subject: `NutriPlantillas — pedido ${orderCode}`,
+      amountClp,
+      email,
+      urlConfirmation: flowConfirmationUrl,
+      urlReturn: flowReturnUrl,
+    });
+    // Flow redirige con un simple GET (no un POST con formulario, como Webpay).
+    return { redirectUrl: `${payment.url}?token=${payment.token}`, token: payment.token, method: 'GET' };
+  }
+
+  async commitTransaction({ token }) {
+    const { getStatus } = require('./flow');
+    const result = await getStatus(token);
+    const approved = Number(result.status) === 2;
+    return { approved, providerStatus: String(result.status), raw: result };
+  }
+
+  async getTransactionStatus({ token }) {
+    return this.commitTransaction({ token });
+  }
+}
+
+// Selector del proveedor activo. Cuando Transbank o Flow se aprueben para
+// producción, basta con PAYMENT_PROVIDER=webpay o PAYMENT_PROVIDER=flow y las
+// credenciales reales — sin tocar órdenes, carrito, permisos ni descargas.
 const PROVIDERS = {
   manual: () => new ManualPaymentProvider(),
   webpay: () => new WebpayProvider(),
+  flow: () => new FlowProvider(),
 };
 
 function getPaymentProvider() {
@@ -120,6 +156,7 @@ module.exports = {
   PaymentProvider,
   ManualPaymentProvider,
   WebpayProvider,
+  FlowProvider,
   getPaymentProvider,
   ORDER_STATUS,
 };
