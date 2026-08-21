@@ -10,7 +10,6 @@
 <helmet data-dc-atomics>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-<script src="./store.js"></script>
 <script>
   // Completar con las credenciales reales de OAuth cuando estén disponibles.
   var GOOGLE_CLIENT_ID = '';
@@ -18,12 +17,13 @@
 </script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" async defer></script>
+<script src="./store.js"></script>
 <style>
   body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
   a{color:#6ee7b7} a:hover{color:#9ff4d1}
   .field{display:flex;flex-direction:column;gap:6px}
   .field label{font-size:12.5px;font-weight:700;color:#c7dad2}
-  .field input{padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Manrope',sans-serif}
+  .field input,.field select{padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Manrope',sans-serif;background:rgba(255,255,255,.04);color:#e2e8f0}
 </style>
 </helmet>
 
@@ -35,10 +35,51 @@
     <p style="font-size:13.5px;color:#9fb8ae;margin:0">Guarda tus compras y accede a futuras actualizaciones.</p>
   </div>
   <form onSubmit="{{ onSubmit }}" style="display:flex;flex-direction:column;gap:16px">
-    <div class="field"><label for="rname">Nombre completo</label><input id="rname" placeholder="Tu nombre"/></div>
+    <div class="field"><label for="rname">Nombre completo</label><input id="rname" placeholder="Tu nombre" value="{{ name }}" onChange="{{ onNameChange }}"/></div>
     <div class="field"><label for="remail">Correo electrónico</label><input id="remail" type="email" placeholder="tucorreo@ejemplo.com" value="{{ email }}" onChange="{{ onEmailChange }}"/></div>
-    <div class="field"><label for="rprof">Profesión (opcional)</label><input id="rprof" placeholder="Ej. Nutricionista, estudiante de nutrición"/></div>
-    <div class="field"><label for="rpass">Contraseña</label><input id="rpass" type="password" placeholder="Mínimo 8 caracteres" value="{{ password }}" onChange="{{ onPasswordChange }}"/></div>
+    <div class="field"><label for="rprof">Profesión (opcional)</label><input id="rprof" placeholder="Ej. Nutricionista, estudiante de nutrición" value="{{ profession }}" onChange="{{ onProfessionChange }}"/></div>
+
+    <div class="field">
+      <label for="rpass">Contraseña</label>
+      <div style="position:relative">
+        <input id="rpass" type="{{ passwordFieldType }}" placeholder="Crea una contraseña" value="{{ password }}" onChange="{{ onPasswordChange }}" style="width:100%;padding-right:42px;box-sizing:border-box"/>
+        <button type="button" onClick="{{ onTogglePassword }}" aria-label="Mostrar u ocultar contraseña" style="position:absolute;right:8px;top:0;height:100%;display:flex;align-items:center;background:none;border:none;cursor:pointer;color:#8fa9a0;padding:0">{{ passwordToggleIcon }}</button>
+      </div>
+    </div>
+
+    <ul style="list-style:none;margin:-6px 0 0;padding:0;display:flex;flex-direction:column;gap:5px">
+      <sc-for list="{{ passwordRules }}" as="rule" hint-placeholder-count="4">
+        <li style="display:flex;gap:7px;align-items:center;font-size:12px;color:{{ rule.color }}">
+          <span style="width:15px;height:15px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:{{ rule.badgeBg }};color:{{ rule.badgeColor }};font-size:10px;line-height:1">{{ rule.icon }}</span>
+          {{ rule.label }}
+        </li>
+      </sc-for>
+    </ul>
+
+    <div class="field">
+      <label for="rpass2">Confirmar contraseña</label>
+      <div style="position:relative">
+        <input id="rpass2" type="{{ confirmFieldType }}" placeholder="Repite tu contraseña" value="{{ confirmPassword }}" onChange="{{ onConfirmPasswordChange }}" style="width:100%;padding-right:42px;box-sizing:border-box"/>
+        <button type="button" onClick="{{ onToggleConfirm }}" aria-label="Mostrar u ocultar contraseña" style="position:absolute;right:8px;top:0;height:100%;display:flex;align-items:center;background:none;border:none;cursor:pointer;color:#8fa9a0;padding:0">{{ confirmToggleIcon }}</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="rphone">N.° de teléfono móvil</label>
+      <div style="display:grid;grid-template-columns:110px 1fr;gap:8px">
+        <select id="rphonecc" value="{{ phoneCode }}" onChange="{{ onPhoneCodeChange }}">
+          <option value="+56">Chile +56</option>
+          <option value="+54">Argentina +54</option>
+          <option value="+51">Perú +51</option>
+          <option value="+57">Colombia +57</option>
+          <option value="+52">México +52</option>
+          <option value="+34">España +34</option>
+          <option value="+1">EE. UU. +1</option>
+        </select>
+        <input id="rphone" placeholder="9 1234 5678" value="{{ phoneNumber }}" onChange="{{ onPhoneNumberChange }}"/>
+      </div>
+    </div>
+
     <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#b7cfc6">
       <input type="checkbox" checked="{{ accepted }}" onChange="{{ onAcceptChange }}" style="margin-top:2px"/>
       <span>Acepto los <a href="Terms.dc.html">términos y condiciones</a> y la <a href="Privacy.dc.html">política de privacidad</a>.</span>
@@ -67,8 +108,16 @@
 
 </x-dc>
 <script type="text/x-dc" data-dc-script>
+const OK = { color: '#6ee7b7', badgeBg: '#6ee7b7', badgeColor: '#04140f', icon: '✓' };
+const PENDING = { color: '#8fa9a0', badgeBg: 'rgba(255,255,255,.08)', badgeColor: '#8fa9a0', icon: '·' };
+
 class Component extends DCLogic {
-  state = { email: '', password: '', accepted: false, errorMsg: '', submitting: false };
+  state = {
+    name: '', email: '', profession: '', password: '', confirmPassword: '',
+    phoneCode: '+56', phoneNumber: '',
+    showPassword: false, showConfirm: false,
+    accepted: false, errorMsg: '', submitting: false
+  };
 
   componentDidMount() {
     this._initGoogle();
@@ -122,39 +171,101 @@ class Component extends DCLogic {
     }
   }
 
+  _passwordChecks() {
+    const p = this.state.password || '';
+    return {
+      minLen: p.length >= 10,
+      maxLen: p.length > 0 && p.length <= 40,
+      upper: /[A-Z]/.test(p),
+      lower: /[a-z]/.test(p),
+      number: /[0-9]/.test(p)
+    };
+  }
+
+  _isStrongPassword() {
+    const c = this._passwordChecks();
+    return c.minLen && c.maxLen && c.upper && c.lower && c.number;
+  }
+
   async _submit(e) {
     if (e && e.preventDefault) e.preventDefault();
     if (this.state.submitting) return;
+    const name = (this.state.name || '').trim();
     const email = (this.state.email || '').trim();
     const password = this.state.password || '';
+    const phoneNumber = (this.state.phoneNumber || '').trim();
+
     if (!this.state.accepted) {
       this.setState({ errorMsg: 'Debes aceptar los términos y la política de privacidad.' });
       return;
     }
-    if (!email || password.length < 8) {
-      this.setState({ errorMsg: 'Ingresa un correo válido y una contraseña de al menos 8 caracteres.' });
+    if (!name) {
+      this.setState({ errorMsg: 'Ingresa tu nombre completo.' });
       return;
     }
+    if (!email) {
+      this.setState({ errorMsg: 'Ingresa un correo válido.' });
+      return;
+    }
+    if (!phoneNumber) {
+      this.setState({ errorMsg: 'Ingresa tu número de teléfono móvil.' });
+      return;
+    }
+    if (!this._isStrongPassword()) {
+      this.setState({ errorMsg: 'Tu contraseña no cumple los requisitos de abajo.' });
+      return;
+    }
+    if (password !== this.state.confirmPassword) {
+      this.setState({ errorMsg: 'Las contraseñas no coinciden.' });
+      return;
+    }
+
     this.setState({ submitting: true, errorMsg: '' });
     try {
-      const user = await window.NMXStore.register(email, password);
-      window.location.href = user.role === 'admin' ? 'AdminDashboard.dc.html' : 'ClientArea.dc.html';
+      const phone = this.state.phoneCode + ' ' + phoneNumber;
+      await window.NMXStore.register(email, password, name, phone);
+      window.location.href = 'VerifyEmail.dc.html?email=' + encodeURIComponent(email);
     } catch (err) {
       this.setState({ submitting: false, errorMsg: err.message || 'No se pudo crear la cuenta.' });
     }
   }
 
   renderVals() {
+    const checks = this._passwordChecks();
+    const rule = (ok, label) => ({ ...(ok ? OK : PENDING), label });
     return {
+      name: this.state.name,
       email: this.state.email,
+      profession: this.state.profession,
       password: this.state.password,
+      confirmPassword: this.state.confirmPassword,
+      phoneCode: this.state.phoneCode,
+      phoneNumber: this.state.phoneNumber,
       accepted: this.state.accepted,
       errorMsg: this.state.errorMsg,
       submitting: this.state.submitting,
       submitOpacity: this.state.submitting ? 0.65 : 1,
       submitLabel: this.state.submitting ? 'Creando cuenta…' : 'Crear cuenta',
+      passwordFieldType: this.state.showPassword ? 'text' : 'password',
+      passwordToggleIcon: this.state.showPassword ? '🙈' : '👁',
+      confirmFieldType: this.state.showConfirm ? 'text' : 'password',
+      confirmToggleIcon: this.state.showConfirm ? '🙈' : '👁',
+      passwordRules: [
+        rule(checks.minLen, 'Mínimo 10 caracteres'),
+        rule(checks.maxLen, 'Máximo 40 caracteres'),
+        rule(checks.upper, 'Mínimo 1 mayúscula'),
+        rule(checks.lower, 'Mínimo 1 minúscula'),
+        rule(checks.number, 'Mínimo 1 número')
+      ],
+      onNameChange: (e) => this.setState({ name: e.target.value }),
       onEmailChange: (e) => this.setState({ email: e.target.value }),
+      onProfessionChange: (e) => this.setState({ profession: e.target.value }),
       onPasswordChange: (e) => this.setState({ password: e.target.value }),
+      onConfirmPasswordChange: (e) => this.setState({ confirmPassword: e.target.value }),
+      onTogglePassword: () => this.setState((s) => ({ showPassword: !s.showPassword })),
+      onToggleConfirm: () => this.setState((s) => ({ showConfirm: !s.showConfirm })),
+      onPhoneCodeChange: (e) => this.setState({ phoneCode: e.target.value }),
+      onPhoneNumberChange: (e) => this.setState({ phoneNumber: e.target.value }),
       onAcceptChange: (e) => this.setState({ accepted: !!(e && e.target && e.target.checked) }),
       onSubmit: (e) => this._submit(e),
       onGoogleLogin: () => { if (window.google) window.google.accounts.id.prompt(); },
@@ -162,6 +273,7 @@ class Component extends DCLogic {
     };
   }
 }
+
 </script>
 </body>
 </html>
