@@ -2,7 +2,7 @@
 // historial de versiones) ahora vive en el backend/Postgres — GET /api/products y
 // GET /api/products/:id lo devuelven junto con el precio real.
 (function (global) {
-  var API_BASE = 'https://nutriplantillas-backend1-production.up.railway.app';
+  var API_BASE = 'https://api.nutrimetria.cc';
 
   var BUYNOW_KEY = 'nmx_buynow_v1';
 
