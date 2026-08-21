@@ -24,10 +24,11 @@
   </div>
 
   <div style="padding:28px 36px 60px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <h1 style="font-size:24px;font-weight:800;margin:0;letter-spacing:-.3px">Cupones</h1>
       <a href="AdminCouponEditor.dc.html" style="text-decoration:none;font-size:13px;font-weight:700;padding:10px 18px;background:#6ee7b7;color:#04140f;border-radius:6px">+ Crear cupón</a>
     </div>
+    <div style="background:rgba(255,148,102,.07);border:1px solid rgba(255,148,102,.22);border-radius:6px;padding:11px 16px;font-size:12px;color:#e8c3ae;margin-bottom:22px" class="mono">FUNCIÓN NO IMPLEMENTADA — Los cupones de descuento todavía no están implementados: no existe la tabla ni la lógica de validación en el backend.</div>
 
     <div style="background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden">
       <div role="table" style="display:flex;flex-direction:column;min-width:900px">
@@ -49,6 +50,9 @@
             <div style="padding:12px 16px"><a href="AdminCouponEditor.dc.html" style="text-decoration:none;font-size:11.5px;font-weight:700">Editar</a></div>
           </div>
         </sc-for>
+        <sc-if value="{{ true }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:26px 16px;text-align:center;color:#8fa9a0;font-size:13px">No hay cupones — función no implementada.</div>
+        </sc-if>
       </div>
     </div>
   </div>
@@ -68,13 +72,7 @@ class Component extends DCLogic {
   }
   renderVals() {
     return {
-      coupons: [
-        {code:'BIENVENIDA10', discount:'10%', range:'1 jul – 31 dic 2026', limit:'500 usos', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7', status:'Activo'},
-        {code:'ESTUDIANTE15', discount:'15%', range:'1 ago – 30 sep 2026', limit:'200 usos', statusBg:'rgba(255,255,255,.06)', statusColor:'#b7cfc6', status:'Programado'},
-        {code:'VERANO2026', discount:'$2.000 CLP', range:'1 ene – 28 feb 2026', limit:'300 usos', statusBg:'rgba(255,255,255,.06)', statusColor:'#b7cfc6', status:'Expirado'},
-        {code:'MEMBRESIA20', discount:'20%', range:'1 jun – 31 dic 2026', limit:'100 usos', statusBg:'rgba(255,148,102,.14)', statusColor:'#ff9466', status:'Pausado'},
-        {code:'LANZAMIENTO', discount:'$1.000 CLP', range:'12 jul – 12 ago 2026', limit:'1000 usos', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7', status:'Activo'}
-      ]
+      coupons: []
     };
   }
 }
