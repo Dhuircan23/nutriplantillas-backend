@@ -182,7 +182,7 @@ class Component extends DCLogic {
   // transacción y obtener {url, token}, 3) redirigir el navegador con un POST
   // (no un simple location.href) llevando token_ws — así es como Webpay lo exige.
   async _startPayment() {
-    if (this.state.payStep) return; // evita doble clic mientras procesa
+    if (this.state.payStep) return;
     const nameOk = (this.state.contactName || '').trim().length > 0;
     const emailOk = /\S+@\S+\.\S+/.test(this.state.contactEmail || '');
     if (!nameOk || !emailOk) {
@@ -200,22 +200,25 @@ class Component extends DCLogic {
       this.setState({ payMsg: 'Conectando con la pasarela de pago…' });
       const result = await window.NMXStore.initPayment(orderCode);
 
-      // El backend habla con un PaymentProvider abstracto, así que la respuesta
-      // tiene dos formas posibles:
-      //   - Proveedor redirigido (Webpay): { url, token } -> POST a la pasarela.
-      //   - Proveedor manual: { requiresManualConfirmation } -> no hay a dónde
-      //     redirigir; el pedido queda esperando confirmación de un administrador.
       if (result && result.requiresManualConfirmation) {
         window.NMXStore.clearBuyNow();
         window.location.href = 'Confirmation.dc.html?order=' + encodeURIComponent(orderCode) + '&payment=pending';
         return;
       }
 
-      if (!result || !result.url || !result.token) {
+      if (!result || !result.url) {
         throw new Error('La pasarela de pago no devolvió una redirección válida.');
       }
 
       this.setState({ payMsg: 'Redirigiendo a la pasarela…' });
+
+      if (result.method === 'GET') {
+        window.location.href = result.url;
+        return;
+      }
+      if (!result.token) {
+        throw new Error('La pasarela de pago no devolvió un token válido.');
+      }
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = result.url;
