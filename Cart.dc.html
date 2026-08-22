@@ -121,7 +121,7 @@ class Component extends DCLogic {
       ...p,
       onRemove: () => window.NMXStore && window.NMXStore.removeFromCart(p.id)
     }));
-    const subtotal = raw.reduce((sum, p) => sum + (p.price || 0), 0);
+    const subtotal = raw.reduce((sum, p) => sum + Number(p.price_clp ?? p.priceClp ?? p.price ?? 0), 0);
     const subtotalLabel = '$' + subtotal.toLocaleString('es-CL') + ' CLP';
     return {
       items,
