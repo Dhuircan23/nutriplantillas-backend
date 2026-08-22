@@ -40,13 +40,24 @@
       <button type="submit" disabled="{{ savingProfile }}" style="align-self:flex-start;padding:11px 22px;background:#6ee7b7;color:#04140f;border:none;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit;opacity:{{ saveProfileOpacity }}">{{ saveProfileLabel }}</button>
     </form>
 
-    <h2 style="font-size:15px;font-weight:800;margin:0 0 14px">Contraseña</h2>
+    <h2 style="font-size:15px;font-weight:800;margin:0 0 6px">{{ passwordSectionTitle }}</h2>
+    <p style="font-size:12.5px;color:#8fa9a0;margin:0 0 14px">{{ passwordSectionHint }}</p>
     <sc-if value="{{ passwordMsg }}" hint-placeholder-val="{{ false }}">
       <div style="background:{{ passwordMsgBg }};border:1px solid {{ passwordMsgBorder }};border-radius:6px;padding:11px 16px;font-size:12.5px;color:{{ passwordMsgColor }};margin-bottom:16px">{{ passwordMsg }}</div>
     </sc-if>
     <form onSubmit="{{ onChangePassword }}" style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
-      <div class="field"><label>Contraseña actual</label><input type="password" placeholder="••••••••" value="{{ currentPassword }}" onChange="{{ onCurrentPasswordChange }}"/></div>
-      <div class="field"><label>Nueva contraseña</label><input type="password" placeholder="••••••••" value="{{ newPassword }}" onChange="{{ onNewPasswordChange }}"/></div>
+      <sc-if value="{{ hasPassword }}" hint-placeholder-val="{{ true }}">
+        <div class="field"><label>Contraseña actual</label><input type="password" placeholder="••••••••" value="{{ currentPassword }}" onChange="{{ onCurrentPasswordChange }}"/></div>
+      </sc-if>
+      <div class="field"><label>{{ newPasswordLabel }}</label><input type="password" placeholder="••••••••" value="{{ newPassword }}" onChange="{{ onNewPasswordChange }}"/></div>
+      <ul style="list-style:none;margin:-6px 0 0;padding:0;display:flex;flex-direction:column;gap:5px">
+        <sc-for list="{{ passwordRules }}" as="rule" hint-placeholder-count="5">
+          <li style="display:flex;gap:7px;align-items:center;font-size:12px;color:{{ rule.color }}">
+            <span style="width:15px;height:15px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:{{ rule.badgeBg }};color:{{ rule.badgeColor }};font-size:10px;line-height:1">{{ rule.icon }}</span>
+            {{ rule.label }}
+          </li>
+        </sc-for>
+      </ul>
       <button type="submit" disabled="{{ savingPassword }}" style="align-self:flex-start;padding:11px 22px;background:transparent;border:1.5px solid #6ee7b7;color:#6ee7b7;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit;opacity:{{ savePasswordOpacity }}">{{ savePasswordLabel }}</button>
     </form>
 
@@ -60,9 +71,12 @@
 
 </x-dc>
 <script type="text/x-dc" data-dc-script>
+const OK = { color: '#6ee7b7', badgeBg: '#6ee7b7', badgeColor: '#04140f', icon: '✓' };
+const PENDING = { color: '#8fa9a0', badgeBg: 'rgba(255,255,255,.08)', badgeColor: '#8fa9a0', icon: '·' };
+
 class Component extends DCLogic {
   state = {
-    loaded: false, name: '', email: '', country: '', profession: '',
+    loaded: false, name: '', email: '', country: '', profession: '', hasPassword: true,
     marketingOptIn: true, productUpdatesOptIn: true,
     savingProfile: false, profileMsg: '', profileMsgKind: 'ok',
     currentPassword: '', newPassword: '', savingPassword: false, passwordMsg: '', passwordMsgKind: 'ok'
@@ -78,6 +92,7 @@ class Component extends DCLogic {
       email: session.email || '',
       country: session.country || '',
       profession: session.profession || '',
+      hasPassword: session.hasPassword !== false,
       marketingOptIn: session.marketingOptIn !== false,
       productUpdatesOptIn: session.productUpdatesOptIn !== false
     });
@@ -96,16 +111,39 @@ class Component extends DCLogic {
     }
   }
 
+  _passwordChecks() {
+    const p = this.state.newPassword || '';
+    return {
+      minLen: p.length >= 10,
+      maxLen: p.length > 0 && p.length <= 40,
+      upper: /[A-Z]/.test(p),
+      lower: /[a-z]/.test(p),
+      number: /[0-9]/.test(p)
+    };
+  }
+
+  _isStrongPassword() {
+    const c = this._passwordChecks();
+    return c.minLen && c.maxLen && c.upper && c.lower && c.number;
+  }
+
   async _changePassword(e) {
     if (e && e.preventDefault) e.preventDefault();
-    if (this.state.newPassword.length < 8) {
-      this.setState({ passwordMsg: 'La nueva contraseña debe tener al menos 8 caracteres.', passwordMsgKind: 'error' });
+    if (!this._isStrongPassword()) {
+      this.setState({ passwordMsg: 'Tu contraseña no cumple los requisitos de abajo.', passwordMsgKind: 'error' });
       return;
     }
     this.setState({ savingPassword: true, passwordMsg: '' });
     try {
       await window.NMXStore.changePassword(this.state.currentPassword, this.state.newPassword);
-      this.setState({ savingPassword: false, currentPassword: '', newPassword: '', passwordMsg: 'Contraseña actualizada.', passwordMsgKind: 'ok' });
+      const wasFirst = !this.state.hasPassword;
+      this.setState({
+        savingPassword: false, currentPassword: '', newPassword: '', hasPassword: true,
+        passwordMsg: wasFirst
+          ? 'Contraseña creada. Ya puedes entrar con tu correo y contraseña, además de Google.'
+          : 'Contraseña actualizada.',
+        passwordMsgKind: 'ok'
+      });
     } catch (err) {
       this.setState({ savingPassword: false, passwordMsg: (err && err.message) || 'No se pudo actualizar la contraseña.', passwordMsgKind: 'error' });
     }
@@ -124,7 +162,22 @@ class Component extends DCLogic {
       : { bg: 'rgba(110,231,183,.08)', border: 'rgba(110,231,183,.25)', color: '#6ee7b7' };
     const pMsg = msgStyle(s.profileMsgKind);
     const wMsg = msgStyle(s.passwordMsgKind);
+    const checks = this._passwordChecks();
+    const rule = (ok, label) => ({ ...(ok ? OK : PENDING), label });
     return {
+      hasPassword: s.hasPassword,
+      passwordSectionTitle: s.hasPassword ? 'Contraseña' : 'Crear contraseña',
+      passwordSectionHint: s.hasPassword
+        ? 'Cambia tu contraseña actual por una nueva.'
+        : 'Tu cuenta se creó con Google. Crea una contraseña si también quieres entrar con tu correo.',
+      newPasswordLabel: s.hasPassword ? 'Nueva contraseña' : 'Contraseña',
+      passwordRules: [
+        rule(checks.minLen, 'Mínimo 10 caracteres'),
+        rule(checks.maxLen, 'Máximo 40 caracteres'),
+        rule(checks.upper, 'Mínimo 1 mayúscula'),
+        rule(checks.lower, 'Mínimo 1 minúscula'),
+        rule(checks.number, 'Mínimo 1 número')
+      ],
       name: s.name, email: s.email, country: s.country, profession: s.profession,
       onNameChange: (e) => this.setState({ name: e.target.value }),
       onCountryChange: (e) => this.setState({ country: e.target.value }),
@@ -141,7 +194,9 @@ class Component extends DCLogic {
       onChangePassword: (e) => this._changePassword(e),
       savingPassword: s.savingPassword,
       savePasswordOpacity: s.savingPassword ? 0.6 : 1,
-      savePasswordLabel: s.savingPassword ? 'Actualizando…' : 'Actualizar contraseña',
+      savePasswordLabel: s.savingPassword
+        ? (s.hasPassword ? 'Actualizando…' : 'Creando…')
+        : (s.hasPassword ? 'Actualizar contraseña' : 'Crear contraseña'),
       passwordMsg: s.passwordMsg, passwordMsgBg: wMsg.bg, passwordMsgBorder: wMsg.border, passwordMsgColor: wMsg.color,
 
       marketingOptIn: s.marketingOptIn,
