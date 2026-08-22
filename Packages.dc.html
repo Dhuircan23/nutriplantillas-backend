@@ -85,16 +85,16 @@
 class Component extends DCLogic {
   state = { addingKey: null };
 
-  async _addPackage(key, productIds, e) {
+  async _addPackage(key, packProductId, e) {
     if (e && e.preventDefault) e.preventDefault();
     if (!window.NMXStore) return;
     const session = await window.NMXStore.getSession();
     if (!session) { window.location.href = 'Login.dc.html'; return; }
     this.setState({ addingKey: key });
     try {
-      for (const id of productIds) {
-        await window.NMXStore.addToCart(id);
-      }
+      // Se agrega el PACK como producto (un solo item, su propio precio), no
+      // los NMX individuales: así el total refleja el precio del pack.
+      await window.NMXStore.addToCart(packProductId);
       window.location.href = 'Cart.dc.html';
     } catch (err) {
       this.setState({ addingKey: null });
@@ -107,13 +107,13 @@ class Component extends DCLogic {
     // agregar varios NMX de una vez. El ahorro se calcula sobre el precio real
     // de cada producto incluido, tomado del catálogo (nutrimetria-inventory.js).
     const RAW = [
-      { key: 'estudiante', name: 'Pack Estudiante', desc: 'Para prácticas, tareas y aprendizaje guiado.', price: 27990, borderColor: '#6ee7b7', highlight: true,
+      { key: 'estudiante', packId: 'pack-estudiante', name: 'Pack Estudiante', desc: 'Para prácticas, tareas y aprendizaje guiado.', price: 27990, borderColor: '#6ee7b7', highlight: true,
         items: [ { id: 'nmx01', label: 'Calculadora Energética (NMX-01)', real: 7990 }, { id: 'nmx13', label: 'Recordatorio de 24 Horas (NMX-13)', real: 5990 }, { id: 'nmxp1', label: 'Guía del Paquete (NMX-P1)', real: 4990 }, { id: 'nmx21', label: 'Distribución Alimentaria INTA 2018 (NMX-21)', real: 7990 }, { id: 'nmx14m', label: 'Evaluación Pediátrica OMS/MINSAL + UDD (NMX-14-MINSAL-UDD)', real: 7990 }, { id: 'nmx12', label: 'Calculadora de Grasa y Composición Corporal (NMX-12)', real: 6990 }, { id: 'nmx36', label: 'Calculadora Especializada de Plicometría (NMX-36)', real: 6990 } ] },
-      { key: 'antropometria', name: 'Pack Antropometría', desc: 'Para seguimiento de mediciones y composición corporal.', price: 17990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
+      { key: 'antropometria', packId: 'pack-antropometria', name: 'Pack Antropometría', desc: 'Para seguimiento de mediciones y composición corporal.', price: 17990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
         items: [ { id: 'nmx20', label: 'Formulario Integral de Evaluación (NMX-20)', real: 7990 }, { id: 'nmx06', label: 'Registro y Seguimiento de Composición Corporal (NMX-06)', real: 5990 }, { id: 'nmx41', label: 'Software Acompañante para Plicómetro (NMX-41)', real: 5990 }, { id: 'nmx10', label: 'Motor de Requerimiento Energético, MET y Efecto Térmico (NMX-10)', real: 6990 } ] },
-      { key: 'consulta', name: 'Pack Consulta Nutricional', desc: 'Para organizar evaluaciones y registros básicos.', price: 24990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
+      { key: 'consulta', packId: 'pack-consulta', name: 'Pack Consulta Nutricional', desc: 'Para organizar evaluaciones y registros básicos.', price: 24990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
         items: [ { id: 'nmx03', label: 'Historia Clínica Nutricional Completa (NMX-03)', real: 7990 }, { id: 'nmx13', label: 'Recordatorio de 24 Horas (NMX-13)', real: 5990 }, { id: 'nmx20', label: 'Formulario Integral de Evaluación (NMX-20)', real: 7990 }, { id: 'nmx21', label: 'Distribución Alimentaria INTA 2018 (NMX-21)', real: 7990 }, { id: 'nmx07', label: 'Gestor de Creación de Dietas (NMX-07)', real: 7990 } ] },
-      { key: 'profesional', name: 'Pack Profesional', desc: 'Colección ampliada de herramientas para consulta.', price: 23990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
+      { key: 'profesional', packId: 'pack-profesional', name: 'Pack Profesional', desc: 'Colección ampliada de herramientas para consulta.', price: 23990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
         items: [ { id: 'nmx01', label: 'Calculadora Energética (NMX-01)', real: 7990 }, { id: 'nmx21', label: 'Distribución Alimentaria INTA 2018 (NMX-21)', real: 7990 }, { id: 'nmx12', label: 'Calculadora de Grasa y Composición Corporal (NMX-12)', real: 6990 }, { id: 'nmx11', label: 'Planificador Integrado de Entrenamiento y Nutrición (NMX-11)', real: 6990 }, { id: 'nmx43', label: 'Biblioteca UDD y Banco Clínico-Formativo (NMX-43)', real: 7990 } ] }
     ];
 
@@ -132,7 +132,7 @@ class Component extends DCLogic {
         btnLabel: adding ? 'Agregando…' : 'Agregar al carrito',
         href: 'Cart.dc.html',
         items: p.items.map((it) => it.label),
-        onAdd: (e) => this._addPackage(p.key, p.items.map((it) => it.id), e)
+        onAdd: (e) => this._addPackage(p.key, p.packId, e)
       };
     });
 
