@@ -34,15 +34,22 @@ async function flowRequest(path, params, method) {
   const url = method === 'GET' ? `${baseUrl}${path}?${body.toString()}` : `${baseUrl}${path}`;
   const res = await fetch(url, {
     method,
-    headers: method === 'POST' ? { 'Content-Type': 'application/x-www-form-urlencoded' } : undefined,
+    // Flow está detrás de un WAF que rechaza con 403 (y sin cuerpo JSON) las
+    // peticiones sin User-Agent — el fetch de Node no manda uno por defecto.
+    headers: {
+      'User-Agent': 'NutriPlantillas/1.0 (+https://nutrimetria.cc)',
+      Accept: 'application/json',
+      ...(method === 'POST' ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
+    },
     body: method === 'POST' ? body : undefined,
   });
-  const data = await res.json().catch(() => ({}));
+  const raw = await res.text();
+  let data = {};
+  try { data = raw ? JSON.parse(raw) : {}; } catch (e) { /* Flow devolvió HTML, no JSON */ }
   if (!res.ok) {
-    // Se registra el detalle de Flow (código y mensaje) para poder diagnosticar:
-    // un 403 puede ser firma inválida, apiKey desconocida o parámetro faltante,
-    // y sin este log los tres se ven igual.
-    console.error('Flow rechazó la petición:', path, res.status, JSON.stringify(data));
+    // Se registra el cuerpo crudo: un 403 sin JSON casi siempre es el WAF, no
+    // la API, y sin ver el texto los dos casos se confunden.
+    console.error('Flow rechazó la petición:', path, res.status, raw.slice(0, 300));
     throw new Error((data && data.message) || `Flow respondió ${res.status}`);
   }
   return data;
