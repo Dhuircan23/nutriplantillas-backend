@@ -39,6 +39,10 @@ async function flowRequest(path, params, method) {
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
+    // Se registra el detalle de Flow (código y mensaje) para poder diagnosticar:
+    // un 403 puede ser firma inválida, apiKey desconocida o parámetro faltante,
+    // y sin este log los tres se ven igual.
+    console.error('Flow rechazó la petición:', path, res.status, JSON.stringify(data));
     throw new Error((data && data.message) || `Flow respondió ${res.status}`);
   }
   return data;
