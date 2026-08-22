@@ -35,6 +35,8 @@ router.post('/:orderCode/init', requireAuth, async (req, res) => {
       returnUrl: `${BACKEND_URL}/api/payments/webpay/return`,
       flowReturnUrl: `${BACKEND_URL}/api/payments/flow/return`,
       flowConfirmationUrl: `${BACKEND_URL}/api/payments/flow/confirm`,
+      mpReturnUrl: `${BACKEND_URL}/api/payments/mp/return`,
+      mpNotificationUrl: `${BACKEND_URL}/api/payments/mp/webhook`,
       sessionRef: `ord-${req.params.orderCode}`,
     });
 
@@ -194,6 +196,72 @@ async function handleFlowConfirm(req, res) {
 router.get('/flow/return', handleFlowReturn);
 router.post('/flow/return', handleFlowReturn);
 router.post('/flow/confirm', handleFlowConfirm);
+
+// Verifica un pago de Mercado Pago contra su API (nunca se confía en los
+// parámetros de la URL) y marca el pedido según el resultado. Compartida entre
+// el retorno del navegador y el webhook.
+async function verifyAndMarkMercadoPago({ orderCode, paymentId }) {
+  const { getPaymentProvider: getProvider } = require('../services/paymentProvider');
+  const provider = getProvider();
+
+  const orderResult = await db.query(
+    'SELECT id, user_id, order_code, status FROM orders WHERE order_code = $1',
+    [orderCode]
+  );
+  const order = orderResult.rows[0];
+  if (!order) return { order: null, approved: false };
+  if (order.status === ORDER_STATUS.PAID) return { order, approved: true, already: true };
+
+  const outcome = await provider.commitTransaction({ token: orderCode, paymentId });
+
+  if (outcome.approved) {
+    await markOrderPaid(order.id, order.user_id);
+  } else if (['rejected', 'cancelled'].includes(outcome.providerStatus)) {
+    await db.query('UPDATE orders SET status = $1 WHERE id = $2', [ORDER_STATUS.FAILED, order.id]);
+  }
+  return { order, approved: outcome.approved };
+}
+
+// GET /api/payments/mp/return — el comprador vuelve desde Mercado Pago.
+// MP agrega external_reference y payment_id a la URL de retorno.
+async function handleMercadoPagoReturn(req, res) {
+  const params = { ...req.query, ...req.body };
+  const orderCode = params.external_reference;
+  const paymentId = params.payment_id || params.collection_id;
+  if (!orderCode) return res.redirect(`${FRONTEND_URL}/Checkout.dc.html?payment=error`);
+  try {
+    const { order, approved } = await verifyAndMarkMercadoPago({ orderCode, paymentId });
+    if (!order) return res.redirect(`${FRONTEND_URL}/Checkout.dc.html?payment=error`);
+    if (!approved) return res.redirect(`${FRONTEND_URL}/Checkout.dc.html?payment=declined`);
+    return res.redirect(`${FRONTEND_URL}/Confirmation.dc.html?order=${order.order_code}`);
+  } catch (e) {
+    console.error('Error confirmando pago MP (return):', e.message);
+    return res.redirect(`${FRONTEND_URL}/Checkout.dc.html?payment=error`);
+  }
+}
+
+// POST /api/payments/mp/webhook — notificación servidor-a-servidor de MP.
+// Responde 200 rápido: MP reintenta si no recibe respuesta.
+async function handleMercadoPagoWebhook(req, res) {
+  const body = req.body || {};
+  const paymentId = (body.data && body.data.id) || req.query['data.id'] || req.query.id;
+  if (!paymentId) return res.status(200).send('OK');
+  try {
+    const { getPayment } = require('../services/mercadopago');
+    const payment = await getPayment(paymentId);
+    if (payment && payment.external_reference) {
+      await verifyAndMarkMercadoPago({ orderCode: payment.external_reference, paymentId });
+    }
+    res.status(200).send('OK');
+  } catch (e) {
+    console.error('Error procesando webhook MP:', e.message);
+    res.status(200).send('OK');
+  }
+}
+
+router.get('/mp/return', handleMercadoPagoReturn);
+router.post('/mp/return', handleMercadoPagoReturn);
+router.post('/mp/webhook', handleMercadoPagoWebhook);
 
 module.exports = router;
 module.exports.markOrderPaid = markOrderPaid;
