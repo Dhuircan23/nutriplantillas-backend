@@ -132,6 +132,49 @@ class FlowProvider extends PaymentProvider {
   }
 }
 
+// Proveedor Mercado Pago (Checkout Pro). Es el más simple de habilitar de los
+// tres: autentica con un access token y no exige habilitación de IP ni
+// aprobación previa de comercio para usar la API. Requiere
+// PAYMENT_PROVIDER=mercadopago + MP_ACCESS_TOKEN.
+class MercadoPagoProvider extends PaymentProvider {
+  get name() {
+    return 'mercadopago';
+  }
+
+  async createTransaction({ orderCode, amountClp, email, mpReturnUrl, mpNotificationUrl }) {
+    const { createPreference } = require('./mercadopago');
+    const pref = await createPreference({
+      orderCode,
+      title: `NutriPlantillas — pedido ${orderCode}`,
+      amountClp,
+      email,
+      notificationUrl: mpNotificationUrl,
+      returnUrl: mpReturnUrl,
+    });
+    // MP redirige con GET a init_point.
+    return { redirectUrl: pref.url, token: pref.preferenceId, method: 'GET' };
+  }
+
+  async commitTransaction({ token, paymentId }) {
+    const { getPayment, findPaymentsByOrderCode } = require('./mercadopago');
+    if (paymentId) {
+      const payment = await getPayment(paymentId);
+      return { approved: payment.status === 'approved', providerStatus: payment.status, raw: payment };
+    }
+    // Sin payment_id, se busca por external_reference (el orderCode).
+    const payments = await findPaymentsByOrderCode(token);
+    const approved = payments.find((p) => p.status === 'approved');
+    return {
+      approved: !!approved,
+      providerStatus: approved ? 'approved' : (payments[0] && payments[0].status) || 'not_found',
+      raw: payments,
+    };
+  }
+
+  async getTransactionStatus(args) {
+    return this.commitTransaction(args);
+  }
+}
 // Selector del proveedor activo. Cuando Transbank o Flow se aprueben para
 // producción, basta con PAYMENT_PROVIDER=webpay o PAYMENT_PROVIDER=flow y las
 // credenciales reales — sin tocar órdenes, carrito, permisos ni descargas.
@@ -139,6 +182,7 @@ const PROVIDERS = {
   manual: () => new ManualPaymentProvider(),
   webpay: () => new WebpayProvider(),
   flow: () => new FlowProvider(),
+  mercadopago: () => new MercadoPagoProvider(),
 };
 
 function getPaymentProvider() {
@@ -157,6 +201,7 @@ module.exports = {
   ManualPaymentProvider,
   WebpayProvider,
   FlowProvider,
+  MercadoPagoProvider,
   getPaymentProvider,
   ORDER_STATUS,
 };
