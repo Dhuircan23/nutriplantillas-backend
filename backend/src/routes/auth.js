@@ -173,14 +173,14 @@ router.post('/forgot-password', async (req, res) => {
     [email.toLowerCase()]
   );
   const user = result.rows[0];
-  if (user && user.password_hash) {
+  if (user) {
     const resetToken = crypto.randomBytes(32).toString('hex');
     await db.query(
       "UPDATE users SET reset_token = $1, reset_token_expires_at = now() + interval '1 hour' WHERE id = $2",
       [resetToken, user.id]
     );
     const resetUrl = `${getPrimaryFrontendUrl()}/ResetPassword.dc.html?token=${resetToken}`;
-    sendPasswordResetEmail(user.email, resetUrl).catch((e) =>
+    sendPasswordResetEmail(user.email, resetUrl, !user.password_hash).catch((e) =>
       console.error('Error enviando correo de recuperación:', e.message)
     );
   }
@@ -233,8 +233,8 @@ router.post('/logout-all', requireAuth, async (req, res) => {
 router.get('/me', requireAuth, async (req, res) => {
   const result = await db.query(
     `SELECT email, role, name, country, profession, marketing_opt_in, product_updates_opt_in, email_verified,
-            membership_status, membership_expires_at, membership_discount_percent
-     FROM users WHERE id = $1`,
+              password_hash, membership_status, membership_expires_at, membership_discount_percent
+       FROM users WHERE id = $1`,
     [req.user.id]
   );
   const u = result.rows[0];
@@ -249,6 +249,7 @@ router.get('/me', requireAuth, async (req, res) => {
       marketingOptIn: u.marketing_opt_in,
       productUpdatesOptIn: u.product_updates_opt_in,
       emailVerified: u.email_verified,
+      hasPassword: !!u.password_hash,
       membershipStatus: membershipActive ? 'active' : (u.membership_status === 'pending' ? 'pending' : 'none'),
       membershipExpiresAt: u.membership_expires_at,
       membershipDiscountPercent: u.membership_discount_percent,
@@ -290,24 +291,24 @@ router.patch('/me', requireAuth, async (req, res) => {
 
 router.post('/change-password', requireAuth, async (req, res) => {
   const { currentPassword, newPassword } = req.body || {};
-  if (typeof newPassword !== 'string' || newPassword.length < 8) {
-    return res.status(400).json({ error: 'La nueva contraseña debe tener al menos 8 caracteres.' });
+  if (!isStrongPassword(newPassword)) {
+    return res.status(400).json({
+      error: 'La contraseña debe tener entre 10 y 40 caracteres, con al menos una mayúscula, una minúscula y un número.',
+    });
   }
 
   const result = await db.query('SELECT password_hash FROM users WHERE id = $1', [req.user.id]);
   const hash = result.rows[0] && result.rows[0].password_hash;
-  if (!hash) {
-    return res.status(400).json({
-      error: 'Esta cuenta se creó con Google o Apple y no tiene contraseña propia.',
-    });
-  }
 
-  const ok = await bcrypt.compare(String(currentPassword || ''), hash);
-  if (!ok) return res.status(401).json({ error: 'La contraseña actual no es correcta.' });
+  // Solo se verifica la contraseña actual si la cuenta ya tenía una.
+  if (hash) {
+    const ok = await bcrypt.compare(String(currentPassword || ''), hash);
+    if (!ok) return res.status(401).json({ error: 'La contraseña actual no es correcta.' });
+  }
 
   const newHash = await bcrypt.hash(newPassword, 12);
   await db.query('UPDATE users SET password_hash = $1 WHERE id = $2', [newHash, req.user.id]);
-  res.json({ ok: true });
+  res.json({ ok: true, wasFirstPassword: !hash });
 });
 
 module.exports = router;
