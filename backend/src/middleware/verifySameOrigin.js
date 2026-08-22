@@ -26,6 +26,8 @@ const EXEMPT_PATHS = [
   /^\/api\/payments\/webpay\/return$/,
   /^\/api\/payments\/flow\/return$/,
   /^\/api\/payments\/flow\/confirm$/,
+  /^\/api\/payments\/mp\/return$/,
+  /^\/api\/payments\/mp\/webhook$/,
 ];
 
 function isExempt(path) {
