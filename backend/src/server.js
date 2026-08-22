@@ -27,10 +27,10 @@ const { verifySameOrigin } = require('./middleware/verifySameOrigin');
 
 const app = express();
 
-// Esta API solo devuelve JSON (nunca HTML que el navegador vaya a renderizar),
-// así que se desactiva el CSP por defecto de helmet (pensado para servir
-// páginas) y se deja explícito que los recursos son cross-origin, ya que el
-// frontend vive en un puerto/origen distinto al de este backend.
+// Railway (y cualquier PaaS) sirve detrás de un proxy: sin esto, express-rate-limit
+// ve la IP del proxy en vez de la del cliente y lanza ERR_ERL_UNEXPECTED_X_FORWARDED_FOR.
+// 1 = confía solo en el primer proxy, que es lo correcto acá.
+app.set('trust proxy', 1);
 app.use(
   helmet({
     contentSecurityPolicy: false,
