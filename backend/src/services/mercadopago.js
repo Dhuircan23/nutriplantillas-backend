@@ -67,3 +67,5 @@ async function findPaymentsByOrderCode(orderCode) {
   const data = await mpRequest(`/v1/payments/search?external_reference=${encodeURIComponent(orderCode)}`);
   return (data && data.results) || [];
 }
+
+module.exports = { createPreference, getPayment, findPaymentsByOrderCode };
