@@ -6,6 +6,9 @@ const { generateOrderCode } = require('../utils/orderCode');
 const router = express.Router();
 router.use(requireAuth);
 
+// POST /api/orders
+// body opcional: { productIds: ["nmx01"] } para el flujo "comprar ahora".
+// Sin body, usa el carrito actual del usuario.
 router.post('/', async (req, res) => {
   const client = await db.pool.connect();
   try {
@@ -14,13 +17,13 @@ router.post('/', async (req, res) => {
 
     if (Array.isArray(productIds) && productIds.length > 0) {
       const result = await client.query(
-        'SELECT id, name, price_clp FROM products WHERE id = ANY($1) AND active = true',
+        'SELECT id, name, price_clp, bundle_items FROM products WHERE id = ANY($1) AND active = true',
         [productIds]
       );
       productRows = result.rows;
     } else {
       const result = await client.query(
-        `SELECT p.id, p.name, p.price_clp
+        `SELECT p.id, p.name, p.price_clp, p.bundle_items
          FROM cart_items c JOIN products p ON p.id = c.product_id
          WHERE c.user_id = $1 AND p.active = true`,
         [req.user.id]
@@ -32,6 +35,8 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'No hay productos para generar el pedido.' });
     }
 
+    // Descuento de membresía activa: se aplica acá, en el servidor, sobre el
+    // precio real de cada producto — el cliente nunca envia el precio final.
     const memberResult = await client.query(
       'SELECT membership_status, membership_expires_at, membership_discount_percent FROM users WHERE id = $1',
       [req.user.id]
@@ -47,6 +52,7 @@ router.post('/', async (req, res) => {
 
     await client.query('BEGIN');
 
+    // El código de pedido es UNIQUE; reintenta en el caso (muy improbable) de colisión.
     let order;
     for (let attempt = 0; attempt < 5; attempt++) {
       try {
@@ -59,12 +65,29 @@ router.post('/', async (req, res) => {
         order = orderResult.rows[0];
         break;
       } catch (e) {
-        if (e.code === '23505' && attempt < 4) continue;
+        if (e.code === '23505' && attempt < 4) continue; // unique_violation, reintenta
         throw e;
       }
     }
 
     for (const p of productRows) {
+      // Un pack cobra su propio precio una vez, pero debe entregar cada archivo
+      // que incluye: se crea un order_item por NMX del bundle (precio 0, el
+      // cobro ya está en el pack) para que las descargas funcionen igual.
+      if (Array.isArray(p.bundle_items) && p.bundle_items.length > 0) {
+        const bundled = await client.query(
+          'SELECT id, name FROM products WHERE id = ANY($1)',
+          [p.bundle_items]
+        );
+        for (const b of bundled.rows) {
+          await client.query(
+            `INSERT INTO order_items (order_id, product_id, product_name, price_clp, downloads_allowed)
+             VALUES ($1, $2, $3, 0, 5)`,
+            [order.id, b.id, b.name]
+          );
+        }
+        continue;
+      }
       await client.query(
         `INSERT INTO order_items (order_id, product_id, product_name, price_clp, downloads_allowed)
          VALUES ($1, $2, $3, $4, 5)`,
@@ -73,6 +96,10 @@ router.post('/', async (req, res) => {
     }
 
     await client.query('COMMIT');
+
+    // El carrito NO se limpia acá a propósito: solo se limpia cuando el pago
+    // efectivamente se confirma (ver payments.js), para no perder los items
+    // si el usuario abandona o falla el pago.
     res.status(201).json({ order: { ...order, items: productRows } });
   } catch (e) {
     await client.query('ROLLBACK');
@@ -101,6 +128,7 @@ router.get('/:orderCode', async (req, res) => {
   const order = orderResult.rows[0];
   if (!order) return res.status(404).json({ error: 'Pedido no encontrado.' });
 
+  // Ownership check: solo el dueño del pedido o un admin pueden verlo.
   if (order.user_id !== req.user.id && req.user.role !== 'admin') {
     return res.status(403).json({ error: 'No tienes acceso a este pedido.' });
   }
