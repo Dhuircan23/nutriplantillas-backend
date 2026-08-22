@@ -60,13 +60,13 @@
 
       <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:24px;margin-bottom:20px">
         <div style="font-weight:800;font-size:15px;margin-bottom:6px">Método de pago</div>
-        <p style="font-size:12.5px;color:#8fa9a0;margin:0 0 16px">Simulación de una pasarela de pago local (estilo Webpay/Transbank). No hay conexión de pago real en este prototipo.</p>
+        <p style="font-size:12.5px;color:#8fa9a0;margin:0 0 16px">Pago real procesado por Flow (tarjetas y transferencia). Serás redirigido a la pasarela de Flow para completar el pago de forma segura.</p>
         <div style="border:1.5px solid #6ee7b7;border-radius:6px;padding:20px;text-align:center;background:rgba(110,231,183,.06);opacity:{{ payOpacity }};transition:opacity .15s ease,transform .15s ease;transform:{{ payTransform }}">
           <button type="button" onClick="{{ onPay }}" disabled="{{ isProcessing }}" style="appearance:none;background:none;border:none;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13.5px;font-weight:700;margin-bottom:4px;color:#6ee7b7;width:100%;cursor:{{ payCursor }};padding:0">
             <sc-if value="{{ isProcessing }}" hint-placeholder-val="{{ false }}"><span class="pay-spinner"></span></sc-if>
             {{ payButtonLabel }}
           </button>
-          <div class="mono" style="font-size:11px;color:#8fa9a0">Toque para iniciar el pago simulado — sin cobro real</div>
+          <div class="mono" style="font-size:11px;color:#8fa9a0">Serás redirigido a Flow para pagar</div>
         </div>
       </div>
 
@@ -100,7 +100,7 @@
         <sc-if value="{{ isProcessing }}" hint-placeholder-val="{{ false }}"><span class="pay-spinner" style="border-top-color:transparent;border-color:#241008"></span></sc-if>
         <button type="button" onClick="{{ onPay }}" disabled="{{ isProcessing }}" style="appearance:none;background:none;border:none;font-family:inherit;font-weight:700;font-size:14px;color:#241008;cursor:{{ payCursor }};padding:0">{{ confirmButtonLabel }}</button>
       </div>
-      <div class="mono" style="text-align:center;font-size:10.5px;color:#8fa9a0;margin-top:10px">Simulación de flujo — sin cobro real</div>
+      <div class="mono" style="text-align:center;font-size:10.5px;color:#8fa9a0;margin-top:10px">Pago procesado por Flow</div>
     </div>
   </div>
   </sc-if>
@@ -118,13 +118,12 @@
   <div style="position:fixed;inset:0;background:rgba(15,31,43,.55);display:flex;align-items:center;justify-content:center;z-index:100">
     <div style="width:360px;background:rgba(10,37,28,.92);border:1px solid rgba(110,231,183,.18);border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(16,185,129,.12);backdrop-filter:blur(16px)">
       <div style="background:#04140f;color:#e2e8f0;padding:14px 18px;font-size:12.5px;font-weight:700;display:flex;justify-content:space-between;align-items:center">
-        <span>Pasarela de pago local (simulada)</span>
-        <span class="mono" style="font-size:10px;color:#9fb0b6">Demo</span>
+        <span>Pasarela de pago Flow</span>
+        <span class="mono" style="font-size:10px;color:#9fb0b6">Pago real</span>
       </div>
       <div style="padding:32px 24px;text-align:center">
         <div style="width:38px;height:38px;border-radius:50%;border:3px solid #ff7a45;border-top-color:transparent;margin:0 auto 18px;animation:nmxspin .8s linear infinite"></div>
         <div style="font-weight:800;font-size:14.5px;margin-bottom:6px;color:#e2e8f0">{{ payStepLabel }}</div>
-        <div class="mono" style="font-size:11px;color:#8fa9a0">Transacción ficticia · sin cobro real</div>
       </div>
     </div>
   </div>
@@ -178,9 +177,6 @@ class Component extends DCLogic {
     }
   }
 
-  // Flujo real de Webpay Plus: 1) crear el pedido en nuestra BD, 2) iniciar la
-  // transacción y obtener {url, token}, 3) redirigir el navegador con un POST
-  // (no un simple location.href) llevando token_ws — así es como Webpay lo exige.
   async _startPayment() {
     if (this.state.payStep) return;
     const nameOk = (this.state.contactName || '').trim().length > 0;
@@ -238,7 +234,7 @@ class Component extends DCLogic {
   renderVals() {
     const raw = this.state.rawItems || [];
     const items = raw.map((p) => ({ name: p.name, priceLabel: p.priceLabel }));
-    const total = raw.reduce((sum, p) => sum + (p.price || 0), 0);
+    const total = raw.reduce((sum, p) => sum + Number(p.price_clp ?? p.priceClp ?? p.price ?? 0), 0);
     const totalLabel = '$' + total.toLocaleString('es-CL') + ' CLP';
     const isProcessing = !!this.state.payStep;
     const notice = this.state.paymentNoticeKey ? PAYMENT_NOTICES[this.state.paymentNoticeKey] : null;
@@ -269,8 +265,6 @@ class Component extends DCLogic {
       onContactCountryChange: (e) => this.setState({ contactCountry: e.target.value }),
       payArmed: this.state.payArmed,
       onPay: () => {
-        // Feedback táctil inmediato (<100ms): el botón se ve presionado antes de que la
-        // promesa resuelva, para que el clic se sienta registrado de inmediato.
         this.setState({ payArmed: true });
         setTimeout(() => this._startPayment(), 150);
       }
