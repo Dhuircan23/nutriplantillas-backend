@@ -60,13 +60,23 @@
 
       <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:24px;margin-bottom:20px">
         <div style="font-weight:800;font-size:15px;margin-bottom:6px">Método de pago</div>
-        <p style="font-size:12.5px;color:#8fa9a0;margin:0 0 16px">Pago real procesado por Flow (tarjetas y transferencia). Serás redirigido a la pasarela de Flow para completar el pago de forma segura.</p>
+        <p style="font-size:12.5px;color:#8fa9a0;margin:0 0 16px">Pago seguro con Mercado Pago: tarjetas de crédito y débito, transferencia o saldo en cuenta.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+          <span class="mono" style="font-size:10.5px;font-weight:600;color:#c7dad2;background:rgba(255,255,255,.05);border:1px solid rgba(110,231,183,.16);padding:6px 11px;border-radius:4px">Crédito</span>
+          <span class="mono" style="font-size:10.5px;font-weight:600;color:#c7dad2;background:rgba(255,255,255,.05);border:1px solid rgba(110,231,183,.16);padding:6px 11px;border-radius:4px">Débito</span>
+          <span class="mono" style="font-size:10.5px;font-weight:600;color:#c7dad2;background:rgba(255,255,255,.05);border:1px solid rgba(110,231,183,.16);padding:6px 11px;border-radius:4px">Transferencia</span>
+          <span class="mono" style="font-size:10.5px;font-weight:600;color:#c7dad2;background:rgba(255,255,255,.05);border:1px solid rgba(110,231,183,.16);padding:6px 11px;border-radius:4px">Saldo Mercado Pago</span>
+        </div>
         <div style="border:1.5px solid #6ee7b7;border-radius:6px;padding:20px;text-align:center;background:rgba(110,231,183,.06);opacity:{{ payOpacity }};transition:opacity .15s ease,transform .15s ease;transform:{{ payTransform }}">
           <button type="button" onClick="{{ onPay }}" disabled="{{ isProcessing }}" style="appearance:none;background:none;border:none;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13.5px;font-weight:700;margin-bottom:4px;color:#6ee7b7;width:100%;cursor:{{ payCursor }};padding:0">
             <sc-if value="{{ isProcessing }}" hint-placeholder-val="{{ false }}"><span class="pay-spinner"></span></sc-if>
             {{ payButtonLabel }}
           </button>
-          <div class="mono" style="font-size:11px;color:#8fa9a0">Serás redirigido a Flow para pagar</div>
+          <div class="mono" style="font-size:11px;color:#8fa9a0">Serás redirigido a Mercado Pago para pagar</div>
+        </div>
+        <div style="display:flex;gap:9px;align-items:flex-start;margin-top:14px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2" style="flex:none;margin-top:1px"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+          <div style="font-size:11.5px;color:#8fa9a0;line-height:1.55">Nunca vemos ni guardamos los datos de tu tarjeta: los procesa Mercado Pago en su propio entorno.</div>
         </div>
       </div>
 
@@ -100,7 +110,7 @@
         <sc-if value="{{ isProcessing }}" hint-placeholder-val="{{ false }}"><span class="pay-spinner" style="border-top-color:transparent;border-color:#241008"></span></sc-if>
         <button type="button" onClick="{{ onPay }}" disabled="{{ isProcessing }}" style="appearance:none;background:none;border:none;font-family:inherit;font-weight:700;font-size:14px;color:#241008;cursor:{{ payCursor }};padding:0">{{ confirmButtonLabel }}</button>
       </div>
-      <div class="mono" style="text-align:center;font-size:10.5px;color:#8fa9a0;margin-top:10px">Pago procesado por Flow</div>
+      <div class="mono" style="text-align:center;font-size:10.5px;color:#8fa9a0;margin-top:10px">Pago procesado por Mercado Pago</div>
     </div>
   </div>
   </sc-if>
@@ -118,7 +128,7 @@
   <div style="position:fixed;inset:0;background:rgba(15,31,43,.55);display:flex;align-items:center;justify-content:center;z-index:100">
     <div style="width:360px;background:rgba(10,37,28,.92);border:1px solid rgba(110,231,183,.18);border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(16,185,129,.12);backdrop-filter:blur(16px)">
       <div style="background:#04140f;color:#e2e8f0;padding:14px 18px;font-size:12.5px;font-weight:700;display:flex;justify-content:space-between;align-items:center">
-        <span>Pasarela de pago Flow</span>
+        <span>Pasarela de pago Mercado Pago</span>
         <span class="mono" style="font-size:10px;color:#9fb0b6">Pago real</span>
       </div>
       <div style="padding:32px 24px;text-align:center">
@@ -134,9 +144,9 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 const PAYMENT_NOTICES = {
-  cancelled: { title: 'Pago cancelado', body: 'Anulaste el pago en Webpay antes de completarlo. Puedes intentarlo de nuevo cuando quieras.' },
-  timeout: { title: 'Se perdió la conexión con Webpay', body: 'La conexión con la pasarela de pago se interrumpió. Vuelve a intentar el pago.' },
-  declined: { title: 'Pago rechazado', body: 'Webpay rechazó la transacción. Verifica los datos de tu medio de pago o intenta con otro.' },
+  cancelled: { title: 'Pago cancelado', body: 'Anulaste el pago antes de completarlo. Puedes intentarlo de nuevo cuando quieras.' },
+  timeout: { title: 'Se perdió la conexión con la pasarela', body: 'La conexión con Mercado Pago se interrumpió. Vuelve a intentar el pago.' },
+  declined: { title: 'Pago rechazado', body: 'Mercado Pago rechazó la transacción. Verifica los datos de tu medio de pago o intenta con otro.' },
   error: { title: 'No pudimos confirmar el pago', body: 'Ocurrió un error confirmando la transacción. Si el cargo se realizó, contáctanos desde soporte antes de reintentar.' }
 };
 
@@ -177,8 +187,11 @@ class Component extends DCLogic {
     }
   }
 
+  // Flujo real de Webpay Plus: 1) crear el pedido en nuestra BD, 2) iniciar la
+  // transacción y obtener {url, token}, 3) redirigir el navegador con un POST
+  // (no un simple location.href) llevando token_ws — así es como Webpay lo exige.
   async _startPayment() {
-    if (this.state.payStep) return;
+    if (this.state.payStep) return; // evita doble clic mientras procesa
     const nameOk = (this.state.contactName || '').trim().length > 0;
     const emailOk = /\S+@\S+\.\S+/.test(this.state.contactEmail || '');
     if (!nameOk || !emailOk) {
@@ -196,6 +209,11 @@ class Component extends DCLogic {
       this.setState({ payMsg: 'Conectando con la pasarela de pago…' });
       const result = await window.NMXStore.initPayment(orderCode);
 
+      // El backend habla con un PaymentProvider abstracto, así que la respuesta
+      // tiene dos formas posibles:
+      //   - Proveedor redirigido (Webpay): { url, token } -> POST a la pasarela.
+      //   - Proveedor manual: { requiresManualConfirmation } -> no hay a dónde
+      //     redirigir; el pedido queda esperando confirmación de un administrador.
       if (result && result.requiresManualConfirmation) {
         window.NMXStore.clearBuyNow();
         window.location.href = 'Confirmation.dc.html?order=' + encodeURIComponent(orderCode) + '&payment=pending';
@@ -208,6 +226,9 @@ class Component extends DCLogic {
 
       this.setState({ payMsg: 'Redirigiendo a la pasarela…' });
 
+      // Flow redirige con un simple GET (la URL ya trae el token); Webpay
+      // exige un POST con token_ws en el body, así que se construye un
+      // formulario oculto y se envía.
       if (result.method === 'GET') {
         window.location.href = result.url;
         return;
@@ -247,7 +268,7 @@ class Component extends DCLogic {
       payStep: this.state.payStep,
       payStepLabel: this.state.payError ? this.state.payError : (this.state.payMsg || 'Validando pedido…'),
       isProcessing,
-      payButtonLabel: isProcessing ? 'Conectando…' : 'Pagar',
+      payButtonLabel: isProcessing ? 'Conectando…' : 'Pagar con Mercado Pago',
       confirmButtonLabel: isProcessing ? 'Conectando…' : 'Confirmar y pagar',
       payCursor: isProcessing ? 'default' : 'pointer',
       payOpacity: isProcessing ? 0.65 : (this.state.payArmed ? 0.8 : 1),
@@ -265,6 +286,8 @@ class Component extends DCLogic {
       onContactCountryChange: (e) => this.setState({ contactCountry: e.target.value }),
       payArmed: this.state.payArmed,
       onPay: () => {
+        // Feedback táctil inmediato (<100ms): el botón se ve presionado antes de que la
+        // promesa resuelva, para que el clic se sienta registrado de inmediato.
         this.setState({ payArmed: true });
         setTimeout(() => this._startPayment(), 150);
       }
