@@ -24,7 +24,7 @@ jobs:
         run: |
           mkdir -p _site
           cp *.dc.html _site/
-          cp support.js store.js nutrimetria-inventory.js _site/
+          cp support.js store.js nutrimetria-inventory.js nutrimetria-capturas.js _site/
           cp -r assets _site/
           cp -r public _site/
           cp Home.dc.html _site/index.html
