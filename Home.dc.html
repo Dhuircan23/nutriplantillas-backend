@@ -22,9 +22,9 @@
 <x-dc>
 <helmet data-dc-atomics>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;color:#eef7f3}
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Inter Tight',system-ui,sans-serif;color:#eef7f3}
   a{color:#6ee7b7}
   a:hover{color:#9ff4d1}
   .btn-primary{display:inline-flex;align-items:center;justify-content:center;padding:14px 26px;background:#ff7a45;color:#0a1512;border-radius:6px;font-weight:800;font-size:14.5px;text-decoration:none;box-shadow:0 0 0 1px rgba(255,122,69,.4),0 10px 30px rgba(255,122,69,.38);transition:transform .15s ease,box-shadow .2s ease,background .2s ease}
@@ -40,12 +40,27 @@
   .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
   .eyebrow::before{content:'';width:20px;height:2px;background:currentColor;border-radius:2px}
   h2{text-wrap:pretty}
+  h1,h2,h3{letter-spacing:-.028em}
+  .faq-item{border-bottom:1px solid rgba(110,231,183,.14);cursor:pointer}
+  .faq-item:hover .faq-q{color:#6ee7b7}
+  .faq-q{transition:color .18s ease}
+  .faq-body{overflow:hidden;transition:max-height .32s cubic-bezier(.4,0,.2,1),opacity .28s ease}
+  .faq-plus{transition:transform .28s cubic-bezier(.4,0,.2,1),color .18s ease}
+  .featured-fade{transition:opacity .34s ease}
   .hairline{border-top:1px solid rgba(110,231,183,.12)}
   .formula{position:absolute;font-family:'JetBrains Mono',monospace;color:#6ee7b7;opacity:.12;white-space:nowrap;pointer-events:none;user-select:none}
   .term-dot{width:8px;height:8px;border-radius:50%}
   .mockup-tab{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:.3px;color:#a7c5ba;padding:0 0 8px;cursor:pointer;border-bottom:2px solid transparent;transition:color .2s ease,border-color .2s ease;white-space:nowrap}
   .mockup-tab.mockup-tab-active{color:#6ee7b7;border-bottom-color:#6ee7b7}
   .mockup-content{transition:opacity .28s ease,transform .28s ease}
+  @media (max-width:560px){
+    .rg-hero-visual{height:260px !important}
+    .rg-hero h1{font-size:clamp(26px,7.4vw,34px) !important}
+    /* El visual del hero va DESPUÉS de título, texto y CTA en móvil */
+    .rg-hero > div:last-child{order:2}
+    .rg-hero > div:first-child{order:1}
+    .rg-hero{display:flex !important;flex-direction:column}
+  }
   @media (max-width:768px){
     .rg-hero,.rg-problem,.rg-membership{grid-template-columns:1fr !important}
     .rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages{grid-template-columns:repeat(2,1fr) !important}
@@ -62,6 +77,39 @@
     #nmxDodecaCanvas{display:none}
   }
   @keyframes nmxDrift{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+  /* ---- Responsive móvil (no afecta escritorio) ---- */
+  img,svg,canvas,video{max-width:100%;height:auto}
+  @media (max-width:900px){
+    /* Cualquier tabla ancha scrollea dentro de su caja en vez de estirar la página */
+    div:has(> [role="table"]){overflow-x:auto;-webkit-overflow-scrolling:touch}
+    /* Paneles admin/cliente: la barra lateral pasa arriba */
+    [style*="grid-template-columns:220px 1fr"]{grid-template-columns:1fr !important}
+    [style*="grid-template-columns:220px 1fr"] > div:first-child{padding:14px 16px !important}
+  }
+  @media (max-width:640px){
+    /* 40px de margen lateral se comen un cuarto de una pantalla de 320px */
+    .section{padding-left:20px !important;padding-right:20px !important;padding-top:44px !important;padding-bottom:44px !important}
+    body > div[style*="margin:0 auto"]{padding-left:20px !important;padding-right:20px !important}
+    body > div[style*="margin:0 auto"] > div[style*="padding"]{padding-left:0 !important;padding-right:0 !important}
+    h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
+    h2{font-size:clamp(20px,5.4vw,24px) !important}
+    /* Objetivos táctiles cómodos */
+    button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
+    /* CTA a ancho completo: dos botones lado a lado no caben bien */
+    .btn-primary,.btn-secondary{width:100%;box-sizing:border-box}
+  }
+  @media (max-width:560px){
+    /* Toda grilla conocida pasa a una columna */
+    .rg-hero,.rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages,.rg-resources,
+    .rg-leadmagnet,.rg-problem,.rg-membership,.rg-cart,.rg-checkout,.rg-checkout-fields,
+    .rg-catalog-grid,.rg-pkg-cards,.rg-mockup-stats,.nmx-hero,.nmx-body,.nmx-meta,
+    .doc-grid,.doc-kpis,.doc-phases,.doc-split,.hiw-steps,.hiw-sheets,.hiw-split{
+      grid-template-columns:1fr !important
+    }
+    .section{padding-left:16px !important;padding-right:16px !important}
+    body > div[style*="margin:0 auto"]{padding-left:16px !important;padding-right:16px !important}
+  }
 </style>
 </helmet>
 
@@ -224,7 +272,7 @@
         <button type="button" onClick="{{ onFeaturedNext }}" aria-label="Siguientes" style="appearance:none;width:34px;height:34px;border-radius:50%;border:1px solid rgba(110,231,183,.28);background:rgba(255,255,255,.04);color:#eef7f3;font-size:15px;cursor:pointer;line-height:1" style-hover="border-color:#6ee7b7;background:rgba(110,231,183,.1)">›</button>
       </div>
     </div>
-    <div class="rg-featured" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px" onMouseEnter="{{ onFeaturedEnter }}" onMouseLeave="{{ onFeaturedLeave }}">
+    <div class="rg-featured featured-fade" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;opacity:{{ featuredOpacity }}" onMouseEnter="{{ onFeaturedEnter }}" onMouseLeave="{{ onFeaturedLeave }}">
       <sc-for list="{{ featured }}" as="prod" hint-placeholder-count="3">
         <div class="glass" style="border-radius:8px;overflow:hidden;display:flex;flex-direction:column;{{ prod.cardBorder }}" style-hover="transform:translateY(-3px);transition:transform .15s">
           <div style="height:170px;position:relative;overflow:hidden;background:#0a251c;display:flex;align-items:center;justify-content:center">
@@ -364,7 +412,7 @@
         <div style="font-weight:700;font-size:13px;color:#fff;margin-bottom:4px">¿Quieres saber cuándo publicamos algo nuevo?</div>
         <sc-if value="{{ !newsletterSent }}" hint-placeholder-val="{{ true }}">
           <form onSubmit="{{ onNewsletterSubmit }}" style="display:flex;gap:10px;flex-wrap:wrap">
-            <input type="email" required="{{ true }}" value="{{ newsletterEmail }}" onChange="{{ onNewsletterEmailChange }}" placeholder="tucorreo@ejemplo.com (opcional)" style="flex:1;min-width:200px;padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13px;font-family:'Manrope',sans-serif;background:rgba(255,255,255,.04);color:#e2e8f0"/>
+            <input type="email" required="{{ true }}" value="{{ newsletterEmail }}" onChange="{{ onNewsletterEmailChange }}" placeholder="tucorreo@ejemplo.com (opcional)" style="flex:1;min-width:200px;padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13px;font-family:'Inter Tight',sans-serif;background:rgba(255,255,255,.04);color:#e2e8f0"/>
             <button type="submit" class="btn-secondary" style="border-color:rgba(110,231,183,.35);cursor:pointer;font-family:inherit">Avisarme</button>
           </form>
         </sc-if>
@@ -415,10 +463,13 @@
     <h2 style="font-size:26px;font-weight:800;margin:0 0 28px;letter-spacing:-.3px;color:#fff">Preguntas frecuentes</h2>
     <div style="display:flex;flex-direction:column">
       <sc-for list="{{ faqs }}" as="f" hint-placeholder-count="6">
-        <div style="border-bottom:1px solid rgba(110,231,183,.12);padding:18px 0">
-          <div style="font-weight:700;font-size:14.5px;display:flex;justify-content:space-between;align-items:center;color:#eef7f3">
+        <div class="faq-item" onClick="{{ f.onToggle }}" style="padding:18px 0">
+          <div class="faq-q" style="font-weight:700;font-size:14.5px;display:flex;justify-content:space-between;align-items:center;gap:16px;color:{{ f.qColor }}">
             {{ f.q }}
-            <span style="color:#6ee7b7;font-weight:800">+</span>
+            <span class="faq-plus" style="color:#6ee7b7;font-weight:800;flex:none;transform:{{ f.plusTransform }}">+</span>
+          </div>
+          <div class="faq-body" style="max-height:{{ f.maxHeight }};opacity:{{ f.bodyOpacity }}">
+            <p style="font-size:13.5px;color:#bfd8ce;line-height:1.7;margin:12px 0 0;max-width:640px">{{ f.a }}</p>
           </div>
         </div>
       </sc-for>
@@ -445,14 +496,23 @@
 const MOCKUP_TABS = ['PORTADA', 'INICIO', 'ENTRADA/DATOS', 'RESULTADOS', 'GRÁFICOS', 'FUENTES'];
 
 class Component extends DCLogic {
-  state = { activeMockupTab: 'RESULTADOS', mockupVisible: true, newsletterEmail: '', newsletterSent: false, leadMagnetDownloaded: false, addedIds: {}, featuredPage: 0, shotIndex: {} };
+  state = { activeMockupTab: 'RESULTADOS', mockupVisible: true, newsletterEmail: '', newsletterSent: false, leadMagnetDownloaded: false, addedIds: {}, featuredPage: 0, shotIndex: {}, openFaq: null, featuredVisible: true };
+
+  // El cambio de página hace un fundido corto en vez de un salto seco.
+  _goToPage(next) {
+    if (this._fadeTimer) clearTimeout(this._fadeTimer);
+    this.setState({ featuredVisible: false });
+    this._fadeTimer = setTimeout(() => {
+      this.setState({ featuredPage: next, featuredVisible: true });
+    }, 200);
+  }
 
   _featuredStep(delta, totalPages) {
     // Una interacción manual pausa el avance automático 12 s.
     this._featuredPaused = true;
     if (this._resumeTimer) clearTimeout(this._resumeTimer);
     this._resumeTimer = setTimeout(() => { this._featuredPaused = false; }, 12000);
-    this.setState((s) => ({ featuredPage: (s.featuredPage + delta + totalPages) % totalPages }));
+    this._goToPage(((this.state.featuredPage + delta) % totalPages + totalPages) % totalPages);
   }
 
   // Cada tarjeta recorre las capturas REALES de su libro (nutrimetria-capturas.js),
@@ -493,7 +553,8 @@ class Component extends DCLogic {
     // está encima o tras una interacción manual, para no pelear con el usuario.
     this._featuredTimer = setInterval(() => {
       if (this._featuredPaused) return;
-      this.setState((s) => ({ featuredPage: (s.featuredPage + 1) % Math.max(1, s.featuredPages || 1) }));
+      const total = Math.max(1, this.state.featuredPages || 1);
+      this._goToPage((this.state.featuredPage + 1) % total);
     }, 5200);
   }
 
@@ -503,6 +564,7 @@ class Component extends DCLogic {
   }
 
   componentWillUnmount() {
+    if (this._fadeTimer) clearTimeout(this._fadeTimer);
     if (this._featuredTimer) clearInterval(this._featuredTimer);
     if (this._resumeTimer) clearTimeout(this._resumeTimer);
     if (this._invTimer) clearTimeout(this._invTimer);
@@ -915,6 +977,7 @@ class Component extends DCLogic {
         background: i === page ? '#6ee7b7' : 'rgba(110,231,183,.28)',
         onSelect: () => { this._featuredStep(i - this.state.featuredPage, totalPages); }
       })),
+      featuredOpacity: this.state.featuredVisible ? 1 : 0,
       onFeaturedPrev: () => this._featuredStep(-1, totalPages),
       onFeaturedNext: () => this._featuredStep(1, totalPages),
       onFeaturedEnter: () => { this._featuredPaused = true; },
@@ -954,13 +1017,26 @@ class Component extends DCLogic {
         'Checklist para consulta nutricional'
       ],
       faqs: [
-        {q:'¿Qué versión de Excel necesito?'},
-        {q:'¿Los archivos funcionan en Google Sheets?'},
-        {q:'¿Necesito instalar macros?'},
-        {q:'¿Puedo modificar las plantillas?'},
-        {q:'¿Cómo recibo el producto?'},
-        {q:'¿Incluye actualizaciones?'}
-      ]
+        {q:'¿Qué versión de Excel necesito?', a:'Excel de escritorio 2016 o posterior, en Windows o Mac. Los archivos no usan macros, así que no aparece ningún aviso de seguridad al abrirlos.'},
+        {q:'¿Los archivos funcionan en Google Sheets?', a:'Se pueden abrir, pero algunas fórmulas y formatos condicionales no se comportan igual. Para trabajar con ellos recomendamos Excel de escritorio.'},
+        {q:'¿Necesito instalar macros?', a:'No. Ninguna herramienta usa macros ni complementos: son libros .xlsx normales.'},
+        {q:'¿Puedo modificar las plantillas?', a:'Sí. Las hojas no están bloqueadas y la licencia es de uso individual, así que puedes adaptarlas a tu consulta.'},
+        {q:'¿Cómo recibo el producto?', a:'Apenas se confirma el pago, el archivo y su portafolio quedan disponibles en tu área de cliente. No esperas correos ni envíos manuales.'},
+        {q:'¿Incluye actualizaciones?', a:'Sí, las correcciones y mejoras de la misma versión mayor quedan incluidas sin costo adicional.'}
+      ].map((f, i) => {
+        // Acordeón: una respuesta abierta a la vez, con apertura por max-height
+        // para que la transición sea suave en vez de un salto.
+        const open = this.state.openFaq === i;
+        return {
+          q: f.q,
+          a: f.a,
+          qColor: open ? '#6ee7b7' : '#eef7f3',
+          plusTransform: open ? 'rotate(45deg)' : 'rotate(0deg)',
+          maxHeight: open ? '220px' : '0px',
+          bodyOpacity: open ? 1 : 0,
+          onToggle: () => this.setState((s) => ({ openFaq: s.openFaq === i ? null : i }))
+        };
+      })
     };
   }
 }

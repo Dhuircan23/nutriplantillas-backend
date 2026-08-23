@@ -9,13 +9,50 @@
 <x-dc>
 <helmet data-dc-atomics>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <script src="./store.js"></script>
+<script src="./nutrimetria-inventory.js"></script>
 <style>
-  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Manrope',system-ui,sans-serif;color:#e2e8f0}
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Inter Tight',system-ui,sans-serif;color:#e2e8f0;position:relative}
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(110,231,183,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(110,231,183,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%);-webkit-mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%)}
+  body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle 520px at 88% 12%,rgba(16,185,129,.13),transparent 70%),radial-gradient(circle 460px at 6% 78%,rgba(255,122,69,.08),transparent 70%)}
+  body > *{position:relative;z-index:1}
   a{color:#6ee7b7} a:hover{color:#9ff4d1}
   .mono{font-family:'JetBrains Mono',monospace}
   @media (max-width:768px){ .rg-cart{grid-template-columns:1fr !important} }
+
+  /* ---- Responsive móvil (no afecta escritorio) ---- */
+  img,svg,canvas,video{max-width:100%;height:auto}
+  @media (max-width:900px){
+    /* Cualquier tabla ancha scrollea dentro de su caja en vez de estirar la página */
+    div:has(> [role="table"]){overflow-x:auto;-webkit-overflow-scrolling:touch}
+    /* Paneles admin/cliente: la barra lateral pasa arriba */
+    [style*="grid-template-columns:220px 1fr"]{grid-template-columns:1fr !important}
+    [style*="grid-template-columns:220px 1fr"] > div:first-child{padding:14px 16px !important}
+  }
+  @media (max-width:640px){
+    /* 40px de margen lateral se comen un cuarto de una pantalla de 320px */
+    .section{padding-left:20px !important;padding-right:20px !important;padding-top:44px !important;padding-bottom:44px !important}
+    body > div[style*="margin:0 auto"]{padding-left:20px !important;padding-right:20px !important}
+    body > div[style*="margin:0 auto"] > div[style*="padding"]{padding-left:0 !important;padding-right:0 !important}
+    h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
+    h2{font-size:clamp(20px,5.4vw,24px) !important}
+    /* Objetivos táctiles cómodos */
+    button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
+    /* CTA a ancho completo: dos botones lado a lado no caben bien */
+    .btn-primary,.btn-secondary{width:100%;box-sizing:border-box}
+  }
+  @media (max-width:560px){
+    /* Toda grilla conocida pasa a una columna */
+    .rg-hero,.rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages,.rg-resources,
+    .rg-leadmagnet,.rg-problem,.rg-membership,.rg-cart,.rg-checkout,.rg-checkout-fields,
+    .rg-catalog-grid,.rg-pkg-cards,.rg-mockup-stats,.nmx-hero,.nmx-body,.nmx-meta,
+    .doc-grid,.doc-kpis,.doc-phases,.doc-split,.hiw-steps,.hiw-sheets,.hiw-split{
+      grid-template-columns:1fr !important
+    }
+    .section{padding-left:16px !important;padding-right:16px !important}
+    body > div[style*="margin:0 auto"]{padding-left:16px !important;padding-right:16px !important}
+  }
 </style>
 </helmet>
 
@@ -29,7 +66,7 @@
       <div>
         <sc-for list="{{ items }}" as="item" hint-placeholder-count="2">
           <div style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(110,231,183,.16)">
-            <div style="width:84px;height:64px;flex:none;border-radius:5px;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03),rgba(255,255,255,.03) 8px,rgba(110,231,183,.06) 8px,rgba(110,231,183,.06) 16px)"></div>
+            <div style="width:110px;height:78px;flex:none;border-radius:6px;overflow:hidden;background:#0a251c;border:1px solid rgba(110,231,183,.16);display:flex;align-items:center;justify-content:center">{{ item.coverEl }}</div>
             <div style="flex:1">
               <div class="mono" style="font-size:10px;color:#6ee7b7;text-transform:uppercase;margin-bottom:4px">{{ item.category }}</div>
               <div style="font-weight:800;font-size:14.5px;margin-bottom:4px">{{ item.name }}</div>
@@ -43,7 +80,7 @@
         </sc-for>
 
         <div style="margin-top:20px;display:flex;gap:10px">
-          <input placeholder="Código de descuento" style="flex:1;padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Manrope',sans-serif"/>
+          <input placeholder="Código de descuento" style="flex:1;padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Inter Tight',sans-serif"/>
           <span style="padding:11px 20px;border:1.5px solid #e2e8f0;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer">Aplicar</span>
         </div>
       </div>
@@ -54,11 +91,15 @@
         <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#c7dad2;margin-bottom:10px"><span>Descuento</span><span>—</span></div>
         <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#c7dad2;margin-bottom:16px"><span>Impuestos (si aplica)</span><span>Incluidos</span></div>
         <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;border-top:1px solid rgba(110,231,183,.16);padding-top:14px;margin-bottom:20px"><span>Total</span><span>{{ subtotalLabel }}</span></div>
-        <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#b7cfc6;margin-bottom:18px">
-          <input type="checkbox" style="margin-top:2px"/>
-          <span>Acepto la <a href="License.dc.html">licencia de uso</a> y los <a href="Terms.dc.html">términos y condiciones</a>.</span>
+        <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#b7cfc6;margin-bottom:6px">
+          <input type="checkbox" checked="{{ accepted }}" onChange="{{ onToggleAccept }}" style="margin-top:2px"/>
+          <span>Acepto la <a href="License.dc.html">licencia de uso</a>, los <a href="Terms.dc.html">términos y condiciones</a> y la <a href="Privacy.dc.html">política de privacidad</a>.</span>
         </label>
-        <div onClick="{{ onGoToCheckout }}" style="display:block;text-align:center;padding:14px;background:#ff7a45;color:#241008;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer">Ir a pagar</div>
+        <sc-if value="{{ showAcceptWarning }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12px;color:#ff6b5e;font-weight:700;margin-bottom:10px">Debes aceptar la licencia y los términos para continuar.</div>
+        </sc-if>
+        <div style="height:12px"></div>
+        <div onClick="{{ onGoToCheckout }}" style="display:block;text-align:center;padding:14px;background:{{ ctaBg }};color:{{ ctaColor }};border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;transition:background .2s ease,opacity .2s ease;opacity:{{ ctaOpacity }}">Ir a pagar</div>
         <div class="mono" style="text-align:center;font-size:10.5px;color:#8fa9a0;margin-top:10px">Entrega digital inmediata tras la confirmación de pago</div>
       </div>
     </div>
@@ -79,7 +120,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { rawItems: [], loaded: false };
+  state = { rawItems: [], loaded: false, accepted: false, showAcceptWarning: false };
 
   componentDidMount() {
     this._init();
@@ -117,17 +158,43 @@ class Component extends DCLogic {
 
   renderVals() {
     const raw = this.state.rawItems || [];
-    const items = raw.map((p) => ({
-      ...p,
-      onRemove: () => window.NMXStore && window.NMXStore.removeFromCart(p.id)
-    }));
+    // Portada real de cada producto: los NMX vienen del inventario y los packs
+    // tienen su propia imagen (assets/img/covers/pack-*.png).
+    const inv = window.NMXInventory;
+    const coverFor = (p) => {
+      if (String(p.id).startsWith('pack-')) return 'assets/img/covers/' + p.id + '.png';
+      const prod = inv ? inv.get(p.id) : null;
+      return prod ? prod.cover : null;
+    };
+    const items = raw.map((p) => {
+      const src = coverFor(p);
+      return {
+        ...p,
+        coverEl: src
+          ? React.createElement('img', { src, alt: p.name, style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' } })
+          : null,
+        onRemove: () => window.NMXStore && window.NMXStore.removeFromCart(p.id)
+      };
+    });
     const subtotal = raw.reduce((sum, p) => sum + Number(p.price_clp ?? p.priceClp ?? p.price ?? 0), 0);
     const subtotalLabel = '$' + subtotal.toLocaleString('es-CL') + ' CLP';
+    const accepted = this.state.accepted;
     return {
       items,
       hasItems: this.state.loaded ? items.length > 0 : true,
       subtotalLabel,
+      accepted,
+      showAcceptWarning: this.state.showAcceptWarning,
+      ctaBg: accepted ? '#ff7a45' : 'rgba(255,122,69,.35)',
+      ctaColor: accepted ? '#241008' : 'rgba(36,16,8,.75)',
+      ctaOpacity: accepted ? 1 : 0.8,
+      onToggleAccept: (e) => this.setState({
+        accepted: !!(e && e.target && e.target.checked),
+        showAcceptWarning: false
+      }),
       onGoToCheckout: () => {
+        // Aceptar la licencia es obligatorio: sin eso no se avanza al pago.
+        if (!this.state.accepted) { this.setState({ showAcceptWarning: true }); return; }
         if (window.NMXStore) window.NMXStore.clearBuyNow();
         window.location.href = 'Checkout.dc.html';
       }

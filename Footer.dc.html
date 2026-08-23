@@ -7,7 +7,18 @@
 </head>
 <body>
 <x-dc>
-<footer style="background:radial-gradient(ellipse 900px 500px at 50% 0%,#0a251c 0%,#04140f 70%) fixed;color:#c7d2d5;border-top:1px solid rgba(110,231,183,.14);font-family:'Manrope',system-ui,sans-serif;padding:56px 40px 28px">
+<helmet data-dc-atomics>
+<style>
+  @media (max-width:768px){
+    footer > div:first-child{grid-template-columns:repeat(2,1fr) !important;gap:26px !important}
+  }
+  @media (max-width:480px){
+    footer > div:first-child{grid-template-columns:1fr !important}
+    footer{padding-left:20px !important;padding-right:20px !important}
+  }
+</style>
+</helmet>
+<footer style="background:radial-gradient(ellipse 900px 500px at 50% 0%,#0a251c 0%,#04140f 70%) fixed;color:#c7d2d5;border-top:1px solid rgba(110,231,183,.14);font-family:'Inter Tight',system-ui,sans-serif;padding:56px 40px 28px">
   <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:32px;max-width:1280px;margin:0 auto">
     <div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
@@ -31,7 +42,6 @@
       <div style="display:flex;flex-direction:column;gap:10px;font-size:13px">
         <a href="HowItWorks.dc.html" style="color:#c7d2d5;text-decoration:none">Cómo funciona</a>
         <a href="FAQ.dc.html" style="color:#c7d2d5;text-decoration:none">Preguntas frecuentes</a>
-        <a href="Contact.dc.html" style="color:#c7d2d5;text-decoration:none">Contacto</a>
         <a href="Contact.dc.html" style="color:#c7d2d5;text-decoration:none">Contacto</a>
         <a href="Support.dc.html" style="color:#c7d2d5;text-decoration:none">Soporte</a>
       </div>

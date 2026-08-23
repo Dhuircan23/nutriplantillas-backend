@@ -9,10 +9,19 @@
 <x-dc>
 <helmet data-dc-atomics>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  /* El header ya conmuta a menú hamburguesa bajo 1100px; acá solo se ajusta
+     el respiro lateral y el tamaño táctil en pantallas chicas. */
+  @media (max-width:560px){
+    header{padding-left:16px !important;padding-right:16px !important}
+    header a[href="Home.dc.html"] span{font-size:15px !important}
+    nav a{min-height:44px;display:flex;align-items:center}
+  }
+</style>
 <script src="./store.js"></script>
 </helmet>
-<header style="position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:14px 40px;background:rgba(4,20,15,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(110,231,183,.14);font-family:'Manrope',system-ui,sans-serif">
+<header style="position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:14px 40px;background:rgba(4,20,15,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(110,231,183,.14);font-family:'Inter Tight',system-ui,sans-serif">
   <a href="Home.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
     <svg width="30" height="30" viewBox="0 0 30 30"><rect x="2" y="2" width="26" height="26" rx="5" fill="#6ee7b7"></rect><rect x="7.5" y="7.5" width="15" height="3" fill="#04140f"></rect><rect x="7.5" y="13.5" width="6.5" height="3" fill="#0a251c"></rect><rect x="16" y="13.5" width="6.5" height="3" fill="#04140f"></rect><rect x="7.5" y="19.5" width="15" height="3" fill="#0a251c"></rect></svg>
     <div style="display:flex;flex-direction:column;line-height:1.1">
@@ -41,7 +50,7 @@
       </a>
       <sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
         <form onSubmit="{{ onSearchSubmit }}" style="position:absolute;top:64px;right:40px;background:rgba(4,20,15,.96);border:1px solid rgba(110,231,183,.25);border-radius:8px;padding:10px;box-shadow:0 12px 30px rgba(0,0,0,.4)">
-          <input autoFocus="{{ true }}" value="{{ searchQuery }}" onChange="{{ onSearchQueryChange }}" placeholder="Buscar herramientas…" style="width:220px;padding:9px 12px;border:1px solid rgba(110,231,183,.25);border-radius:5px;font-size:13px;font-family:'Manrope',sans-serif;background:rgba(255,255,255,.05);color:#e2e8f0"/>
+          <input autoFocus="{{ true }}" value="{{ searchQuery }}" onChange="{{ onSearchQueryChange }}" placeholder="Buscar herramientas…" style="width:220px;padding:9px 12px;border:1px solid rgba(110,231,183,.25);border-radius:5px;font-size:13px;font-family:'Inter Tight',sans-serif;background:rgba(255,255,255,.05);color:#e2e8f0"/>
         </form>
       </sc-if>
       <a href="Cart.dc.html" aria-label="Carrito" style="position:relative;color:#9fb8ae;display:flex">
@@ -72,7 +81,7 @@
 </header>
 
 <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
-  <nav style="position:sticky;top:64px;z-index:39;background:rgba(4,20,15,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(110,231,183,.14);padding:8px 24px 18px;display:flex;flex-direction:column;font-family:'Manrope',system-ui,sans-serif">
+  <nav style="position:sticky;top:64px;z-index:39;background:rgba(4,20,15,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(110,231,183,.14);padding:8px 24px 18px;display:flex;flex-direction:column;font-family:'Inter Tight',system-ui,sans-serif">
     <a href="Catalog.dc.html" style="text-decoration:none;color:#eef7f3;font-weight:600;font-size:15px;padding:12px 0;border-bottom:1px solid rgba(110,231,183,.12)">Tienda</a>
     <a href="Packages.dc.html" style="text-decoration:none;color:#eef7f3;font-weight:600;font-size:15px;padding:12px 0;border-bottom:1px solid rgba(110,231,183,.12)">Paquetes</a>
     <a href="Membership.dc.html" style="text-decoration:none;color:#eef7f3;font-weight:600;font-size:15px;padding:12px 0;border-bottom:1px solid rgba(110,231,183,.12)">Membresía</a>
