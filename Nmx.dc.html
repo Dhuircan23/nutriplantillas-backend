@@ -22,6 +22,7 @@
   }
 </style>
 <script src="./nutrimetria-inventory.js"></script>
+<script src="./nutrimetria-capturas.js"></script>
 </helmet>
 
 <dc-import name="Header" active="tienda" hint-size="100%,64px"></dc-import>
@@ -37,16 +38,45 @@
 
   <div class="nmx-hero" style="display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:start;margin-bottom:44px">
     <div>
-      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden;margin-bottom:12px;min-height:120px;background:#0a251c">
-        {{ coverEl }}
+      <div style="position:relative;border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden;margin-bottom:10px;background:#0a251c;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center">
+        {{ slideEl }}
+        <sc-if value="{{ hasCaptures }}" hint-placeholder-val="{{ false }}">
+          <button type="button" onClick="{{ onSlidePrev }}" aria-label="Vista anterior" style="appearance:none;position:absolute;left:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:1px solid rgba(110,231,183,.28);background:rgba(4,20,15,.78);color:#eef7f3;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1" style-hover="background:rgba(4,20,15,.95);border-color:#6ee7b7">‹</button>
+          <button type="button" onClick="{{ onSlideNext }}" aria-label="Vista siguiente" style="appearance:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:1px solid rgba(110,231,183,.28);background:rgba(4,20,15,.78);color:#eef7f3;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1" style-hover="background:rgba(4,20,15,.95);border-color:#6ee7b7">›</button>
+          <div style="position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;background:linear-gradient(transparent,rgba(4,20,15,.85))">
+            <span class="nmx-tag" style="color:#eef7f3">{{ slideLabel }}</span>
+            <span class="mono" style="font-size:10px;color:#9fb8ae">{{ slidePosition }}</span>
+          </div>
+        </sc-if>
       </div>
-      <div style="display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:11px 13px">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8fa9a0" stroke-width="2" style="flex:none;margin-top:1px"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 15l5-5 4 4 3-3 6 6"></path></svg>
+
+      <sc-if value="{{ hasCaptures }}" hint-placeholder-val="{{ false }}">
         <div>
-          <div class="nmx-tag" style="color:#8fa9a0;margin-bottom:3px">Captura no generada</div>
-          <div style="font-size:11.5px;color:#7f9a91;line-height:1.5">Las vistas internas del libro no se muestran: <span class="mono">{{ captureNotice }}</span>. La portada es una identificación de marca, no una captura del archivo.</div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:12px 0 10px">
+            <span class="nmx-tag" style="color:#6ee7b7">Vistas del libro</span>
+            <span class="mono" style="font-size:10.5px;color:#7f9a91">{{ captureCount }} capturas reales</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px">
+            <sc-for list="{{ slides }}" as="cap" hint-placeholder-count="6">
+              <button type="button" onClick="{{ cap.onSelect }}" title="{{ cap.label }}" style="appearance:none;padding:0;border:1.5px solid {{ cap.borderColor }};border-radius:6px;overflow:hidden;background:#0a1f18;cursor:pointer;display:flex;flex-direction:column" style-hover="border-color:rgba(110,231,183,.5)">
+                <span style="display:block;width:100%;height:56px;overflow:hidden">{{ cap.thumbEl }}</span>
+                <span class="nmx-tag" style="color:{{ cap.labelColor }};padding:5px 6px;text-align:center;font-size:9px;line-height:1.3">{{ cap.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <button type="button" onClick="{{ onOpenViewer }}" style="appearance:none;font-family:inherit;width:100%;margin-top:10px;padding:9px;background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.2);border-radius:6px;color:#c7dad2;font-size:12px;font-weight:600;cursor:zoom-in">Ver en pantalla completa</button>
         </div>
-      </div>
+      </sc-if>
+
+      <sc-if value="{{ !hasCaptures }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:11px 13px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8fa9a0" stroke-width="2" style="flex:none;margin-top:1px"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 15l5-5 4 4 3-3 6 6"></path></svg>
+          <div>
+            <div class="nmx-tag" style="color:#8fa9a0;margin-bottom:3px">Captura no generada</div>
+            <div style="font-size:11.5px;color:#7f9a91;line-height:1.5">Las vistas internas del libro no se muestran: <span class="mono">{{ captureNotice }}</span>. La portada es una identificación de marca, no una captura del archivo.</div>
+          </div>
+        </div>
+      </sc-if>
     </div>
 
     <div>
@@ -226,18 +256,69 @@
   </div>
 </div>
 
+<sc-if value="{{ viewerOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ onCloseViewer }}" style="position:fixed;inset:0;z-index:200;background:rgba(3,15,11,.94);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 64px">
+    <div style="display:flex;justify-content:space-between;align-items:center;width:100%;max-width:1100px;margin-bottom:12px">
+      <div>
+        <div style="font-size:14px;font-weight:800;color:#eef7f3">{{ viewerLabel }}</div>
+        <div class="mono" style="font-size:11px;color:#7f9a91">{{ product.sku }} · {{ viewerPosition }}</div>
+      </div>
+      <button type="button" onClick="{{ onCloseViewer }}" aria-label="Cerrar" style="appearance:none;background:rgba(255,255,255,.06);border:1px solid rgba(110,231,183,.2);color:#eef7f3;border-radius:6px;width:36px;height:36px;font-size:18px;cursor:pointer;line-height:1">×</button>
+    </div>
+    <div style="max-width:1100px;width:100%;flex:1;display:flex;align-items:center;justify-content:center;min-height:0;border:1px solid rgba(110,231,183,.18);border-radius:8px;overflow:hidden;background:#0a1f18">{{ viewerImageEl }}</div>
+    <div style="display:flex;gap:12px;align-items:center;margin-top:14px">
+      <button type="button" onClick="{{ onPrev }}" aria-label="Anterior" style="appearance:none;font-family:inherit;background:rgba(255,255,255,.06);border:1px solid rgba(110,231,183,.25);color:#eef7f3;border-radius:6px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer">← Anterior</button>
+      <button type="button" onClick="{{ onNext }}" aria-label="Siguiente" style="appearance:none;font-family:inherit;background:rgba(255,255,255,.06);border:1px solid rgba(110,231,183,.25);color:#eef7f3;border-radius:6px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer">Siguiente →</button>
+    </div>
+  </div>
+</sc-if>
+
 <dc-import name="Footer" hint-size="100%,420px"></dc-import>
 
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240,&quot;height&quot;:1400}}">
 class Component extends DCLogic {
-  state = { added: false, inventoryReady: false };
+  // slideIndex: 0 = portada de marca, 1..N = capturas reales del libro.
+  state = { added: false, inventoryReady: false, viewerIndex: null, slideIndex: 0 };
 
-  componentDidMount() { this._waitForInventory(); }
+  componentDidMount() {
+    this._waitForInventory();
+    // Flechas y Escape para recorrer las capturas sin usar el mouse.
+    this._onKey = (e) => {
+      if (this.state.viewerIndex === null) return;
+      if (e.key === 'Escape') this.setState({ viewerIndex: null });
+      if (e.key === 'ArrowRight') this._step(1);
+      if (e.key === 'ArrowLeft') this._step(-1);
+    };
+    window.addEventListener('keydown', this._onKey);
+  }
 
   componentWillUnmount() {
     if (this._addedTimer) clearTimeout(this._addedTimer);
     if (this._retryTimer) clearTimeout(this._retryTimer);
+    if (this._onKey) window.removeEventListener('keydown', this._onKey);
+  }
+
+  _captures() {
+    const inv = window.NMXInventory;
+    if (!inv || !window.NMXCaptures) return [];
+    const p = inv.get(this._currentId()) || inv.products[0];
+    return p ? window.NMXCaptures.forProduct(p.id) : [];
+  }
+
+  _step(delta) {
+    const shots = this._captures();
+    if (!shots.length) return;
+    this.setState((s) => ({
+      viewerIndex: (s.viewerIndex + delta + shots.length) % shots.length
+    }));
+  }
+
+  // El carrusel incluye la portada como primera diapositiva, por eso el total
+  // es capturas + 1.
+  _slideStep(delta) {
+    const total = this._captures().length + 1;
+    this.setState((s) => ({ slideIndex: (s.slideIndex + delta + total) % total }));
   }
 
   _waitForInventory() {
@@ -270,6 +351,11 @@ class Component extends DCLogic {
       return {
         product: { sku: '—', name: 'Cargando herramienta…', phaseName: '', phaseHref: 'Catalog.dc.html', objective: '', population: '', category: '', kindLabel: '', priceLabel: '—', cover: '', portfolioPdf: '', excelFile: '', portfolioDocxFile: '', inputs: [], results: [], methodology: [], sources: '', limitations: '', portfolioState: '', docState: '', note: '' },
         siblings: [], captureNotice: '', versionLabel: '—', versionColor: '#8fa9a0', coverEl: null,
+        captures: [], hasCaptures: false, captureCount: 0, viewerOpen: false,
+        viewerLabel: '', viewerPosition: '', viewerImageEl: null,
+        slides: [], slideEl: null, slideLabel: '', slidePosition: '',
+        onSlidePrev: () => {}, onSlideNext: () => {}, onOpenViewer: () => {},
+        onCloseViewer: () => {}, onPrev: () => {}, onNext: () => {},
         ctaLabel: 'Cargando…', ctaDisabled: true, ctaCursor: 'default', onAddToCart: () => {}
       };
     }
@@ -283,9 +369,52 @@ class Component extends DCLogic {
       coverEl: img(p.cover, p.name, { display: 'block', width: '100%', height: '88px', objectFit: 'cover' })
     }));
 
+    // Capturas reales del libro: miniatura clicable + visor a pantalla completa.
+    const shots = window.NMXCaptures ? window.NMXCaptures.forProduct(product.id) : [];
+    const vi = this.state.viewerIndex;
+    const current = vi !== null && shots[vi] ? shots[vi] : null;
+    const allSlides = [{ label: 'Portada', src: product.cover }, ...shots];
+    const si = Math.min(this.state.slideIndex, allSlides.length - 1);
+    const slide = allSlides[si];
+
     return {
       product: { ...product, phaseHref: 'Catalog.dc.html?fase=' + product.phase },
       coverEl: img(product.cover, product.name, { display: 'block', width: '100%', height: 'auto' }),
+      captures: shots.map((c, i) => ({
+        label: c.label,
+        thumbEl: img(c.src, c.label, { width: '100%', height: '56px', objectFit: 'cover', objectPosition: 'top left', display: 'block' }),
+        onOpen: () => this.setState({ viewerIndex: i })
+      })),
+      // Carrusel: portada + capturas, con la miniatura activa resaltada.
+      slides: [{ label: 'Portada', src: product.cover }, ...shots].map((c, i) => ({
+        label: c.label,
+        thumbEl: img(c.src, c.label, { width: '100%', height: '56px', objectFit: 'cover', objectPosition: 'top left', display: 'block' }),
+        borderColor: i === si ? '#6ee7b7' : 'rgba(110,231,183,.18)',
+        labelColor: i === si ? '#6ee7b7' : '#8fa9a0',
+        onSelect: () => this.setState({ slideIndex: i })
+      })),
+      // El contenedor fija la proporción (4:3); la imagen se ajusta dentro con
+      // contain para que portada (3:1) y capturas (1.29:1) no cambien la altura.
+      slideEl: slide
+        ? img(slide.src, slide.label, { display: 'block', maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' })
+        : null,
+      slideLabel: slide ? slide.label : '',
+      slidePosition: shots.length ? (si + 1) + ' / ' + (shots.length + 1) : '',
+      onSlidePrev: () => this._slideStep(-1),
+      onSlideNext: () => this._slideStep(1),
+      // Desde la portada, "pantalla completa" abre la primera captura real.
+      onOpenViewer: () => this.setState({ viewerIndex: Math.max(0, si - 1) }),
+      hasCaptures: shots.length > 0,
+      captureCount: shots.length,
+      viewerOpen: !!current,
+      viewerLabel: current ? current.label : '',
+      viewerPosition: current ? (vi + 1) + ' de ' + shots.length : '',
+      viewerImageEl: current
+        ? img(current.src, current.label, { maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', display: 'block' })
+        : null,
+      onCloseViewer: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ viewerIndex: null }); },
+      onPrev: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this._step(-1); },
+      onNext: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this._step(1); },
       siblings,
       captureNotice: inv.report.captureNotice,
       versionLabel: notConfirmed ? 'No confirmada en el archivo' : product.version,
