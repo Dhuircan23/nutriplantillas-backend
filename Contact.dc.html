@@ -20,13 +20,28 @@
 </style>
 </helmet>
 
-<dc-import name="Header" active="" cart-count="2" hint-size="100%,64px"></dc-import>
+<dc-import name="Header" active="contacto" cart-count="2" hint-size="100%,64px"></dc-import>
 
 <div style="max-width:640px;margin:0 auto;padding:40px 40px 80px">
   <h1 style="font-size:26px;font-weight:800;margin:0 0 10px;letter-spacing:-.3px">Contacto</h1>
   <p style="font-size:13.5px;color:#9fb8ae;margin:0 0 28px;line-height:1.6">Consultas comerciales, dudas sobre una herramienta o soporte con un producto ya comprado.</p>
 
   <sc-if value="{{ !sent }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px">
+      <a href="{{ mailtoHref }}" style="text-decoration:none;display:flex;align-items:center;gap:9px;padding:12px 18px;background:#6ee7b7;color:#04140f;border-radius:6px;font-size:13.5px;font-weight:700">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M2 7l10 6 10-6"></path></svg>
+        Escribir por correo
+      </a>
+      <a href="https://wa.me/56964361341" target="_blank" rel="noopener" style="text-decoration:none;display:flex;align-items:center;gap:9px;padding:12px 18px;border:1.5px solid rgba(110,231,183,.3);color:#e2e8f0;border-radius:6px;font-size:13.5px;font-weight:700">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-12.6 7.3L3 20.5l1.8-5.3A8.4 8.4 0 1 1 21 11.5z"></path></svg>
+        WhatsApp
+      </a>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+      <div style="flex:1;height:1px;background:rgba(110,231,183,.16)"></div>
+      <span class="mono" style="font-size:11px;color:#7fa398">o completa el formulario</span>
+      <div style="flex:1;height:1px;background:rgba(110,231,183,.16)"></div>
+    </div>
     <form onSubmit="{{ onSubmit }}" style="display:flex;flex-direction:column;gap:16px">
       <div class="field"><label>Nombre</label><input required="{{ true }}" value="{{ name }}" onChange="{{ onNameChange }}"/></div>
       <div class="field"><label>Correo electrónico</label><input type="email" required="{{ true }}" value="{{ email }}" onChange="{{ onEmailChange }}"/></div>
@@ -41,13 +56,14 @@
       </div>
       <div class="field"><label>Mensaje</label><textarea rows="5" required="{{ true }}" value="{{ message }}" onChange="{{ onMessageChange }}" placeholder="Cuéntanos en qué te podemos ayudar…"></textarea></div>
       <button type="submit" style="align-self:flex-start;padding:12px 24px;background:#6ee7b7;color:#04140f;border:none;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit">Enviar mensaje</button>
+      <p style="font-size:11.5px;color:#8fa9a0;margin:0">Al enviar, se abre tu correo (Gmail u otro) con el mensaje ya escrito para que lo confirmes.</p>
     </form>
   </sc-if>
 
   <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
     <div style="border:1px solid rgba(110,231,183,.25);border-radius:8px;padding:22px;background:rgba(110,231,183,.06)">
-      <div style="color:#6ee7b7;font-weight:800;font-size:15px;margin-bottom:6px">Mensaje enviado ✓</div>
-      <p style="font-size:13px;color:#c7dad2;margin:0;line-height:1.6">Gracias, {{ name }}. Te responderemos a {{ email }} a la brevedad.</p>
+      <div style="color:#6ee7b7;font-weight:800;font-size:15px;margin-bottom:6px">Correo abierto ✓</div>
+      <p style="font-size:13px;color:#c7dad2;margin:0;line-height:1.6">Gracias, {{ name }}. Se abrió tu aplicación de correo con el mensaje listo para enviar a Dhuircan23@gmail.com. Si no se abrió, escríbenos directamente a <a href="mailto:Dhuircan23@gmail.com">Dhuircan23@gmail.com</a>.</p>
     </div>
   </sc-if>
 
@@ -67,17 +83,42 @@
 class Component extends DCLogic {
   state = { name: '', email: '', reason: 'soporte', message: '', sent: false };
 
+  // No hay endpoint de contacto en el backend, así que el formulario compone un
+  // mailto: con los datos ya escritos — se abre Gmail (o el cliente de correo
+  // que el usuario tenga) y el mensaje llega de verdad a la casilla.
+  _mailto() {
+    const s = this.state;
+    const REASONS = {
+      soporte: 'Soporte de un producto comprado',
+      comercial: 'Consulta comercial',
+      prensa: 'Prensa',
+      otro: 'Otro'
+    };
+    const subject = 'NUTRIMETRÍA — ' + (REASONS[s.reason] || 'Contacto');
+    const body = [
+      'Nombre: ' + (s.name || ''),
+      'Correo: ' + (s.email || ''),
+      'Motivo: ' + (REASONS[s.reason] || ''),
+      '',
+      s.message || ''
+    ].join('\n');
+    return 'mailto:Dhuircan23@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  }
+
   renderVals() {
     const s = this.state;
     return {
       name: s.name, email: s.email, reason: s.reason, message: s.message, sent: s.sent,
+      mailtoHref: 'mailto:Dhuircan23@gmail.com?subject=' + encodeURIComponent('NUTRIMETRÍA — Contacto'),
       onNameChange: (e) => this.setState({ name: e.target.value }),
       onEmailChange: (e) => this.setState({ email: e.target.value }),
       onReasonChange: (e) => this.setState({ reason: e.target.value }),
       onMessageChange: (e) => this.setState({ message: e.target.value }),
       onSubmit: (e) => {
         e.preventDefault();
-        if (s.name.trim() && s.email.trim() && s.message.trim()) this.setState({ sent: true });
+        if (!(s.name.trim() && s.email.trim() && s.message.trim())) return;
+        window.location.href = this._mailto();
+        this.setState({ sent: true });
       }
     };
   }
