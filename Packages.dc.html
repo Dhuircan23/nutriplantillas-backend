@@ -107,14 +107,14 @@ class Component extends DCLogic {
     // agregar varios NMX de una vez. El ahorro se calcula sobre el precio real
     // de cada producto incluido, tomado del catálogo (nutrimetria-inventory.js).
     const RAW = [
-      { key: 'estudiante', packId: 'pack-estudiante', name: 'Pack Estudiante', desc: 'Para prácticas, tareas y aprendizaje guiado.', price: 27990, borderColor: '#6ee7b7', highlight: true,
+      { key: 'estudiante', packId: 'pack-estudiante', name: 'Pack Estudiante', desc: 'Para prácticas, tareas y aprendizaje guiado.', price: 19990, borderColor: '#6ee7b7', highlight: true,
         items: [ { id: 'nmx01', label: 'Calculadora Energética (NMX-01)', real: 7990 }, { id: 'nmx13', label: 'Recordatorio de 24 Horas (NMX-13)', real: 5990 }, { id: 'nmxp1', label: 'Guía del Paquete (NMX-P1)', real: 4990 }, { id: 'nmx21', label: 'Distribución Alimentaria INTA 2018 (NMX-21)', real: 7990 }, { id: 'nmx14m', label: 'Evaluación Pediátrica OMS/MINSAL + UDD (NMX-14-MINSAL-UDD)', real: 7990 }, { id: 'nmx12', label: 'Calculadora de Grasa y Composición Corporal (NMX-12)', real: 6990 }, { id: 'nmx36', label: 'Calculadora Especializada de Plicometría (NMX-36)', real: 6990 } ] },
       { key: 'antropometria', packId: 'pack-antropometria', name: 'Pack Antropometría', desc: 'Para seguimiento de mediciones y composición corporal.', price: 17990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
         items: [ { id: 'nmx20', label: 'Formulario Integral de Evaluación (NMX-20)', real: 7990 }, { id: 'nmx06', label: 'Registro y Seguimiento de Composición Corporal (NMX-06)', real: 5990 }, { id: 'nmx41', label: 'Software Acompañante para Plicómetro (NMX-41)', real: 5990 }, { id: 'nmx10', label: 'Motor de Requerimiento Energético, MET y Efecto Térmico (NMX-10)', real: 6990 } ] },
       { key: 'consulta', packId: 'pack-consulta', name: 'Pack Consulta Nutricional', desc: 'Para organizar evaluaciones y registros básicos.', price: 24990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
         items: [ { id: 'nmx03', label: 'Historia Clínica Nutricional Completa (NMX-03)', real: 7990 }, { id: 'nmx13', label: 'Recordatorio de 24 Horas (NMX-13)', real: 5990 }, { id: 'nmx20', label: 'Formulario Integral de Evaluación (NMX-20)', real: 7990 }, { id: 'nmx21', label: 'Distribución Alimentaria INTA 2018 (NMX-21)', real: 7990 }, { id: 'nmx07', label: 'Gestor de Creación de Dietas (NMX-07)', real: 7990 } ] },
-      { key: 'profesional', packId: 'pack-profesional', name: 'Pack Profesional', desc: 'Colección ampliada de herramientas para consulta.', price: 23990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
-        items: [ { id: 'nmx01', label: 'Calculadora Energética (NMX-01)', real: 7990 }, { id: 'nmx21', label: 'Distribución Alimentaria INTA 2018 (NMX-21)', real: 7990 }, { id: 'nmx12', label: 'Calculadora de Grasa y Composición Corporal (NMX-12)', real: 6990 }, { id: 'nmx11', label: 'Planificador Integrado de Entrenamiento y Nutrición (NMX-11)', real: 6990 }, { id: 'nmx43', label: 'Biblioteca UDD y Banco Clínico-Formativo (NMX-43)', real: 7990 } ] }
+      { key: 'profesional', packId: 'pack-profesional', name: 'Pack Profesional', desc: 'Todo el Pack Estudiante más las herramientas deportivas y de biblioteca clínica.', price: 32990, borderColor: 'rgba(110,231,183,.16)', highlight: false,
+        items: [ { id: 'nmx01', label: 'Calculadora Energética (NMX-01)', real: 7990 }, { id: 'nmx21', label: 'Distribución Alimentaria INTA 2018 (NMX-21)', real: 7990 }, { id: 'nmx12', label: 'Calculadora de Grasa y Composición Corporal (NMX-12)', real: 6990 }, { id: 'nmx36', label: 'Calculadora Especializada de Plicometría (NMX-36)', real: 6990 }, { id: 'nmx13', label: 'Recordatorio de 24 Horas (NMX-13)', real: 5990 }, { id: 'nmx14m', label: 'Evaluación Pediátrica OMS/MINSAL + UDD (NMX-14-MINSAL-UDD)', real: 7990 }, { id: 'nmxp1', label: 'Guía del Paquete (NMX-P1)', real: 4990 }, { id: 'nmx11', label: 'Planificador Integrado de Entrenamiento y Nutrición (NMX-11)', real: 6990 }, { id: 'nmx43', label: 'Biblioteca UDD y Banco Clínico-Formativo (NMX-43)', real: 7990 } ] }
     ];
 
     const money = (n) => '$' + n.toLocaleString('es-CL') + ' CLP';
@@ -139,12 +139,12 @@ class Component extends DCLogic {
     return {
       packages,
       comparisonRows: [
-        {label:'Archivos incluidos', estudiante:'7', antropometria:'4', consulta:'5', profesional:'5'},
+        {label:'Archivos incluidos', estudiante:'7', antropometria:'4', consulta:'5', profesional:'9'},
         {label:'Actualizaciones', estudiante:'Incluidas 6 meses', antropometria:'Incluidas 6 meses', consulta:'Incluidas 12 meses', profesional:'Incluidas 12 meses'},
         {label:'Soporte', estudiante:'Por correo', antropometria:'Por correo', consulta:'Prioritario', profesional:'Prioritario'},
         {label:'Tipo de licencia', estudiante:'Individual', antropometria:'Individual', consulta:'Individual', profesional:'Individual / Profesional'},
         {label:'Público recomendado', estudiante:'Estudiantes', antropometria:'Profesionales en consulta', consulta:'Profesionales en consulta', profesional:'Consulta con alto volumen'},
-        {label:'Ahorro real', estudiante:'$20.940 CLP', antropometria:'$8.970 CLP', consulta:'$12.960 CLP', profesional:'$13.960 CLP'}
+        {label:'Ahorro real', estudiante:'$28.940 CLP', antropometria:'$8.970 CLP', consulta:'$12.960 CLP', profesional:'$30.920 CLP'}
       ]
     };
   }
