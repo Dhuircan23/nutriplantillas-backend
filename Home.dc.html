@@ -61,11 +61,15 @@
     h1,h2{overflow-wrap:break-word;word-break:break-word}
     .rg-hero h1{font-size:clamp(24px,6.6vw,30px) !important}
     .mockup-content{min-width:0}
-    /* La fila de pestañas se desplaza DENTRO de la tarjeta: sin min-width:0 en
-       ella y en sus ancestros, crecía al ancho de su contenido y estiraba el
-       mockup fuera de la pantalla. */
-    .mockup-tabs{min-width:0;max-width:100%}
-    .rg-hero-visual .glass,.rg-hero-visual .glass > div{min-width:0;max-width:100%;box-sizing:border-box}
+    /* Restricción dura al viewport: da igual qué ancho tenga el contenedor
+       padre, el preview y los CTA no pueden pasar del ancho de la pantalla.
+       El desplazamiento horizontal queda DENTRO de la fila de pestañas. */
+    .rg-hero-visual,.rg-hero-visual .glass{max-width:calc(100vw - 32px) !important;box-sizing:border-box}
+    .rg-hero-visual .glass > div{max-width:100% !important;box-sizing:border-box;min-width:0}
+    .mockup-tabs{min-width:0;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .mockup-tabs::-webkit-scrollbar{display:none}
+    .cta-row{max-width:calc(100vw - 32px);box-sizing:border-box}
+    .rg-hero > *{max-width:calc(100vw - 32px);box-sizing:border-box}
     /* El mockup del hero era absoluto sobre un contenedor de altura fija: en
        móvil se salía de pantalla y dejaba un hueco vertical enorme. Pasa al
        flujo normal y el canvas decorativo se retira. */
