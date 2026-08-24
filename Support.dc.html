@@ -10,6 +10,8 @@
 <helmet data-dc-atomics>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<script src="./nutrimetria-inventory.js"></script>
 <style>
   body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Inter Tight',system-ui,sans-serif;color:#e2e8f0;position:relative}
   body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(110,231,183,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(110,231,183,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%);-webkit-mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%)}
@@ -19,28 +21,23 @@
   .mono{font-family:'JetBrains Mono',monospace}
   .field{display:flex;flex-direction:column;gap:6px}
   .field label{font-size:12.5px;font-weight:700;color:#c7dad2}
-  .field input,.field select,.field textarea{padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Inter Tight',sans-serif}
+  .field input,.field select,.field textarea{padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Inter Tight',sans-serif;background:rgba(255,255,255,.04);color:#e2e8f0}
 
   /* ---- Responsive móvil (no afecta escritorio) ---- */
   img,svg,canvas,video{max-width:100%;height:auto}
   @media (max-width:900px){
-    /* Cualquier tabla ancha scrollea dentro de su caja en vez de estirar la página */
     div:has(> [role="table"]){overflow-x:auto;-webkit-overflow-scrolling:touch}
-    /* Paneles admin/cliente: la barra lateral pasa arriba y a ancho completo.
-       Se busca el VALOR "220px 1fr" porque el serializador puede meter espacios. */
     [style*="220px 1fr"]{grid-template-columns:1fr !important;gap:18px !important}
     [style*="220px 1fr"] > *{max-width:100% !important;width:100% !important}
     [style*="220px 1fr"] nav{display:flex !important;flex-wrap:wrap;gap:8px !important}
   }
   @media (max-width:640px){
-    /* 40px de margen lateral se comen un cuarto de una pantalla de 320px */
     .section{padding-left:20px !important;padding-right:20px !important;padding-top:44px !important;padding-bottom:44px !important}
     div[style*="px 40px"]{padding-inline:20px !important;box-sizing:border-box}
     h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
     h2{font-size:clamp(20px,5.4vw,24px) !important}
     button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
     .btn-primary,.btn-secondary{width:100%;box-sizing:border-box}
-    /* Nada puede empujar la página a lo ancho */
     body{overflow-x:hidden}
   }
   @media (max-width:560px){
@@ -50,7 +47,6 @@
     .doc-grid,.doc-kpis,.doc-phases,.doc-split,.hiw-steps,.hiw-sheets,.hiw-split{
       grid-template-columns:1fr !important
     }
-    /* Grillas con medidas fijas declaradas inline */
     [style*="1.5fr 1fr"],[style*="1.4fr 1fr"],[style*="1.6fr 1fr"],[style*="1.05fr 1fr"],
     [style*="1.4fr 1fr 1fr 1fr 1fr"],[style*="repeat(3,1fr)"],[style*="repeat(4,1fr)"],
     [style*="repeat(5,1fr)"]{grid-template-columns:1fr !important}
@@ -66,29 +62,42 @@
   <dc-import name="ClientNav" active="soporte" hint-size="220px,360px"></dc-import>
 
   <div style="max-width:640px">
-    <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Soporte</h1>
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px">Soporte</h1>
+    <p style="font-size:13px;color:#9fb8ae;margin:0 0 22px;line-height:1.6">Cuéntanos qué ocurrió con una herramienta que compraste. Respondemos al correo de tu cuenta.</p>
 
-    <form style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
-      <div class="field"><label>Producto</label><select><option>Calculadora de Necesidades Energéticas</option><option>Registro Antropométrico</option></select></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div class="field"><label>Versión</label><input value="v1.0"/></div>
-        <div class="field"><label>Sistema operativo</label><input placeholder="Ej. Windows 11"/></div>
-      </div>
-      <div class="field"><label>Versión de Excel</label><input placeholder="Ej. Microsoft 365"/></div>
-      <div class="field"><label>Descripción del problema</label><textarea rows="4" placeholder="Cuéntanos qué ocurrió…"></textarea></div>
-      <div class="field"><label>Adjuntar captura (opcional)</label><input type="file"/></div>
-      <span style="align-self:flex-start;padding:12px 24px;background:#ff7a45;color:#241008;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer">Enviar solicitud</span>
-    </form>
-
-    <h2 style="font-size:15px;font-weight:800;margin:0 0 12px">Mis solicitudes</h2>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:36px">
-      <sc-for list="{{ tickets }}" as="t" hint-placeholder-count="2">
-        <div style="border:1px solid rgba(110,231,183,.16);border-radius:6px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
-          <div><div style="font-weight:700;font-size:13px">{{ t.subject }}</div><div class="mono" style="font-size:11px;color:#7fa398">{{ t.date }}</div></div>
-          <span class="mono" style="font-size:10.5px;padding:3px 8px;border-radius:3px;background:{{ t.statusBg }};color:{{ t.statusColor }}">{{ t.status }}</span>
+    <sc-if value="{{ !sent }}" hint-placeholder-val="{{ true }}">
+      <form onSubmit="{{ onSubmit }}" style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
+        <div class="field">
+          <label for="sprod">Producto</label>
+          <select id="sprod" value="{{ product }}" onChange="{{ onProductChange }}">
+            <sc-for list="{{ productOptions }}" as="opt" hint-placeholder-count="6">
+              <option value="{{ opt.value }}">{{ opt.label }}</option>
+            </sc-for>
+          </select>
         </div>
-      </sc-for>
-    </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="field"><label for="sver">Versión</label><input id="sver" value="{{ version }}" onChange="{{ onVersionChange }}" placeholder="Ej. v1.0"/></div>
+          <div class="field"><label for="sos">Sistema operativo</label><input id="sos" value="{{ os }}" onChange="{{ onOsChange }}" placeholder="Ej. Windows 11"/></div>
+        </div>
+        <div class="field"><label for="sexcel">Versión de Excel</label><input id="sexcel" value="{{ excel }}" onChange="{{ onExcelChange }}" placeholder="Ej. Microsoft 365"/></div>
+        <div class="field"><label for="sdesc">Descripción del problema</label><textarea id="sdesc" rows="5" required="{{ true }}" value="{{ description }}" onChange="{{ onDescriptionChange }}" placeholder="Cuéntanos qué ocurrió: en qué hoja, qué esperabas y qué pasó…"></textarea></div>
+
+        <sc-if value="{{ errorMsg }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12.5px;color:#ff6b5e;font-weight:600">{{ errorMsg }}</div>
+        </sc-if>
+
+        <button type="submit" style="align-self:flex-start;padding:12px 24px;background:#ff7a45;color:#241008;border:none;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit">Enviar solicitud</button>
+        <p style="font-size:11.5px;color:#8fa9a0;margin:0">Se abre tu correo con la solicitud ya escrita. Si tienes una captura, adjúntala ahí antes de enviarla.</p>
+      </form>
+    </sc-if>
+
+    <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+      <div style="border:1px solid rgba(110,231,183,.25);border-radius:8px;padding:22px;background:rgba(110,231,183,.06);margin-bottom:32px">
+        <div style="color:#6ee7b7;font-weight:800;font-size:15px;margin-bottom:6px">Solicitud lista para enviar ✓</div>
+        <p style="font-size:13px;color:#c7dad2;margin:0 0 14px;line-height:1.6">Se abrió tu aplicación de correo con la solicitud escrita hacia Dhuircan23@gmail.com. Si no se abrió, escríbenos directamente a <a href="mailto:Dhuircan23@gmail.com">Dhuircan23@gmail.com</a>.</p>
+        <button type="button" onClick="{{ onReset }}" style="appearance:none;font-family:inherit;padding:10px 18px;border:1.5px solid rgba(110,231,183,.3);background:transparent;color:#e2e8f0;border-radius:6px;font-weight:700;font-size:12.5px;cursor:pointer">Enviar otra solicitud</button>
+      </div>
+    </sc-if>
 
     <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:24px">
       <h2 style="font-size:15px;font-weight:800;margin:0 0 6px">¿Te falta una calculadora?</h2>
@@ -100,7 +109,7 @@
         </form>
       </sc-if>
       <sc-if value="{{ suggestionSent }}" hint-placeholder-val="{{ false }}">
-        <div style="color:#6ee7b7;font-weight:700;font-size:13.5px">¡Gracias! Tu sugerencia quedó registrada ✓</div>
+        <div style="color:#6ee7b7;font-weight:700;font-size:13.5px">Se abrió tu correo con la sugerencia ✓</div>
       </sc-if>
     </div>
   </div>
@@ -110,22 +119,98 @@
 
 </x-dc>
 <script type="text/x-dc" data-dc-script>
+const MAILTO = 'Dhuircan23@gmail.com';
+
 class Component extends DCLogic {
-  state = { suggestionText: '', suggestionSent: false };
+  state = {
+    product: '', version: '', os: '', excel: '', description: '',
+    sent: false, errorMsg: '',
+    suggestionText: '', suggestionSent: false,
+    email: '', ready: false
+  };
+
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session) { window.location.href = 'Login.dc.html'; return; }
+    this.setState({ email: session.email || '', ready: true });
+    this._waitInventory();
+  }
+
+  componentWillUnmount() { if (this._t) clearTimeout(this._t); }
+
+  _waitInventory() {
+    if (window.NMXInventory) { this.forceUpdate(); return; }
+    this._t = setTimeout(() => this._waitInventory(), 30);
+  }
+
+  // No hay endpoint de soporte en el backend, así que la solicitud se compone
+  // como mailto con todos los datos técnicos ya escritos: llega de verdad a la
+  // casilla y el usuario puede adjuntar su captura antes de enviarla.
+  _submit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const s = this.state;
+    if (!(s.description || '').trim()) {
+      this.setState({ errorMsg: 'Describe el problema antes de enviar.' });
+      return;
+    }
+    const subject = 'Soporte NUTRIMETRÍA — ' + (s.product || 'herramienta');
+    const body = [
+      'Producto: ' + (s.product || '—'),
+      'Versión: ' + (s.version || '—'),
+      'Sistema operativo: ' + (s.os || '—'),
+      'Versión de Excel: ' + (s.excel || '—'),
+      'Cuenta: ' + (s.email || '—'),
+      '',
+      'Problema:',
+      s.description
+    ].join('\n');
+    window.location.href = 'mailto:' + MAILTO +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body);
+    this.setState({ sent: true, errorMsg: '' });
+  }
+
+  _submitSuggestion(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const text = (this.state.suggestionText || '').trim();
+    if (!text) return;
+    window.location.href = 'mailto:' + MAILTO +
+      '?subject=' + encodeURIComponent('Sugerencia de herramienta — NUTRIMETRÍA') +
+      '&body=' + encodeURIComponent(text);
+    this.setState({ suggestionSent: true });
+  }
 
   renderVals() {
+    const s = this.state;
+    const inv = window.NMXInventory;
+    // El desplegable lista los 32 productos reales del inventario, no dos
+    // nombres de ejemplo.
+    const productOptions = inv
+      ? inv.products.map((p) => ({ value: p.sku + ' — ' + p.name, label: p.sku + ' · ' + p.name }))
+      : [{ value: '', label: 'Cargando herramientas…' }];
+
     return {
-      tickets: [
-        {subject:'Error al abrir hoja de resultados', date:'8 jul 2026', status:'Resuelta', statusBg:'rgba(110,231,183,.12)', statusColor:'#6ee7b7'},
-        {subject:'Consulta sobre compatibilidad con Mac', date:'2 jul 2026', status:'En proceso', statusBg:'rgba(255,148,102,.14)', statusColor:'#ff9466'}
-      ],
-      suggestionText: this.state.suggestionText,
-      suggestionSent: this.state.suggestionSent,
+      productOptions,
+      product: s.product || (productOptions[0] && productOptions[0].value) || '',
+      version: s.version,
+      os: s.os,
+      excel: s.excel,
+      description: s.description,
+      errorMsg: s.errorMsg,
+      sent: s.sent,
+      onProductChange: (e) => this.setState({ product: e.target.value }),
+      onVersionChange: (e) => this.setState({ version: e.target.value }),
+      onOsChange: (e) => this.setState({ os: e.target.value }),
+      onExcelChange: (e) => this.setState({ excel: e.target.value }),
+      onDescriptionChange: (e) => this.setState({ description: e.target.value, errorMsg: '' }),
+      onSubmit: (e) => this._submit(e),
+      onReset: () => this.setState({ sent: false, description: '', version: '', os: '', excel: '' }),
+
+      suggestionText: s.suggestionText,
+      suggestionSent: s.suggestionSent,
       onSuggestionChange: (e) => this.setState({ suggestionText: e.target.value }),
-      onSuggestionSubmit: (e) => {
-        e.preventDefault();
-        if ((this.state.suggestionText || '').trim()) this.setState({ suggestionSent: true });
-      }
+      onSuggestionSubmit: (e) => this._submitSuggestion(e)
     };
   }
 }
