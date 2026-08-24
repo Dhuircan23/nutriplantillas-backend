@@ -8,7 +8,7 @@ router.use(requireAuth);
 
 // POST /api/orders
 // body opcional: { productIds: ["nmx01"] } para el flujo "comprar ahora".
-// Sin body, usa el carrito actual del usuario.
+// Sin body, usa el carrito actual del usuario (igual que getCheckoutItems() del prototipo).
 router.post('/', async (req, res) => {
   const client = await db.pool.connect();
   try {
@@ -17,13 +17,13 @@ router.post('/', async (req, res) => {
 
     if (Array.isArray(productIds) && productIds.length > 0) {
       const result = await client.query(
-        'SELECT id, name, price_clp, bundle_items FROM products WHERE id = ANY($1) AND active = true',
+        'SELECT id, name, price_clp, bundle_items, is_membership FROM products WHERE id = ANY($1) AND active = true',
         [productIds]
       );
       productRows = result.rows;
     } else {
       const result = await client.query(
-        `SELECT p.id, p.name, p.price_clp, p.bundle_items
+        `SELECT p.id, p.name, p.price_clp, p.bundle_items, p.is_membership
          FROM cart_items c JOIN products p ON p.id = c.product_id
          WHERE c.user_id = $1 AND p.active = true`,
         [req.user.id]
@@ -44,8 +44,12 @@ router.post('/', async (req, res) => {
     const mem = memberResult.rows[0];
     const memberActive = mem.membership_status === 'active' && mem.membership_expires_at && new Date(mem.membership_expires_at) > new Date();
     const discountPct = memberActive ? mem.membership_discount_percent : 0;
+    // La membresía NO da descuento sobre sí misma.
     if (discountPct > 0) {
-      productRows = productRows.map((p) => ({ ...p, price_clp: Math.round(p.price_clp * (100 - discountPct) / 100) }));
+      productRows = productRows.map((p) => ({
+        ...p,
+        price_clp: p.is_membership ? p.price_clp : Math.round(p.price_clp * (100 - discountPct) / 100)
+      }));
     }
 
     const total = productRows.reduce((sum, p) => sum + p.price_clp, 0);
@@ -129,6 +133,7 @@ router.get('/:orderCode', async (req, res) => {
   if (!order) return res.status(404).json({ error: 'Pedido no encontrado.' });
 
   // Ownership check: solo el dueño del pedido o un admin pueden verlo.
+  // Esto es lo que reemplaza el fallback inseguro de Confirmation.dc.html.
   if (order.user_id !== req.user.id && req.user.role !== 'admin') {
     return res.status(403).json({ error: 'No tienes acceso a este pedido.' });
   }
