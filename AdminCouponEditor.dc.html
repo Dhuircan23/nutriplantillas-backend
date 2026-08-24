@@ -29,32 +29,36 @@
   @media (max-width:900px){
     /* Cualquier tabla ancha scrollea dentro de su caja en vez de estirar la página */
     div:has(> [role="table"]){overflow-x:auto;-webkit-overflow-scrolling:touch}
-    /* Paneles admin/cliente: la barra lateral pasa arriba */
-    [style*="grid-template-columns:220px 1fr"]{grid-template-columns:1fr !important}
-    [style*="grid-template-columns:220px 1fr"] > div:first-child{padding:14px 16px !important}
+    /* Paneles admin/cliente: la barra lateral pasa arriba y a ancho completo.
+       Se busca el VALOR "220px 1fr" porque el serializador puede meter espacios. */
+    [style*="220px 1fr"]{grid-template-columns:1fr !important;gap:18px !important}
+    [style*="220px 1fr"] > *{max-width:100% !important;width:100% !important}
+    [style*="220px 1fr"] nav{display:flex !important;flex-wrap:wrap;gap:8px !important}
   }
   @media (max-width:640px){
     /* 40px de margen lateral se comen un cuarto de una pantalla de 320px */
     .section{padding-left:20px !important;padding-right:20px !important;padding-top:44px !important;padding-bottom:44px !important}
-    body > div[style*="margin:0 auto"]{padding-left:20px !important;padding-right:20px !important}
-    body > div[style*="margin:0 auto"] > div[style*="padding"]{padding-left:0 !important;padding-right:0 !important}
+    div[style*="px 40px"]{padding-inline:20px !important;box-sizing:border-box}
     h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
     h2{font-size:clamp(20px,5.4vw,24px) !important}
-    /* Objetivos táctiles cómodos */
     button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
-    /* CTA a ancho completo: dos botones lado a lado no caben bien */
     .btn-primary,.btn-secondary{width:100%;box-sizing:border-box}
+    /* Nada puede empujar la página a lo ancho */
+    body{overflow-x:hidden}
   }
   @media (max-width:560px){
-    /* Toda grilla conocida pasa a una columna */
     .rg-hero,.rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages,.rg-resources,
     .rg-leadmagnet,.rg-problem,.rg-membership,.rg-cart,.rg-checkout,.rg-checkout-fields,
     .rg-catalog-grid,.rg-pkg-cards,.rg-mockup-stats,.nmx-hero,.nmx-body,.nmx-meta,
     .doc-grid,.doc-kpis,.doc-phases,.doc-split,.hiw-steps,.hiw-sheets,.hiw-split{
       grid-template-columns:1fr !important
     }
+    /* Grillas con medidas fijas declaradas inline */
+    [style*="1.5fr 1fr"],[style*="1.4fr 1fr"],[style*="1.6fr 1fr"],[style*="1.05fr 1fr"],
+    [style*="1.4fr 1fr 1fr 1fr 1fr"],[style*="repeat(3,1fr)"],[style*="repeat(4,1fr)"],
+    [style*="repeat(5,1fr)"]{grid-template-columns:1fr !important}
     .section{padding-left:16px !important;padding-right:16px !important}
-    body > div[style*="margin:0 auto"]{padding-left:16px !important;padding-right:16px !important}
+    div[style*="px 40px"]{padding-inline:16px !important}
   }
 </style>
 </helmet>

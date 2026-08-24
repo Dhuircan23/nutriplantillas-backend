@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <script src="./store.js"></script>
+<script src="./nutrimetria-inventory.js"></script>
 <style>
   body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Inter Tight',system-ui,sans-serif;color:#e2e8f0;position:relative}
   body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(110,231,183,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(110,231,183,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%);-webkit-mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%)}
@@ -29,32 +30,36 @@
   @media (max-width:900px){
     /* Cualquier tabla ancha scrollea dentro de su caja en vez de estirar la página */
     div:has(> [role="table"]){overflow-x:auto;-webkit-overflow-scrolling:touch}
-    /* Paneles admin/cliente: la barra lateral pasa arriba */
-    [style*="grid-template-columns:220px 1fr"]{grid-template-columns:1fr !important}
-    [style*="grid-template-columns:220px 1fr"] > div:first-child{padding:14px 16px !important}
+    /* Paneles admin/cliente: la barra lateral pasa arriba y a ancho completo.
+       Se busca el VALOR "220px 1fr" porque el serializador puede meter espacios. */
+    [style*="220px 1fr"]{grid-template-columns:1fr !important;gap:18px !important}
+    [style*="220px 1fr"] > *{max-width:100% !important;width:100% !important}
+    [style*="220px 1fr"] nav{display:flex !important;flex-wrap:wrap;gap:8px !important}
   }
   @media (max-width:640px){
     /* 40px de margen lateral se comen un cuarto de una pantalla de 320px */
     .section{padding-left:20px !important;padding-right:20px !important;padding-top:44px !important;padding-bottom:44px !important}
-    body > div[style*="margin:0 auto"]{padding-left:20px !important;padding-right:20px !important}
-    body > div[style*="margin:0 auto"] > div[style*="padding"]{padding-left:0 !important;padding-right:0 !important}
+    div[style*="px 40px"]{padding-inline:20px !important;box-sizing:border-box}
     h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
     h2{font-size:clamp(20px,5.4vw,24px) !important}
-    /* Objetivos táctiles cómodos */
     button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
-    /* CTA a ancho completo: dos botones lado a lado no caben bien */
     .btn-primary,.btn-secondary{width:100%;box-sizing:border-box}
+    /* Nada puede empujar la página a lo ancho */
+    body{overflow-x:hidden}
   }
   @media (max-width:560px){
-    /* Toda grilla conocida pasa a una columna */
     .rg-hero,.rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages,.rg-resources,
     .rg-leadmagnet,.rg-problem,.rg-membership,.rg-cart,.rg-checkout,.rg-checkout-fields,
     .rg-catalog-grid,.rg-pkg-cards,.rg-mockup-stats,.nmx-hero,.nmx-body,.nmx-meta,
     .doc-grid,.doc-kpis,.doc-phases,.doc-split,.hiw-steps,.hiw-sheets,.hiw-split{
       grid-template-columns:1fr !important
     }
+    /* Grillas con medidas fijas declaradas inline */
+    [style*="1.5fr 1fr"],[style*="1.4fr 1fr"],[style*="1.6fr 1fr"],[style*="1.05fr 1fr"],
+    [style*="1.4fr 1fr 1fr 1fr 1fr"],[style*="repeat(3,1fr)"],[style*="repeat(4,1fr)"],
+    [style*="repeat(5,1fr)"]{grid-template-columns:1fr !important}
     .section{padding-left:16px !important;padding-right:16px !important}
-    body > div[style*="margin:0 auto"]{padding-left:16px !important;padding-right:16px !important}
+    div[style*="px 40px"]{padding-inline:16px !important}
   }
 </style>
 </helmet>
@@ -82,7 +87,7 @@
         <div class="glass" style="border-radius:8px;padding:20px">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
             <div style="display:flex;gap:14px">
-              <div class="glass" style="width:56px;height:44px;flex:none;border-radius:5px;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03),rgba(255,255,255,.03) 8px,rgba(110,231,183,.06) 8px,rgba(110,231,183,.06) 16px)"></div>
+              <div class="glass" style="width:56px;height:44px;flex:none;border-radius:5px;overflow:hidden;display:flex;align-items:center;justify-content:center">{{ p.coverEl }}</div>
               <div>
                 <div style="font-weight:800;font-size:14.5px;margin-bottom:3px">{{ p.name }}</div>
                 <div class="mono" style="font-size:11px;color:#7fa398">Pedido {{ p.orderCode }} · {{ p.purchaseDate }}</div>
@@ -138,7 +143,17 @@ class Component extends DCLogic {
             priceLabel: '$' + it.priceClp.toLocaleString('es-CL') + ' CLP',
             downloadsLeft: it.downloadsLeft,
             downloadHref: window.NMXStore.downloadUrl(it.orderItemId, 'excel'),
-            portfolioHref: window.NMXStore.downloadUrl(it.orderItemId, 'portfolio')
+            portfolioHref: window.NMXStore.downloadUrl(it.orderItemId, 'portfolio'),
+            // Portada real del producto (las de los packs viven en covers/pack-*).
+            coverEl: (function () {
+              const inv = window.NMXInventory;
+              const src = String(it.productId).startsWith('pack-')
+                ? 'assets/img/covers/' + it.productId + '.png'
+                : (inv && inv.get(it.productId) ? inv.get(it.productId).cover : null);
+              return src
+                ? React.createElement('img', { src, alt: it.name, style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' } })
+                : null;
+            })()
           });
         });
       });
