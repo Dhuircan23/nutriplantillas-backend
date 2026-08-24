@@ -1,0 +1,29 @@
+# robots.txt — nutrimetria.cc
+# Las páginas de cuenta, compra y administración llevan además noindex en su
+# propio <head>; esto solo evita el rastreo innecesario.
+
+User-agent: *
+Allow: /
+
+# Cuenta y proceso de compra
+Disallow: /Login.dc.html
+Disallow: /Register.dc.html
+Disallow: /ForgotPassword.dc.html
+Disallow: /ResetPassword.dc.html
+Disallow: /VerifyEmail.dc.html
+Disallow: /Cart.dc.html
+Disallow: /Checkout.dc.html
+Disallow: /Confirmation.dc.html
+
+# Área de cliente
+Disallow: /ClientArea.dc.html
+Disallow: /ClientMembership.dc.html
+Disallow: /MyProducts.dc.html
+Disallow: /Orders.dc.html
+Disallow: /Profile.dc.html
+Disallow: /ResourceAccess.dc.html
+
+# Panel de administración
+Disallow: /Admin
+
+Sitemap: https://www.nutrimetria.cc/sitemap.xml
