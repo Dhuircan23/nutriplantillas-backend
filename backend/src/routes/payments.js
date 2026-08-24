@@ -10,6 +10,13 @@ const router = express.Router();
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:4000';
 const FRONTEND_URL = getPrimaryFrontendUrl();
 
+// POST /api/payments/:orderCode/init
+// Inicia un intento de pago a través del PaymentProvider activo.
+//   - PAYMENT_PROVIDER=manual (por defecto): no cobra. Deja el pedido en
+//     payment_processing y devuelve instrucciones. Solo un admin puede
+//     confirmarlo (ver POST /api/admin/orders/:orderCode/confirm-manual).
+//   - PAYMENT_PROVIDER=webpay: devuelve { url, token } para el POST de
+//     redirección a Transbank. NO activo por defecto.
 router.post('/:orderCode/init', requireAuth, async (req, res) => {
   const orderResult = await db.query(
     'SELECT id, user_id, status, total_clp FROM orders WHERE order_code = $1',
@@ -37,6 +44,7 @@ router.post('/:orderCode/init', requireAuth, async (req, res) => {
       flowConfirmationUrl: `${BACKEND_URL}/api/payments/flow/confirm`,
       mpReturnUrl: `${BACKEND_URL}/api/payments/mp/return`,
       mpNotificationUrl: `${BACKEND_URL}/api/payments/mp/webhook`,
+      // Referencia opaca: no se manda el id interno del usuario a un tercero.
       sessionRef: `ord-${req.params.orderCode}`,
     });
 
@@ -48,6 +56,8 @@ router.post('/:orderCode/init', requireAuth, async (req, res) => {
         attempt.token || null,
         attempt.buyOrder || null,
         provider.name,
+        // El proveedor manual queda esperando confirmación; el redirigido sigue
+        // 'pending' hasta que Transbank conteste, para no bloquear un reintento.
         provider.name === 'manual' ? ORDER_STATUS.PAYMENT_PROCESSING : order.status,
         order.id,
       ]
@@ -67,6 +77,15 @@ router.post('/:orderCode/init', requireAuth, async (req, res) => {
   }
 });
 
+// GET/POST /api/payments/webpay/return
+// Retorno del navegador del comprador desde Transbank. Solo aplica al proveedor
+// webpay. Está exento de la verificación CSRF porque no confía en la cookie de
+// sesión: valida el pago con token_ws contra la API del proveedor.
+//
+// Tres casos según la documentación de Transbank:
+//   1. token_ws presente        -> el pago se completó, hay que confirmar.
+//   2. TBK_TOKEN presente       -> el comprador anuló antes de pagar.
+//   3. Ninguno de los dos       -> timeout / conexión caída.
 async function handleWebpayReturn(req, res) {
   const params = { ...req.query, ...req.body };
   const { token_ws, TBK_TOKEN, TBK_ORDEN_COMPRA } = params;
@@ -116,6 +135,9 @@ async function handleWebpayReturn(req, res) {
   }
 }
 
+// Marca un pedido como pagado y limpia del carrito solo los productos de ese
+// pedido. Es el único lugar que mueve un pedido a 'paid' — así la condición que
+// habilita las descargas tiene una sola puerta de entrada.
 async function markOrderPaid(orderId, userId) {
   const client = await db.pool.connect();
   try {
@@ -131,6 +153,21 @@ async function markOrderPaid(orderId, userId) {
         userId,
         productIds,
       ]);
+      // Si el pedido incluye la membresía, se activa por 30 días. Si ya estaba
+      // activa, se suma un mes más en vez de reiniciar el plazo.
+      const membership = await client.query(
+        'SELECT 1 FROM products WHERE id = ANY($1) AND is_membership = true LIMIT 1',
+        [productIds]
+      );
+      if (membership.rows.length > 0) {
+        await client.query(
+          `UPDATE users SET
+             membership_status = 'active',
+             membership_expires_at = GREATEST(COALESCE(membership_expires_at, now()), now()) + interval '1 month'
+           WHERE id = $1`,
+          [userId]
+        );
+      }
     }
     await client.query('COMMIT');
   } catch (e) {
@@ -144,6 +181,10 @@ async function markOrderPaid(orderId, userId) {
 router.get('/webpay/return', handleWebpayReturn);
 router.post('/webpay/return', handleWebpayReturn);
 
+// Verifica un token de Flow contra su API (fuente de verdad, nunca se confía
+// en el body del POST) y marca el pedido pagado/fallido según corresponda.
+// Compartida entre el retorno del navegador y el webhook servidor-a-servidor,
+// para que ambos caminos lleguen al mismo resultado sin duplicar lógica.
 async function verifyAndMarkFlow(token) {
   const { getStatus } = require('../services/flow');
   const result = await getStatus(token);
@@ -167,6 +208,8 @@ async function verifyAndMarkFlow(token) {
   return { order, approved };
 }
 
+// GET/POST /api/payments/flow/return — el navegador del comprador vuelve acá
+// después de pagar en Flow. Exento de CSRF: no se apoya en la cookie de sesión.
 async function handleFlowReturn(req, res) {
   const token = (req.query && req.query.token) || (req.body && req.body.token);
   if (!token) return res.redirect(`${FRONTEND_URL}/Checkout.dc.html?payment=error`);
@@ -181,6 +224,8 @@ async function handleFlowReturn(req, res) {
   }
 }
 
+// POST /api/payments/flow/confirm — webhook servidor-a-servidor de Flow (sin
+// navegador, sin cookie). Responde rápido: Flow reintenta si no recibe 200.
 async function handleFlowConfirm(req, res) {
   const token = (req.body && req.body.token) || (req.query && req.query.token);
   if (!token) return res.status(400).send('missing token');
