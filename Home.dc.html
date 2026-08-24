@@ -54,6 +54,13 @@
   .mockup-tab.mockup-tab-active{color:#6ee7b7;border-bottom-color:#6ee7b7}
   .mockup-content{transition:opacity .28s ease,transform .28s ease}
   @media (max-width:560px){
+    /* Los hijos flex/grid conservan min-width:auto y no se encogen bajo el ancho
+       de su contenido: eso empujaba el h1 y el mockup fuera de pantalla.
+       Con min-width:0 sí ceden, y las palabras largas parten. */
+    .rg-hero,.rg-hero > *,.rg-hero-visual,.rg-hero-visual > *,.wrap,.wrap > *{min-width:0}
+    h1,h2{overflow-wrap:break-word;word-break:break-word}
+    .rg-hero h1{font-size:clamp(24px,6.6vw,30px) !important}
+    .mockup-content{min-width:0}
     /* El mockup del hero era absoluto sobre un contenedor de altura fija: en
        móvil se salía de pantalla y dejaba un hueco vertical enorme. Pasa al
        flujo normal y el canvas decorativo se retira. */
