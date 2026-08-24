@@ -35,6 +35,8 @@ jobs:
           cp -r public _site/
           # SEO: robots.txt y sitemap.xml deben quedar en la raiz del sitio
           cp robots.txt sitemap.xml _site/
+          # Manifest del icono (el navegador lo busca en la raiz)
+          cp site.webmanifest _site/
           # Entrada del sitio
           cp Home.dc.html _site/index.html
 
