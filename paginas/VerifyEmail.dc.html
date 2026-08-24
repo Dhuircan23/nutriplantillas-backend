@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/img/favicon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#04140f">
+<title>Verificar correo — NUTRIMETRÍA</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Inter Tight',system-ui,sans-serif;color:#e2e8f0;position:relative}
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(110,231,183,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(110,231,183,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%);-webkit-mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%)}
+  body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle 520px at 88% 12%,rgba(16,185,129,.13),transparent 70%),radial-gradient(circle 460px at 6% 78%,rgba(255,122,69,.08),transparent 70%)}
+  body > *{position:relative;z-index:1}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+
+  /* ---- Responsive móvil (no afecta escritorio) ---- */
+  img,svg,canvas,video{max-width:100%;height:auto}
+  @media (max-width:900px){
+    /* Cualquier tabla ancha scrollea dentro de su caja en vez de estirar la página */
+    div:has(> [role="table"]){overflow-x:auto;-webkit-overflow-scrolling:touch}
+    /* Paneles admin/cliente: la barra lateral pasa arriba y a ancho completo.
+       Se busca el VALOR "220px 1fr" porque el serializador puede meter espacios. */
+    [style*="220px 1fr"]{grid-template-columns:1fr !important;gap:18px !important}
+    [style*="220px 1fr"] > *{max-width:100% !important;width:100% !important}
+    [style*="220px 1fr"] nav{display:flex !important;flex-wrap:wrap;gap:8px !important}
+  }
+  @media (max-width:640px){
+    /* 40px de margen lateral se comen un cuarto de una pantalla de 320px */
+    .section{padding-left:20px !important;padding-right:20px !important;padding-top:44px !important;padding-bottom:44px !important}
+    div[style*="px 40px"]{padding-inline:20px !important;box-sizing:border-box}
+    h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
+    h2{font-size:clamp(20px,5.4vw,24px) !important}
+    button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
+    .cta-row{flex-wrap:wrap}
+    .btn-primary,.btn-secondary{flex:1 1 100%;box-sizing:border-box}
+    /* Nada puede empujar la página a lo ancho */
+    body{overflow-x:hidden}
+  }
+  @media (max-width:560px){
+    .rg-hero,.rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages,.rg-resources,
+    .rg-leadmagnet,.rg-problem,.rg-membership,.rg-cart,.rg-checkout,.rg-checkout-fields,
+    .rg-catalog-grid,.rg-pkg-cards,.rg-mockup-stats,.nmx-hero,.nmx-body,.nmx-meta,
+    .doc-grid,.doc-kpis,.doc-phases,.doc-split,.hiw-steps,.hiw-sheets,.hiw-split{
+      grid-template-columns:1fr !important
+    }
+    /* Grillas con medidas fijas declaradas inline */
+    [style*="1.5fr 1fr"],[style*="1.4fr 1fr"],[style*="1.6fr 1fr"],[style*="1.05fr 1fr"],
+    [style*="1.4fr 1fr 1fr 1fr 1fr"],[style*="repeat(3,1fr)"],[style*="repeat(4,1fr)"],
+    [style*="repeat(5,1fr)"]{grid-template-columns:1fr !important}
+    .section{padding-left:16px !important;padding-right:16px !important}
+    div[style*="px 40px"]{padding-inline:16px !important}
+  }
+</style>
+</helmet>
+
+<dc-import name="Header" active="" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:480px;margin:0 auto;padding:64px 40px 100px">
+  <div style="border:1px solid rgba(110,231,183,.2);border-radius:10px;padding:32px">
+    <sc-if value="{{ mode === 'checking' }}" hint-placeholder-val="{{ true }}">
+      <h1 style="font-size:20px;font-weight:800;margin:0 0 10px">Verificando tu correo…</h1>
+    </sc-if>
+
+    <sc-if value="{{ mode === 'verified' }}" hint-placeholder-val="{{ false }}">
+      <h1 style="font-size:20px;font-weight:800;margin:0 0 10px">Correo verificado ✓</h1>
+      <p style="font-size:13.5px;color:#b7cfc6;line-height:1.6;margin:0 0 20px">Tu cuenta {{ email }} quedó verificada.</p>
+      <a href="ClientArea.dc.html" style="display:inline-block;text-decoration:none;padding:12px 22px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:13.5px">Ir a mi cuenta</a>
+    </sc-if>
+
+    <sc-if value="{{ mode === 'pending' }}" hint-placeholder-val="{{ false }}">
+      <h1 style="font-size:20px;font-weight:800;margin:0 0 14px">Verifica tu correo electrónico</h1>
+      <p style="font-size:13.5px;color:#b7cfc6;line-height:1.7;margin:0 0 12px">Gracias por registrarte en NutriPlantillas.</p>
+      <p style="font-size:13.5px;color:#b7cfc6;line-height:1.7;margin:0 0 22px">Revisa la bandeja de entrada de <strong>{{ email }}</strong> para verificar tu correo y comenzar a usar tu cuenta.</p>
+      <sc-if value="{{ resendMsg }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:12.5px;color:#6ee7b7;margin-bottom:14px">{{ resendMsg }}</div>
+      </sc-if>
+      <div style="display:flex;gap:10px">
+        <a href="Home.dc.html" style="text-decoration:none;padding:11px 20px;border:1.5px solid rgba(110,231,183,.3);color:#e2e8f0;border-radius:6px;font-weight:700;font-size:13.5px">Volver</a>
+        <button type="button" disabled="{{ resending }}" onClick="{{ onResend }}" style="appearance:none;font-family:inherit;padding:11px 20px;background:#6ee7b7;color:#04140f;border:none;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer;opacity:{{ resendOpacity }}">{{ resendLabel }}</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ mode === 'error' }}" hint-placeholder-val="{{ false }}">
+      <h1 style="font-size:20px;font-weight:800;margin:0 0 10px;color:#ff6b5e">Enlace inválido</h1>
+      <p style="font-size:13.5px;color:#c7dad2;line-height:1.6;margin:0 0 20px">{{ errorMsg }}</p>
+      <a href="Login.dc.html" style="display:inline-block;text-decoration:none;padding:12px 22px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:13.5px">Iniciar sesión</a>
+    </sc-if>
+  </div>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { mode: 'checking', email: '', errorMsg: '', resending: false, resendMsg: '' };
+
+  componentDidMount() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const email = params.get('email') || '';
+    if (token) {
+      this._verify(token);
+    } else {
+      this.setState({ mode: 'pending', email });
+    }
+  }
+
+  async _verify(token) {
+    if (!window.NMXStore) { setTimeout(() => this._verify(token), 30); return; }
+    try {
+      const res = await window.NMXStore.verifyEmailToken(token);
+      this.setState({ mode: 'verified', email: res.email || '' });
+    } catch (e) {
+      this.setState({ mode: 'error', errorMsg: (e && e.message) || 'El enlace ya no es válido.' });
+    }
+  }
+
+  async _resend() {
+    this.setState({ resending: true, resendMsg: '' });
+    try {
+      await window.NMXStore.resendVerificationEmail();
+      this.setState({ resending: false, resendMsg: 'Correo reenviado. Revisa tu bandeja de entrada.' });
+    } catch (e) {
+      this.setState({ resending: false, resendMsg: (e && e.message) || 'No se pudo reenviar el correo.' });
+    }
+  }
+
+  renderVals() {
+    return {
+      mode: this.state.mode,
+      email: this.state.email,
+      errorMsg: this.state.errorMsg,
+      resending: this.state.resending,
+      resendOpacity: this.state.resending ? 0.65 : 1,
+      resendLabel: this.state.resending ? 'Enviando…' : 'Reenviar correo',
+      resendMsg: this.state.resendMsg,
+      onResend: () => this._resend()
+    };
+  }
+}
+
+</script>
+</body>
+</html>

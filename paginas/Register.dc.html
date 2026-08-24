@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/img/favicon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#04140f">
+<title>Crear cuenta — NUTRIMETRÍA</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script>
+  // Completar con las credenciales reales de OAuth cuando estén disponibles.
+  var GOOGLE_CLIENT_ID = '889022887607-cok3l2meq9seith9jpkt7e1b0vnog2nv.apps.googleusercontent.com';
+  var APPLE_CLIENT_ID = '';
+</script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" async defer></script>
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Inter Tight',system-ui,sans-serif;color:#e2e8f0;position:relative}
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(110,231,183,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(110,231,183,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%);-webkit-mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%)}
+  body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle 520px at 88% 12%,rgba(16,185,129,.13),transparent 70%),radial-gradient(circle 460px at 6% 78%,rgba(255,122,69,.08),transparent 70%)}
+  body > *{position:relative;z-index:1}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12.5px;font-weight:700;color:#c7dad2}
+  .field input,.field select{padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Inter Tight',sans-serif;background:rgba(255,255,255,.04);color:#e2e8f0}
+
+  /* ---- Responsive móvil (no afecta escritorio) ---- */
+  img,svg,canvas,video{max-width:100%;height:auto}
+  @media (max-width:900px){
+    /* Cualquier tabla ancha scrollea dentro de su caja en vez de estirar la página */
+    div:has(> [role="table"]){overflow-x:auto;-webkit-overflow-scrolling:touch}
+    /* Paneles admin/cliente: la barra lateral pasa arriba y a ancho completo.
+       Se busca el VALOR "220px 1fr" porque el serializador puede meter espacios. */
+    [style*="220px 1fr"]{grid-template-columns:1fr !important;gap:18px !important}
+    [style*="220px 1fr"] > *{max-width:100% !important;width:100% !important}
+    [style*="220px 1fr"] nav{display:flex !important;flex-wrap:wrap;gap:8px !important}
+  }
+  @media (max-width:640px){
+    /* 40px de margen lateral se comen un cuarto de una pantalla de 320px */
+    .section{padding-left:20px !important;padding-right:20px !important;padding-top:44px !important;padding-bottom:44px !important}
+    div[style*="px 40px"]{padding-inline:20px !important;box-sizing:border-box}
+    h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
+    h2{font-size:clamp(20px,5.4vw,24px) !important}
+    button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
+    .cta-row{flex-wrap:wrap}
+    .btn-primary,.btn-secondary{flex:1 1 100%;box-sizing:border-box}
+    /* Nada puede empujar la página a lo ancho */
+    body{overflow-x:hidden}
+  }
+  @media (max-width:560px){
+    .rg-hero,.rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages,.rg-resources,
+    .rg-leadmagnet,.rg-problem,.rg-membership,.rg-cart,.rg-checkout,.rg-checkout-fields,
+    .rg-catalog-grid,.rg-pkg-cards,.rg-mockup-stats,.nmx-hero,.nmx-body,.nmx-meta,
+    .doc-grid,.doc-kpis,.doc-phases,.doc-split,.hiw-steps,.hiw-sheets,.hiw-split{
+      grid-template-columns:1fr !important
+    }
+    /* Grillas con medidas fijas declaradas inline */
+    [style*="1.5fr 1fr"],[style*="1.4fr 1fr"],[style*="1.6fr 1fr"],[style*="1.05fr 1fr"],
+    [style*="1.4fr 1fr 1fr 1fr 1fr"],[style*="repeat(3,1fr)"],[style*="repeat(4,1fr)"],
+    [style*="repeat(5,1fr)"]{grid-template-columns:1fr !important}
+    .section{padding-left:16px !important;padding-right:16px !important}
+    div[style*="px 40px"]{padding-inline:16px !important}
+  }
+</style>
+</helmet>
+
+<dc-import name="Header" active="" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:440px;margin:0 auto;padding:56px 40px 100px">
+  <div style="text-align:center;margin-bottom:28px">
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 8px;letter-spacing:-.3px">Crear cuenta</h1>
+    <p style="font-size:13.5px;color:#9fb8ae;margin:0">Guarda tus compras y accede a futuras actualizaciones.</p>
+  </div>
+  <form onSubmit="{{ onSubmit }}" style="display:flex;flex-direction:column;gap:16px">
+    <div class="field"><label for="rname">Nombre completo</label><input id="rname" placeholder="Tu nombre" value="{{ name }}" onChange="{{ onNameChange }}"/></div>
+    <div class="field"><label for="remail">Correo electrónico</label><input id="remail" type="email" placeholder="tucorreo@ejemplo.com" value="{{ email }}" onChange="{{ onEmailChange }}"/></div>
+    <div class="field"><label for="rprof">Profesión (opcional)</label><input id="rprof" placeholder="Ej. Nutricionista, estudiante de nutrición" value="{{ profession }}" onChange="{{ onProfessionChange }}"/></div>
+
+    <div class="field">
+      <label for="rpass">Contraseña</label>
+      <div style="position:relative">
+        <input id="rpass" type="{{ passwordFieldType }}" placeholder="Crea una contraseña" value="{{ password }}" onChange="{{ onPasswordChange }}" style="width:100%;padding-right:42px;box-sizing:border-box"/>
+        <button type="button" onClick="{{ onTogglePassword }}" aria-label="Mostrar u ocultar contraseña" style="position:absolute;right:8px;top:0;height:100%;display:flex;align-items:center;background:none;border:none;cursor:pointer;color:#8fa9a0;padding:0">{{ passwordToggleIcon }}</button>
+      </div>
+    </div>
+
+    <ul style="list-style:none;margin:-6px 0 0;padding:0;display:flex;flex-direction:column;gap:5px">
+      <sc-for list="{{ passwordRules }}" as="rule" hint-placeholder-count="4">
+        <li style="display:flex;gap:7px;align-items:center;font-size:12px;color:{{ rule.color }}">
+          <span style="width:15px;height:15px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:{{ rule.badgeBg }};color:{{ rule.badgeColor }};font-size:10px;line-height:1">{{ rule.icon }}</span>
+          {{ rule.label }}
+        </li>
+      </sc-for>
+    </ul>
+
+    <div class="field">
+      <label for="rpass2">Confirmar contraseña</label>
+      <div style="position:relative">
+        <input id="rpass2" type="{{ confirmFieldType }}" placeholder="Repite tu contraseña" value="{{ confirmPassword }}" onChange="{{ onConfirmPasswordChange }}" style="width:100%;padding-right:42px;box-sizing:border-box"/>
+        <button type="button" onClick="{{ onToggleConfirm }}" aria-label="Mostrar u ocultar contraseña" style="position:absolute;right:8px;top:0;height:100%;display:flex;align-items:center;background:none;border:none;cursor:pointer;color:#8fa9a0;padding:0">{{ confirmToggleIcon }}</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="rphone">N.° de teléfono móvil</label>
+      <div style="display:grid;grid-template-columns:110px 1fr;gap:8px">
+        <select id="rphonecc" value="{{ phoneCode }}" onChange="{{ onPhoneCodeChange }}">
+          <option value="+56">Chile +56</option>
+          <option value="+54">Argentina +54</option>
+          <option value="+51">Perú +51</option>
+          <option value="+57">Colombia +57</option>
+          <option value="+52">México +52</option>
+          <option value="+34">España +34</option>
+          <option value="+1">EE. UU. +1</option>
+        </select>
+        <input id="rphone" placeholder="9 1234 5678" value="{{ phoneNumber }}" onChange="{{ onPhoneNumberChange }}"/>
+      </div>
+    </div>
+
+    <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#b7cfc6">
+      <input type="checkbox" checked="{{ accepted }}" onChange="{{ onAcceptChange }}" style="margin-top:2px"/>
+      <span>Acepto los <a href="Terms.dc.html">términos y condiciones</a> y la <a href="Privacy.dc.html">política de privacidad</a>.</span>
+    </label>
+    <sc-if value="{{ errorMsg }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:12.5px;color:#ff6b5e;font-weight:600">{{ errorMsg }}</div>
+    </sc-if>
+    <button type="submit" disabled="{{ submitting }}" style="text-decoration:none;text-align:center;padding:13px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;border:none;font-family:'Inter Tight',sans-serif;opacity:{{ submitOpacity }}">{{ submitLabel }}</button>
+  </form>
+
+  <div style="display:flex;align-items:center;gap:12px;margin:22px 0">
+    <div style="flex:1;height:1px;background:rgba(110,231,183,.16)"></div>
+    <span class="mono" style="font-size:11px;color:#7fa398">o</span>
+    <div style="flex:1;height:1px;background:rgba(110,231,183,.16)"></div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <button type="button" onClick="{{ onGoogleLogin }}" style="appearance:none;font-family:'Inter Tight',sans-serif;text-align:center;padding:12px;background:rgba(255,255,255,.04);border:1.5px solid rgba(110,231,183,.25);color:#e2e8f0;border-radius:6px;font-weight:700;font-size:13.5px;cursor:pointer">Continuar con Google</button>
+  </div>
+
+  <p style="font-size:12.5px;color:#8fa9a0;text-align:center;margin-top:22px">¿Ya tienes cuenta? <a href="Login.dc.html">Inicia sesión</a></p>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const OK = { color: '#6ee7b7', badgeBg: '#6ee7b7', badgeColor: '#04140f', icon: '✓' };
+const PENDING = { color: '#8fa9a0', badgeBg: 'rgba(255,255,255,.08)', badgeColor: '#8fa9a0', icon: '·' };
+
+class Component extends DCLogic {
+  state = {
+    name: '', email: '', profession: '', password: '', confirmPassword: '',
+    phoneCode: '+56', phoneNumber: '',
+    showPassword: false, showConfirm: false,
+    accepted: false, errorMsg: '', submitting: false
+  };
+
+  componentDidMount() {
+    this._initGoogle();
+    this._initApple();
+  }
+
+  _initGoogle() {
+    if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+      this._googleRetry = setTimeout(() => this._initGoogle(), 200);
+      return;
+    }
+    try {
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: (response) => this._onGoogleCredential(response)
+      });
+    } catch (e) { /* GOOGLE_CLIENT_ID aún sin completar */ }
+  }
+
+  async _onGoogleCredential(response) {
+    try {
+      const user = await window.NMXStore.loginWithGoogle(response.credential);
+      window.location.href = user.role === 'admin' ? 'AdminDashboard.dc.html' : 'ClientArea.dc.html';
+    } catch (err) {
+      this.setState({ errorMsg: err.message || 'No se pudo continuar con Google.' });
+    }
+  }
+
+  _initApple() {
+    if (!window.AppleID || !window.AppleID.auth) {
+      this._appleRetry = setTimeout(() => this._initApple(), 200);
+      return;
+    }
+    try {
+      window.AppleID.auth.init({
+        clientId: APPLE_CLIENT_ID,
+        scope: 'email',
+        redirectURI: window.location.origin + '/Login.dc.html',
+        usePopup: true
+      });
+    } catch (e) { /* APPLE_CLIENT_ID aún sin completar */ }
+  }
+
+  async _signInWithApple() {
+    try {
+      const data = await window.AppleID.auth.signIn();
+      const user = await window.NMXStore.loginWithApple(data.authorization.id_token);
+      window.location.href = user.role === 'admin' ? 'AdminDashboard.dc.html' : 'ClientArea.dc.html';
+    } catch (err) {
+      this.setState({ errorMsg: (err && err.message) || 'No se pudo continuar con Apple.' });
+    }
+  }
+
+  _passwordChecks() {
+    const p = this.state.password || '';
+    return {
+      minLen: p.length >= 10,
+      maxLen: p.length > 0 && p.length <= 40,
+      upper: /[A-Z]/.test(p),
+      lower: /[a-z]/.test(p),
+      number: /[0-9]/.test(p)
+    };
+  }
+
+  _isStrongPassword() {
+    const c = this._passwordChecks();
+    return c.minLen && c.maxLen && c.upper && c.lower && c.number;
+  }
+
+  async _submit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (this.state.submitting) return;
+    const name = (this.state.name || '').trim();
+    const email = (this.state.email || '').trim();
+    const password = this.state.password || '';
+    const phoneNumber = (this.state.phoneNumber || '').trim();
+
+    if (!this.state.accepted) {
+      this.setState({ errorMsg: 'Debes aceptar los términos y la política de privacidad.' });
+      return;
+    }
+    if (!name) {
+      this.setState({ errorMsg: 'Ingresa tu nombre completo.' });
+      return;
+    }
+    if (!email) {
+      this.setState({ errorMsg: 'Ingresa un correo válido.' });
+      return;
+    }
+    if (!phoneNumber) {
+      this.setState({ errorMsg: 'Ingresa tu número de teléfono móvil.' });
+      return;
+    }
+    if (!this._isStrongPassword()) {
+      this.setState({ errorMsg: 'Tu contraseña no cumple los requisitos de abajo.' });
+      return;
+    }
+    if (password !== this.state.confirmPassword) {
+      this.setState({ errorMsg: 'Las contraseñas no coinciden.' });
+      return;
+    }
+
+    this.setState({ submitting: true, errorMsg: '' });
+    try {
+      const phone = this.state.phoneCode + ' ' + phoneNumber;
+      await window.NMXStore.register(email, password, name, phone);
+      window.location.href = 'VerifyEmail.dc.html?email=' + encodeURIComponent(email);
+    } catch (err) {
+      this.setState({ submitting: false, errorMsg: err.message || 'No se pudo crear la cuenta.' });
+    }
+  }
+
+  renderVals() {
+    const checks = this._passwordChecks();
+    const rule = (ok, label) => ({ ...(ok ? OK : PENDING), label });
+    return {
+      name: this.state.name,
+      email: this.state.email,
+      profession: this.state.profession,
+      password: this.state.password,
+      confirmPassword: this.state.confirmPassword,
+      phoneCode: this.state.phoneCode,
+      phoneNumber: this.state.phoneNumber,
+      accepted: this.state.accepted,
+      errorMsg: this.state.errorMsg,
+      submitting: this.state.submitting,
+      submitOpacity: this.state.submitting ? 0.65 : 1,
+      submitLabel: this.state.submitting ? 'Creando cuenta…' : 'Crear cuenta',
+      passwordFieldType: this.state.showPassword ? 'text' : 'password',
+      passwordToggleIcon: this.state.showPassword ? '🙈' : '👁',
+      confirmFieldType: this.state.showConfirm ? 'text' : 'password',
+      confirmToggleIcon: this.state.showConfirm ? '🙈' : '👁',
+      passwordRules: [
+        rule(checks.minLen, 'Mínimo 10 caracteres'),
+        rule(checks.maxLen, 'Máximo 40 caracteres'),
+        rule(checks.upper, 'Mínimo 1 mayúscula'),
+        rule(checks.lower, 'Mínimo 1 minúscula'),
+        rule(checks.number, 'Mínimo 1 número')
+      ],
+      onNameChange: (e) => this.setState({ name: e.target.value }),
+      onEmailChange: (e) => this.setState({ email: e.target.value }),
+      onProfessionChange: (e) => this.setState({ profession: e.target.value }),
+      onPasswordChange: (e) => this.setState({ password: e.target.value }),
+      onConfirmPasswordChange: (e) => this.setState({ confirmPassword: e.target.value }),
+      onTogglePassword: () => this.setState((s) => ({ showPassword: !s.showPassword })),
+      onToggleConfirm: () => this.setState((s) => ({ showConfirm: !s.showConfirm })),
+      onPhoneCodeChange: (e) => this.setState({ phoneCode: e.target.value }),
+      onPhoneNumberChange: (e) => this.setState({ phoneNumber: e.target.value }),
+      onAcceptChange: (e) => this.setState({ accepted: !!(e && e.target && e.target.checked) }),
+      onSubmit: (e) => this._submit(e),
+      onGoogleLogin: () => { if (window.google) window.google.accounts.id.prompt(); },
+      onAppleLogin: () => this._signInWithApple()
+    };
+  }
+}
+
+</script>
+</body>
+</html>

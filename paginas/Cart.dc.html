@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/img/favicon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#04140f">
+<title>Tu carrito — NUTRIMETRÍA</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<script src="./nutrimetria-inventory.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Inter Tight',system-ui,sans-serif;color:#e2e8f0;position:relative}
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(110,231,183,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(110,231,183,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%);-webkit-mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%)}
+  body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle 520px at 88% 12%,rgba(16,185,129,.13),transparent 70%),radial-gradient(circle 460px at 6% 78%,rgba(255,122,69,.08),transparent 70%)}
+  body > *{position:relative;z-index:1}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  @media (max-width:768px){ .rg-cart{grid-template-columns:1fr !important} }
+
+  /* ---- Responsive móvil (no afecta escritorio) ---- */
+  img,svg,canvas,video{max-width:100%;height:auto}
+  @media (max-width:900px){
+    /* Cualquier tabla ancha scrollea dentro de su caja en vez de estirar la página */
+    div:has(> [role="table"]){overflow-x:auto;-webkit-overflow-scrolling:touch}
+    /* Paneles admin/cliente: la barra lateral pasa arriba y a ancho completo.
+       Se busca el VALOR "220px 1fr" porque el serializador puede meter espacios. */
+    [style*="220px 1fr"]{grid-template-columns:1fr !important;gap:18px !important}
+    [style*="220px 1fr"] > *{max-width:100% !important;width:100% !important}
+    [style*="220px 1fr"] nav{display:flex !important;flex-wrap:wrap;gap:8px !important}
+  }
+  @media (max-width:640px){
+    /* 40px de margen lateral se comen un cuarto de una pantalla de 320px */
+    .section{padding-left:20px !important;padding-right:20px !important;padding-top:44px !important;padding-bottom:44px !important}
+    div[style*="px 40px"]{padding-inline:20px !important;box-sizing:border-box}
+    h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
+    h2{font-size:clamp(20px,5.4vw,24px) !important}
+    button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
+    .cta-row{flex-wrap:wrap}
+    .btn-primary,.btn-secondary{flex:1 1 100%;box-sizing:border-box}
+    /* Nada puede empujar la página a lo ancho */
+    body{overflow-x:hidden}
+  }
+  @media (max-width:560px){
+    .rg-hero,.rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages,.rg-resources,
+    .rg-leadmagnet,.rg-problem,.rg-membership,.rg-cart,.rg-checkout,.rg-checkout-fields,
+    .rg-catalog-grid,.rg-pkg-cards,.rg-mockup-stats,.nmx-hero,.nmx-body,.nmx-meta,
+    .doc-grid,.doc-kpis,.doc-phases,.doc-split,.hiw-steps,.hiw-sheets,.hiw-split{
+      grid-template-columns:1fr !important
+    }
+    /* Grillas con medidas fijas declaradas inline */
+    [style*="1.5fr 1fr"],[style*="1.4fr 1fr"],[style*="1.6fr 1fr"],[style*="1.05fr 1fr"],
+    [style*="1.4fr 1fr 1fr 1fr 1fr"],[style*="repeat(3,1fr)"],[style*="repeat(4,1fr)"],
+    [style*="repeat(5,1fr)"]{grid-template-columns:1fr !important}
+    .section{padding-left:16px !important;padding-right:16px !important}
+    div[style*="px 40px"]{padding-inline:16px !important}
+  }
+</style>
+</helmet>
+
+<dc-import name="Header" active="tienda" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:1100px;margin:0 auto;padding:36px 40px 80px">
+  <h1 style="font-size:26px;font-weight:800;margin:0 0 28px;letter-spacing:-.3px">Tu carrito</h1>
+
+  <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ true }}">
+    <div class="rg-cart" style="display:grid;grid-template-columns:1.5fr 1fr;gap:40px;align-items:start">
+      <div>
+        <sc-for list="{{ items }}" as="item" hint-placeholder-count="2">
+          <div style="display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(110,231,183,.16)">
+            <div style="width:110px;height:78px;flex:none;border-radius:6px;overflow:hidden;background:#0a251c;border:1px solid rgba(110,231,183,.16);display:flex;align-items:center;justify-content:center">{{ item.coverEl }}</div>
+            <div style="flex:1">
+              <div class="mono" style="font-size:10px;color:#6ee7b7;text-transform:uppercase;margin-bottom:4px">{{ item.category }}</div>
+              <div style="font-weight:800;font-size:14.5px;margin-bottom:4px">{{ item.name }}</div>
+              <div class="mono" style="font-size:11px;color:#7fa398">{{ item.format }} · {{ item.version }} · Licencia individual</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between">
+              <span style="font-weight:800;font-size:15px">{{ item.priceLabel }}</span>
+              <span onClick="{{ item.onRemove }}" style="font-size:12px;color:#ff6b5e;cursor:pointer;font-weight:600">Eliminar</span>
+            </div>
+          </div>
+        </sc-for>
+
+        <div style="margin-top:20px;display:flex;gap:10px">
+          <input placeholder="Código de descuento" style="flex:1;padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Inter Tight',sans-serif"/>
+          <span style="padding:11px 20px;border:1.5px solid #e2e8f0;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer">Aplicar</span>
+        </div>
+      </div>
+
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:22px">
+        <div style="font-weight:800;font-size:15px;margin-bottom:16px">Resumen de compra</div>
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#c7dad2;margin-bottom:10px"><span>Subtotal</span><span>{{ subtotalLabel }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:{{ discountColor }};margin-bottom:10px"><span>{{ discountLabel }}</span><span>{{ discountAmount }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#c7dad2;margin-bottom:16px"><span>Impuestos (si aplica)</span><span>Incluidos</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;border-top:1px solid rgba(110,231,183,.16);padding-top:14px;margin-bottom:20px"><span>Total</span><span>{{ totalLabel }}</span></div>
+        <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#b7cfc6;margin-bottom:6px">
+          <input type="checkbox" checked="{{ accepted }}" onChange="{{ onToggleAccept }}" style="margin-top:2px"/>
+          <span>Acepto la <a href="License.dc.html">licencia de uso</a>, los <a href="Terms.dc.html">términos y condiciones</a> y la <a href="Privacy.dc.html">política de privacidad</a>.</span>
+        </label>
+        <sc-if value="{{ showAcceptWarning }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12px;color:#ff6b5e;font-weight:700;margin-bottom:10px">Debes aceptar la licencia y los términos para continuar.</div>
+        </sc-if>
+        <div style="height:12px"></div>
+        <div onClick="{{ onGoToCheckout }}" style="display:block;text-align:center;padding:14px;background:{{ ctaBg }};color:{{ ctaColor }};border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;transition:background .2s ease,opacity .2s ease;opacity:{{ ctaOpacity }}">Ir a pagar</div>
+        <div class="mono" style="text-align:center;font-size:10.5px;color:#8fa9a0;margin-top:10px">Entrega digital inmediata tras la confirmación de pago</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ !hasItems }}" hint-placeholder-val="{{ false }}">
+    <div style="text-align:center;padding:80px 20px;border:1px dashed rgba(110,231,183,.25);border-radius:8px">
+      <div style="font-size:34px;margin-bottom:16px">🛒</div>
+      <div style="font-weight:800;font-size:17px;margin-bottom:8px">Tu carrito está vacío</div>
+      <p style="font-size:13.5px;color:#9fb8ae;margin:0 0 24px">Explora el catálogo y encuentra la herramienta que necesitas.</p>
+      <a href="Catalog.dc.html" style="text-decoration:none;padding:12px 24px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:13.5px">Ver catálogo</a>
+    </div>
+  </sc-if>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { rawItems: [], loaded: false, accepted: false, showAcceptWarning: false, session: null };
+
+  componentDidMount() {
+    this._init();
+    this._onChange = () => this._refresh();
+    window.addEventListener('nmx:cart-changed', this._onChange);
+  }
+
+  componentWillUnmount() {
+    if (this._retryTimer) clearTimeout(this._retryTimer);
+    if (this._onChange) window.removeEventListener('nmx:cart-changed', this._onChange);
+  }
+
+  async _init() {
+    if (!window.NMXStore) {
+      this._retryTimer = setTimeout(() => this._init(), 30);
+      return;
+    }
+    const session = await window.NMXStore.getSession();
+    if (!session) {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    this.setState({ session });
+    this._refresh();
+  }
+
+  async _refresh() {
+    if (!window.NMXStore) return;
+    try {
+      const rawItems = await window.NMXStore.getCartItems();
+      this.setState({ rawItems, loaded: true });
+    } catch (e) {
+      this.setState({ rawItems: [], loaded: true });
+    }
+  }
+
+  renderVals() {
+    const raw = this.state.rawItems || [];
+    // Portada real de cada producto: los NMX vienen del inventario y los packs
+    // tienen su propia imagen (assets/img/covers/pack-*.png).
+    const inv = window.NMXInventory;
+    const coverFor = (p) => {
+      if (String(p.id).startsWith('pack-')) return 'assets/img/covers/' + p.id + '.png';
+      const prod = inv ? inv.get(p.id) : null;
+      return prod ? prod.cover : null;
+    };
+    const items = raw.map((p) => {
+      const src = coverFor(p);
+      return {
+        ...p,
+        coverEl: src
+          ? React.createElement('img', { src, alt: p.name, style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' } })
+          : null,
+        onRemove: () => window.NMXStore && window.NMXStore.removeFromCart(p.id)
+      };
+    });
+    const subtotal = raw.reduce((sum, p) => sum + Number(p.price_clp ?? p.priceClp ?? p.price ?? 0), 0);
+    const subtotalLabel = '$' + subtotal.toLocaleString('es-CL') + ' CLP';
+    // El descuento de membresía lo calcula el backend al crear el pedido; acá se
+    // muestra el mismo cálculo para que el total del carrito coincida con el
+    // monto que llega a Mercado Pago. La membresía no se descuenta a sí misma.
+    const s = this.state.session;
+    const memberActive = !!(s && s.membershipStatus === 'active');
+    const pct = memberActive ? (s.membershipDiscountPercent || 15) : 0;
+    const discountable = raw
+      .filter((p) => p.id !== 'membership-mensual')
+      .reduce((sum, p) => sum + Number(p.price_clp ?? p.priceClp ?? p.price ?? 0), 0);
+    const discount = pct > 0 ? Math.round(discountable * pct / 100) : 0;
+    const total = subtotal - discount;
+    const money = (n) => '$' + n.toLocaleString('es-CL') + ' CLP';
+    const accepted = this.state.accepted;
+    return {
+      items,
+      hasItems: this.state.loaded ? items.length > 0 : true,
+      subtotalLabel,
+      totalLabel: money(total),
+      discountLabel: pct > 0 ? ('Descuento membresía −' + pct + '%') : 'Descuento',
+      discountAmount: discount > 0 ? ('−' + money(discount)) : '—',
+      discountColor: discount > 0 ? '#34d399' : '#c7dad2',
+      accepted,
+      showAcceptWarning: this.state.showAcceptWarning,
+      ctaBg: accepted ? '#ff7a45' : 'rgba(255,122,69,.35)',
+      ctaColor: accepted ? '#241008' : 'rgba(36,16,8,.75)',
+      ctaOpacity: accepted ? 1 : 0.8,
+      onToggleAccept: (e) => this.setState({
+        accepted: !!(e && e.target && e.target.checked),
+        showAcceptWarning: false
+      }),
+      onGoToCheckout: () => {
+        // Aceptar la licencia es obligatorio: sin eso no se avanza al pago.
+        if (!this.state.accepted) { this.setState({ showAcceptWarning: true }); return; }
+        if (window.NMXStore) window.NMXStore.clearBuyNow();
+        window.location.href = 'Checkout.dc.html';
+      }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

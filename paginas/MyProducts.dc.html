@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/img/favicon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#04140f">
+<title>Mis productos — NUTRIMETRÍA</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<script src="./nutrimetria-inventory.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Inter Tight',system-ui,sans-serif;color:#e2e8f0;position:relative}
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(110,231,183,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(110,231,183,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%);-webkit-mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%)}
+  body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle 520px at 88% 12%,rgba(16,185,129,.13),transparent 70%),radial-gradient(circle 460px at 6% 78%,rgba(255,122,69,.08),transparent 70%)}
+  body > *{position:relative;z-index:1}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .glass{background:rgba(255,255,255,.035);border:1px solid rgba(110,231,183,.15);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  @keyframes nmxPulse{0%,100%{opacity:.5}50%{opacity:.9}}
+  .skeleton{background:rgba(255,255,255,.05);border-radius:5px;animation:nmxPulse 1.4s ease-in-out infinite}
+  @keyframes nmxFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .nmx-fade-in{animation:nmxFadeIn .35s ease}
+
+  /* ---- Responsive móvil (no afecta escritorio) ---- */
+  img,svg,canvas,video{max-width:100%;height:auto}
+  @media (max-width:900px){
+    /* Cualquier tabla ancha scrollea dentro de su caja en vez de estirar la página */
+    div:has(> [role="table"]){overflow-x:auto;-webkit-overflow-scrolling:touch}
+    /* Paneles admin/cliente: la barra lateral pasa arriba y a ancho completo.
+       Se busca el VALOR "220px 1fr" porque el serializador puede meter espacios. */
+    [style*="220px 1fr"]{grid-template-columns:1fr !important;gap:18px !important}
+    [style*="220px 1fr"] > *{max-width:100% !important;width:100% !important}
+    [style*="220px 1fr"] nav{display:flex !important;flex-wrap:wrap;gap:8px !important}
+  }
+  @media (max-width:640px){
+    /* 40px de margen lateral se comen un cuarto de una pantalla de 320px */
+    .section{padding-left:20px !important;padding-right:20px !important;padding-top:44px !important;padding-bottom:44px !important}
+    div[style*="px 40px"]{padding-inline:20px !important;box-sizing:border-box}
+    h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
+    h2{font-size:clamp(20px,5.4vw,24px) !important}
+    button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
+    .cta-row{flex-wrap:wrap}
+    .btn-primary,.btn-secondary{flex:1 1 100%;box-sizing:border-box}
+    /* Nada puede empujar la página a lo ancho */
+    body{overflow-x:hidden}
+  }
+  @media (max-width:560px){
+    .rg-hero,.rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages,.rg-resources,
+    .rg-leadmagnet,.rg-problem,.rg-membership,.rg-cart,.rg-checkout,.rg-checkout-fields,
+    .rg-catalog-grid,.rg-pkg-cards,.rg-mockup-stats,.nmx-hero,.nmx-body,.nmx-meta,
+    .doc-grid,.doc-kpis,.doc-phases,.doc-split,.hiw-steps,.hiw-sheets,.hiw-split{
+      grid-template-columns:1fr !important
+    }
+    /* Grillas con medidas fijas declaradas inline */
+    [style*="1.5fr 1fr"],[style*="1.4fr 1fr"],[style*="1.6fr 1fr"],[style*="1.05fr 1fr"],
+    [style*="1.4fr 1fr 1fr 1fr 1fr"],[style*="repeat(3,1fr)"],[style*="repeat(4,1fr)"],
+    [style*="repeat(5,1fr)"]{grid-template-columns:1fr !important}
+    .section{padding-left:16px !important;padding-right:16px !important}
+    div[style*="px 40px"]{padding-inline:16px !important}
+  }
+</style>
+</helmet>
+
+<dc-import name="Header" active="" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:1200px;margin:0 auto;padding:32px 40px 72px;display:grid;grid-template-columns:220px 1fr;gap:36px;align-items:start">
+  <dc-import name="ClientNav" active="productos" hint-size="220px,360px"></dc-import>
+
+  <div>
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 22px;letter-spacing:-.3px">Mis productos</h1>
+
+    <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="skeleton" style="height:120px;border-radius:8px"></div>
+        <div class="skeleton" style="height:120px;border-radius:8px"></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ !isLoading }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ !hasProducts }}" hint-placeholder-val="{{ false }}">
+      <div class="glass" style="border-radius:8px;padding:40px;text-align:center;color:#9fb8ae;font-size:13.5px">Aún no tienes productos comprados. <a href="Catalog.dc.html">Ver catálogo</a></div>
+    </sc-if>
+    <div style="display:flex;flex-direction:column;gap:14px" class="nmx-fade-in">
+      <sc-for list="{{ products }}" as="p" hint-placeholder-count="2">
+        <div class="glass" style="border-radius:8px;padding:20px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+            <div style="display:flex;gap:14px">
+              <div class="glass" style="width:56px;height:44px;flex:none;border-radius:5px;overflow:hidden;display:flex;align-items:center;justify-content:center">{{ p.coverEl }}</div>
+              <div>
+                <div style="font-weight:800;font-size:14.5px;margin-bottom:3px">{{ p.name }}</div>
+                <div class="mono" style="font-size:11px;color:#7fa398">Pedido {{ p.orderCode }} · {{ p.purchaseDate }}</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px" class="mono">
+            <div><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:2px">Precio pagado</div><div style="font-size:12.5px;font-weight:700;color:#e2e8f0">{{ p.priceLabel }}</div></div>
+            <div><div style="font-size:10px;color:#8fa9a0;text-transform:uppercase;margin-bottom:2px">Descargas disponibles</div><div style="font-size:12.5px;font-weight:700;color:#e2e8f0">{{ p.downloadsLeft }}</div></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a href="{{ p.downloadHref }}" style="text-decoration:none;font-size:12px;font-weight:700;padding:9px 16px;background:#6ee7b7;color:#04140f;border-radius:5px;cursor:pointer">Descargar .xlsx</a>
+            <a href="{{ p.portfolioHref }}" style="text-decoration:none;font-size:12px;font-weight:700;padding:9px 16px;border:1.5px solid rgba(110,231,183,.3);border-radius:5px;color:#e2e8f0">Portafolio .docx</a>
+          </div>
+          <div class="mono" style="font-size:10.5px;color:#7f9a91;margin-top:9px">Las descargas consumen cupo. El portafolio en PDF es de lectura libre y no consume.</div>
+        </div>
+      </sc-for>
+    </div>
+    </sc-if>
+  </div>
+</div>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { products: [], loaded: false };
+
+  componentDidMount() {
+    this._init();
+  }
+  componentWillUnmount() { if (this._retryTimer) clearTimeout(this._retryTimer); }
+
+  async _init() {
+    if (!window.NMXStore) { this._retryTimer = setTimeout(() => this._init(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session) {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    try {
+      const orders = await window.NMXStore.getMyOrders();
+      const paidOrders = orders.filter((o) => o.status === 'paid');
+      const details = await Promise.all(paidOrders.map((o) => window.NMXStore.getOrder(o.order_code || o.orderCode)));
+      const products = [];
+      details.forEach((order) => {
+        (order.items || []).forEach((it) => {
+          products.push({
+            name: it.name,
+            orderCode: order.orderCode,
+            purchaseDate: order.paidAt ? new Date(order.paidAt).toLocaleDateString('es-CL') : '',
+            priceLabel: '$' + it.priceClp.toLocaleString('es-CL') + ' CLP',
+            downloadsLeft: it.downloadsLeft,
+            downloadHref: window.NMXStore.downloadUrl(it.orderItemId, 'excel'),
+            portfolioHref: window.NMXStore.downloadUrl(it.orderItemId, 'portfolio'),
+            // Portada real del producto (las de los packs viven en covers/pack-*).
+            coverEl: (function () {
+              const inv = window.NMXInventory;
+              const src = String(it.productId).startsWith('pack-')
+                ? 'assets/img/covers/' + it.productId + '.png'
+                : (inv && inv.get(it.productId) ? inv.get(it.productId).cover : null);
+              return src
+                ? React.createElement('img', { src, alt: it.name, style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' } })
+                : null;
+            })()
+          });
+        });
+      });
+      this.setState({ products, loaded: true });
+    } catch (e) {
+      this.setState({ products: [], loaded: true });
+    }
+  }
+
+  renderVals() {
+    return { products: this.state.products, isLoading: !this.state.loaded, hasProducts: this.state.loaded ? this.state.products.length > 0 : true };
+  }
+}
+
+</script>
+</body>
+</html>

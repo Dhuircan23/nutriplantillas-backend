@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/img/favicon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#04140f">
+<title>Finalizar compra — NUTRIMETRÍA</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Inter Tight',system-ui,sans-serif;color:#e2e8f0;position:relative}
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(110,231,183,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(110,231,183,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%);-webkit-mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%)}
+  body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle 520px at 88% 12%,rgba(16,185,129,.13),transparent 70%),radial-gradient(circle 460px at 6% 78%,rgba(255,122,69,.08),transparent 70%)}
+  body > *{position:relative;z-index:1}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12.5px;font-weight:700;color:#c7dad2}
+  .field input{padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Inter Tight',sans-serif;background:rgba(255,255,255,.04);color:#e2e8f0}
+  @keyframes nmxspin{to{transform:rotate(360deg)}}
+  .pay-spinner{width:14px;height:14px;border-radius:50%;border:2px solid #6ee7b7;border-top-color:transparent;animation:nmxspin .7s linear infinite;flex:none}
+  @media (max-width:768px){
+    .rg-checkout{grid-template-columns:1fr !important}
+    .rg-checkout-fields{grid-template-columns:1fr !important}
+  }
+
+  /* ---- Responsive móvil (no afecta escritorio) ---- */
+  img,svg,canvas,video{max-width:100%;height:auto}
+  @media (max-width:900px){
+    /* Cualquier tabla ancha scrollea dentro de su caja en vez de estirar la página */
+    div:has(> [role="table"]){overflow-x:auto;-webkit-overflow-scrolling:touch}
+    /* Paneles admin/cliente: la barra lateral pasa arriba y a ancho completo.
+       Se busca el VALOR "220px 1fr" porque el serializador puede meter espacios. */
+    [style*="220px 1fr"]{grid-template-columns:1fr !important;gap:18px !important}
+    [style*="220px 1fr"] > *{max-width:100% !important;width:100% !important}
+    [style*="220px 1fr"] nav{display:flex !important;flex-wrap:wrap;gap:8px !important}
+  }
+  @media (max-width:640px){
+    /* 40px de margen lateral se comen un cuarto de una pantalla de 320px */
+    .section{padding-left:20px !important;padding-right:20px !important;padding-top:44px !important;padding-bottom:44px !important}
+    div[style*="px 40px"]{padding-inline:20px !important;box-sizing:border-box}
+    h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
+    h2{font-size:clamp(20px,5.4vw,24px) !important}
+    button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
+    .cta-row{flex-wrap:wrap}
+    .btn-primary,.btn-secondary{flex:1 1 100%;box-sizing:border-box}
+    /* Nada puede empujar la página a lo ancho */
+    body{overflow-x:hidden}
+  }
+  @media (max-width:560px){
+    .rg-hero,.rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages,.rg-resources,
+    .rg-leadmagnet,.rg-problem,.rg-membership,.rg-cart,.rg-checkout,.rg-checkout-fields,
+    .rg-catalog-grid,.rg-pkg-cards,.rg-mockup-stats,.nmx-hero,.nmx-body,.nmx-meta,
+    .doc-grid,.doc-kpis,.doc-phases,.doc-split,.hiw-steps,.hiw-sheets,.hiw-split{
+      grid-template-columns:1fr !important
+    }
+    /* Grillas con medidas fijas declaradas inline */
+    [style*="1.5fr 1fr"],[style*="1.4fr 1fr"],[style*="1.6fr 1fr"],[style*="1.05fr 1fr"],
+    [style*="1.4fr 1fr 1fr 1fr 1fr"],[style*="repeat(3,1fr)"],[style*="repeat(4,1fr)"],
+    [style*="repeat(5,1fr)"]{grid-template-columns:1fr !important}
+    .section{padding-left:16px !important;padding-right:16px !important}
+    div[style*="px 40px"]{padding-inline:16px !important}
+  }
+</style>
+</helmet>
+
+<dc-import name="Header" active="tienda" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:1100px;margin:0 auto;padding:36px 40px 80px">
+  <div class="mono" style="display:flex;gap:8px;align-items:center;font-size:12px;color:#8fa9a0;margin-bottom:24px">
+    <span style="color:#6ee7b7;font-weight:700">1. Carrito</span> → <span style="color:#6ee7b7;font-weight:700">2. Datos</span> → <span>3. Pago</span> → <span>4. Confirmación</span>
+  </div>
+  <h1 style="font-size:26px;font-weight:800;margin:0 0 28px;letter-spacing:-.3px">Finalizar compra</h1>
+
+  <sc-if value="{{ paymentNotice }}" hint-placeholder-val="{{ false }}">
+    <div style="border:1px solid rgba(255,107,94,.35);background:rgba(255,107,94,.08);border-radius:8px;padding:20px 22px;margin-bottom:24px">
+      <div style="font-weight:800;font-size:15px;margin-bottom:6px;color:#e2e8f0">{{ paymentNoticeTitle }}</div>
+      <p style="font-size:13.5px;color:#c7dad2;margin:0">{{ paymentNoticeBody }}</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ true }}">
+  <div class="rg-checkout" style="display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:start">
+    <div>
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:24px;margin-bottom:20px">
+        <div style="font-weight:800;font-size:15px;margin-bottom:16px">Datos de contacto</div>
+        <div class="rg-checkout-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="field"><label>Nombre completo</label><input placeholder="Ej. Camila Rojas" value="{{ contactName }}" onChange="{{ onContactNameChange }}"/></div>
+          <div class="field"><label>Correo electrónico</label><input placeholder="tucorreo@ejemplo.com" value="{{ contactEmail }}" onChange="{{ onContactEmailChange }}"/></div>
+          <div class="field" style="grid-column:1/-1"><label>País</label><input placeholder="Chile" value="{{ contactCountry }}" onChange="{{ onContactCountryChange }}"/></div>
+        </div>
+      </div>
+
+      <sc-if value="{{ showContactWarning }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:12px;color:#ff6b5e;font-weight:700;margin:-12px 0 20px">Completa tu nombre y correo antes de pagar.</div>
+      </sc-if>
+
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:24px;margin-bottom:20px">
+        <div style="font-weight:800;font-size:15px;margin-bottom:6px">Método de pago</div>
+        <p style="font-size:12.5px;color:#8fa9a0;margin:0 0 16px">Pago seguro con Mercado Pago: tarjetas de crédito y débito, transferencia o saldo en cuenta.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+          <span class="mono" style="font-size:10.5px;font-weight:600;color:#c7dad2;background:rgba(255,255,255,.05);border:1px solid rgba(110,231,183,.16);padding:6px 11px;border-radius:4px">Crédito</span>
+          <span class="mono" style="font-size:10.5px;font-weight:600;color:#c7dad2;background:rgba(255,255,255,.05);border:1px solid rgba(110,231,183,.16);padding:6px 11px;border-radius:4px">Débito</span>
+          <span class="mono" style="font-size:10.5px;font-weight:600;color:#c7dad2;background:rgba(255,255,255,.05);border:1px solid rgba(110,231,183,.16);padding:6px 11px;border-radius:4px">Transferencia</span>
+          <span class="mono" style="font-size:10.5px;font-weight:600;color:#c7dad2;background:rgba(255,255,255,.05);border:1px solid rgba(110,231,183,.16);padding:6px 11px;border-radius:4px">Saldo Mercado Pago</span>
+        </div>
+        <div style="border:1.5px solid #6ee7b7;border-radius:6px;padding:20px;text-align:center;background:rgba(110,231,183,.06);opacity:{{ payOpacity }};transition:opacity .15s ease,transform .15s ease;transform:{{ payTransform }}">
+          <button type="button" onClick="{{ onPay }}" disabled="{{ isProcessing }}" style="appearance:none;background:none;border:none;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13.5px;font-weight:700;margin-bottom:4px;color:#6ee7b7;width:100%;cursor:{{ payCursor }};padding:0">
+            <sc-if value="{{ isProcessing }}" hint-placeholder-val="{{ false }}"><span class="pay-spinner"></span></sc-if>
+            {{ payButtonLabel }}
+          </button>
+          <div class="mono" style="font-size:11px;color:#8fa9a0">Serás redirigido a Mercado Pago para pagar</div>
+        </div>
+        <div style="display:flex;gap:9px;align-items:flex-start;margin-top:14px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2" style="flex:none;margin-top:1px"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+          <div style="font-size:11.5px;color:#8fa9a0;line-height:1.55">Nunca vemos ni guardamos los datos de tu tarjeta: los procesa Mercado Pago en su propio entorno.</div>
+        </div>
+      </div>
+
+      <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:24px">
+        <label style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:#b7cfc6">
+          <input type="checkbox" checked="{{ accepted }}" onChange="{{ onToggleAccept }}" style="margin-top:2px"/>
+          <span>Acepto la <a href="License.dc.html">licencia de uso</a>, los <a href="Terms.dc.html">términos y condiciones</a> y la <a href="Privacy.dc.html">política de privacidad</a>.</span>
+        </label>
+        <sc-if value="{{ showAcceptWarning }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12px;color:#ff6b5e;font-weight:700;margin-top:10px">Debes aceptar la licencia y los términos para continuar.</div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:22px">
+      <div style="font-weight:800;font-size:15px;margin-bottom:16px">Resumen</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px">
+        <sc-for list="{{ items }}" as="item" hint-placeholder-count="2">
+          <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#c7dad2">{{ item.name }}</span><span style="font-weight:700">{{ item.priceLabel }}</span></div>
+        </sc-for>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13.5px;color:{{ discountColor }};margin-bottom:10px"><span>{{ discountLabel }}</span><span>{{ discountAmount }}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;border-top:1px solid rgba(110,231,183,.16);padding-top:14px;margin-bottom:20px"><span>Total</span><span>{{ totalLabel }}</span></div>
+      <div style="border-top:1px solid rgba(110,231,183,.16);padding-top:16px;margin-bottom:20px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:11px;font-weight:700;color:#8fa9a0;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px" class="mono">Qué incluye tu compra</div>
+        <div style="display:flex;gap:8px;font-size:12.5px;color:#c7dad2"><span style="color:#6ee7b7;flex:none">✓</span>Descarga inmediata del archivo .xlsx sin macros</div>
+        <div style="display:flex;gap:8px;font-size:12.5px;color:#c7dad2"><span style="color:#6ee7b7;flex:none">✓</span>Actualizaciones de la misma versión mayor sin costo adicional</div>
+        <div style="display:flex;gap:8px;font-size:12.5px;color:#c7dad2"><span style="color:#6ee7b7;flex:none">✓</span>Soporte por correo desde tu área de cliente</div>
+        <div style="display:flex;gap:8px;font-size:12.5px;color:#c7dad2"><span style="color:#6ee7b7;flex:none">✓</span>Garantía de 7 días si el archivo presenta errores de fórmula</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;padding:14px;background:{{ confirmBg }};border-radius:6px;opacity:{{ payOpacity }}">
+        <sc-if value="{{ isProcessing }}" hint-placeholder-val="{{ false }}"><span class="pay-spinner" style="border-top-color:transparent;border-color:#241008"></span></sc-if>
+        <button type="button" onClick="{{ onPay }}" disabled="{{ isProcessing }}" style="appearance:none;background:none;border:none;font-family:inherit;font-weight:700;font-size:14px;color:#241008;cursor:{{ payCursor }};padding:0">{{ confirmButtonLabel }}</button>
+      </div>
+      <sc-if value="{{ !accepted }}" hint-placeholder-val="{{ true }}">
+        <div class="mono" style="text-align:center;font-size:10.5px;color:#ff9466;margin-top:8px">Acepta la licencia y los términos para habilitar el pago</div>
+      </sc-if>
+      <div class="mono" style="text-align:center;font-size:10.5px;color:#8fa9a0;margin-top:10px">Pago procesado por Mercado Pago</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ !hasItems }}" hint-placeholder-val="{{ false }}">
+    <div style="text-align:center;padding:80px 20px;border:1px dashed rgba(110,231,183,.25);border-radius:8px">
+      <div style="font-weight:800;font-size:17px;margin-bottom:8px">No hay productos en tu compra</div>
+      <p style="font-size:13.5px;color:#9fb8ae;margin:0 0 24px">Vuelve al catálogo o a tu carrito para continuar.</p>
+      <a href="Catalog.dc.html" style="text-decoration:none;padding:12px 24px;background:#6ee7b7;color:#04140f;border-radius:6px;font-weight:700;font-size:13.5px">Ver catálogo</a>
+    </div>
+  </sc-if>
+</div>
+
+<sc-if value="{{ payStep }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;background:rgba(15,31,43,.55);display:flex;align-items:center;justify-content:center;z-index:100">
+    <div style="width:360px;background:rgba(10,37,28,.92);border:1px solid rgba(110,231,183,.18);border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(16,185,129,.12);backdrop-filter:blur(16px)">
+      <div style="background:#04140f;color:#e2e8f0;padding:14px 18px;font-size:12.5px;font-weight:700;display:flex;justify-content:space-between;align-items:center">
+        <span>Pasarela de pago Mercado Pago</span>
+        <span class="mono" style="font-size:10px;color:#9fb0b6">Pago real</span>
+      </div>
+      <div style="padding:32px 24px;text-align:center">
+        <div style="width:38px;height:38px;border-radius:50%;border:3px solid #ff7a45;border-top-color:transparent;margin:0 auto 18px;animation:nmxspin .8s linear infinite"></div>
+        <div style="font-weight:800;font-size:14.5px;margin-bottom:6px;color:#e2e8f0">{{ payStepLabel }}</div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const PAYMENT_NOTICES = {
+  cancelled: { title: 'Pago cancelado', body: 'Anulaste el pago antes de completarlo. Puedes intentarlo de nuevo cuando quieras.' },
+  timeout: { title: 'Se perdió la conexión con la pasarela', body: 'La conexión con Mercado Pago se interrumpió. Vuelve a intentar el pago.' },
+  declined: { title: 'Pago rechazado', body: 'Mercado Pago rechazó la transacción. Verifica los datos de tu medio de pago o intenta con otro.' },
+  error: { title: 'No pudimos confirmar el pago', body: 'Ocurrió un error confirmando la transacción. Si el cargo se realizó, contáctanos desde soporte antes de reintentar.' }
+};
+
+class Component extends DCLogic {
+  state = { rawItems: [], loaded: false, accepted: false, showAcceptWarning: false, payStep: null, payError: '', payMsg: '', paymentNoticeKey: null, contactName: '', contactEmail: '', contactCountry: 'Chile', showContactWarning: false, payArmed: false, session: null };
+
+  componentDidMount() {
+    const params = new URLSearchParams(window.location.search);
+    const paymentNoticeKey = params.get('payment');
+    if (paymentNoticeKey && PAYMENT_NOTICES[paymentNoticeKey]) {
+      this.setState({ paymentNoticeKey });
+    }
+    this._init();
+  }
+
+  componentWillUnmount() {
+    if (this._retryTimer) clearTimeout(this._retryTimer);
+  }
+
+  async _init() {
+    if (!window.NMXStore) {
+      this._retryTimer = setTimeout(() => this._init(), 30);
+      return;
+    }
+    const session = await window.NMXStore.getSession();
+    if (!session) {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    this.setState({ session });
+    try {
+      const buyNowIds = window.NMXStore.getBuyNowIds();
+      const rawItems = buyNowIds
+        ? (await Promise.all(buyNowIds.map((id) => window.NMXStore.getProduct(id)))).filter(Boolean)
+        : await window.NMXStore.getCartItems();
+      this.setState({ rawItems, loaded: true });
+    } catch (e) {
+      this.setState({ rawItems: [], loaded: true });
+    }
+  }
+
+  // Flujo real de Webpay Plus: 1) crear el pedido en nuestra BD, 2) iniciar la
+  // transacción y obtener {url, token}, 3) redirigir el navegador con un POST
+  // (no un simple location.href) llevando token_ws — así es como Webpay lo exige.
+  async _startPayment() {
+    if (this.state.payStep) return; // evita doble clic mientras procesa
+    const nameOk = (this.state.contactName || '').trim().length > 0;
+    const emailOk = /\S+@\S+\.\S+/.test(this.state.contactEmail || '');
+    if (!nameOk || !emailOk) {
+      this.setState({ showContactWarning: true, payArmed: false });
+      return;
+    }
+    if (!this.state.accepted) {
+      this.setState({ showContactWarning: false, showAcceptWarning: true, payArmed: false });
+      return;
+    }
+    this.setState({ showAcceptWarning: false, showContactWarning: false, payStep: 'processing', payError: '', payMsg: 'Validando pedido…' });
+    try {
+      const order = await window.NMXStore.createOrder();
+      const orderCode = order.order_code || order.orderCode;
+      this.setState({ payMsg: 'Conectando con la pasarela de pago…' });
+      const result = await window.NMXStore.initPayment(orderCode);
+
+      // El backend habla con un PaymentProvider abstracto, así que la respuesta
+      // tiene dos formas posibles:
+      //   - Proveedor redirigido (Webpay): { url, token } -> POST a la pasarela.
+      //   - Proveedor manual: { requiresManualConfirmation } -> no hay a dónde
+      //     redirigir; el pedido queda esperando confirmación de un administrador.
+      if (result && result.requiresManualConfirmation) {
+        window.NMXStore.clearBuyNow();
+        window.location.href = 'Confirmation.dc.html?order=' + encodeURIComponent(orderCode) + '&payment=pending';
+        return;
+      }
+
+      if (!result || !result.url) {
+        throw new Error('La pasarela de pago no devolvió una redirección válida.');
+      }
+
+      this.setState({ payMsg: 'Redirigiendo a la pasarela…' });
+
+      // Flow redirige con un simple GET (la URL ya trae el token); Webpay
+      // exige un POST con token_ws en el body, así que se construye un
+      // formulario oculto y se envía.
+      if (result.method === 'GET') {
+        window.location.href = result.url;
+        return;
+      }
+      if (!result.token) {
+        throw new Error('La pasarela de pago no devolvió un token válido.');
+      }
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = result.url;
+      form.style.display = 'none';
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'token_ws';
+      input.value = result.token;
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+    } catch (e) {
+      this.setState({ payStep: null, payArmed: false, payError: (e && e.message) || 'No se pudo iniciar el pago. Intenta de nuevo.' });
+    }
+  }
+
+  renderVals() {
+    const raw = this.state.rawItems || [];
+    const items = raw.map((p) => ({ name: p.name, priceLabel: p.priceLabel }));
+    const total = raw.reduce((sum, p) => sum + Number(p.price_clp ?? p.priceClp ?? p.price ?? 0), 0);
+    // Mismo cálculo que orders.js: el monto que se ve acá es el que se cobra.
+    const sess = this.state.session;
+    const pct = (sess && sess.membershipStatus === 'active') ? (sess.membershipDiscountPercent || 15) : 0;
+    const discountable = raw
+      .filter((p) => p.id !== 'membership-mensual')
+      .reduce((sum, p) => sum + Number(p.price_clp ?? p.priceClp ?? p.price ?? 0), 0);
+    const discount = pct > 0 ? Math.round(discountable * pct / 100) : 0;
+    const money = (n) => '$' + n.toLocaleString('es-CL') + ' CLP';
+    const totalLabel = money(total - discount);
+    const isProcessing = !!this.state.payStep;
+    const notice = this.state.paymentNoticeKey ? PAYMENT_NOTICES[this.state.paymentNoticeKey] : null;
+    return {
+      items,
+      totalLabel,
+      discountLabel: pct > 0 ? ('Descuento membresía −' + pct + '%') : 'Descuento',
+      discountAmount: discount > 0 ? ('−' + money(discount)) : '—',
+      discountColor: discount > 0 ? '#34d399' : '#c7dad2',
+      hasItems: this.state.loaded ? items.length > 0 : true,
+      accepted: this.state.accepted,
+      showAcceptWarning: this.state.showAcceptWarning,
+      payStep: this.state.payStep,
+      payStepLabel: this.state.payError ? this.state.payError : (this.state.payMsg || 'Validando pedido…'),
+      isProcessing,
+      payButtonLabel: isProcessing ? 'Conectando…' : 'Pagar con Mercado Pago',
+      confirmButtonLabel: isProcessing ? 'Conectando…' : 'Confirmar y pagar',
+      payCursor: isProcessing ? 'default' : 'pointer',
+      payOpacity: isProcessing ? 0.65 : (this.state.payArmed ? 0.8 : 1),
+      payTransform: this.state.payArmed && !isProcessing ? 'scale(.98)' : 'scale(1)',
+      paymentNotice: !!notice,
+      paymentNoticeTitle: notice ? notice.title : '',
+      paymentNoticeBody: notice ? notice.body : '',
+      // El botón de pago se ve deshabilitado hasta aceptar la licencia; el
+      // clic igual avisa cuál es el requisito que falta.
+      confirmBg: this.state.accepted ? '#ff7a45' : 'rgba(255,122,69,.35)',
+      onToggleAccept: (e) => this.setState({ accepted: !!(e && e.target && e.target.checked), showAcceptWarning: false }),
+      contactName: this.state.contactName,
+      contactEmail: this.state.contactEmail,
+      contactCountry: this.state.contactCountry,
+      showContactWarning: this.state.showContactWarning,
+      onContactNameChange: (e) => this.setState({ contactName: e.target.value }),
+      onContactEmailChange: (e) => this.setState({ contactEmail: e.target.value }),
+      onContactCountryChange: (e) => this.setState({ contactCountry: e.target.value }),
+      payArmed: this.state.payArmed,
+      onPay: () => {
+        // Feedback táctil inmediato (<100ms): el botón se ve presionado antes de que la
+        // promesa resuelva, para que el clic se sienta registrado de inmediato.
+        this.setState({ payArmed: true });
+        setTimeout(() => this._startPayment(), 150);
+      }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/img/favicon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#04140f">
+<title>Las 32 herramientas Excel — NUTRIMETRÍA</title>
+<meta name="description" content="Catálogo completo de las 32 herramientas de Excel para nutrición clínica, organizadas en 8 fases. Filtra por fase, tipo de herramienta y precio.">
+<link rel="canonical" href="https://www.nutrimetria.cc/Catalog.dc.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NUTRIMETRÍA">
+<meta property="og:locale" content="es_CL">
+<meta property="og:title" content="Las 32 herramientas Excel — NUTRIMETRÍA">
+<meta property="og:description" content="Catálogo completo de las 32 herramientas de Excel para nutrición clínica, organizadas en 8 fases. Filtra por fase, tipo de herramienta y precio.">
+<meta property="og:image" content="https://www.nutrimetria.cc/assets/img/og-catalog.png">
+<meta property="og:url" content="https://www.nutrimetria.cc/Catalog.dc.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Las 32 herramientas Excel — NUTRIMETRÍA">
+<meta name="twitter:description" content="Catálogo completo de las 32 herramientas de Excel para nutrición clínica, organizadas en 8 fases. Filtra por fase, tipo de herramienta y precio.">
+<meta name="twitter:image" content="https://www.nutrimetria.cc/assets/img/og-catalog.png">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Inter Tight',system-ui,sans-serif;color:#e2e8f0;position:relative}
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(110,231,183,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(110,231,183,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%);-webkit-mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%)}
+  body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle 520px at 88% 12%,rgba(16,185,129,.13),transparent 70%),radial-gradient(circle 460px at 6% 78%,rgba(255,122,69,.08),transparent 70%)}
+  body > *{position:relative;z-index:1}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .filter-group{margin-bottom:30px}
+  .filter-title{font-size:11px;font-weight:700;color:#8fa9a0;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
+  .filter-opt{display:flex;align-items:center;gap:9px;font-size:13px;color:#c7dad2;padding:10px 12px;min-height:44px;cursor:pointer;margin-bottom:8px;border:1px solid rgba(110,231,183,.16);border-radius:6px;background:rgba(255,255,255,.02);box-sizing:border-box;transition:border-color .18s ease,background .18s ease,color .18s ease}
+  .filter-opt:hover{border-color:rgba(110,231,183,.42);background:rgba(110,231,183,.07);color:#eef7f3}
+  /* Marcado: se tiñe el chip completo, no solo la casilla nativa. */
+  .filter-opt:has(input:checked){border-color:#6ee7b7;background:rgba(110,231,183,.13);color:#eef7f3;font-weight:600}
+  .filter-opt input{accent-color:#6ee7b7;width:16px;height:16px;flex:none;cursor:pointer}
+  @media (max-width:768px){
+    .rg-catalog-layout{grid-template-columns:1fr !important}
+    .rg-catalog-grid{grid-template-columns:repeat(2,1fr) !important}
+  }
+  @media (max-width:480px){
+    .rg-catalog-grid{grid-template-columns:1fr !important}
+  }
+
+  /* ---- Responsive móvil (no afecta escritorio) ---- */
+  img,svg,canvas,video{max-width:100%;height:auto}
+  @media (max-width:900px){
+    /* Cualquier tabla ancha scrollea dentro de su caja en vez de estirar la página */
+    div:has(> [role="table"]){overflow-x:auto;-webkit-overflow-scrolling:touch}
+    /* Paneles admin/cliente: la barra lateral pasa arriba y a ancho completo.
+       Se busca el VALOR "220px 1fr" porque el serializador puede meter espacios. */
+    [style*="220px 1fr"]{grid-template-columns:1fr !important;gap:18px !important}
+    [style*="220px 1fr"] > *{max-width:100% !important;width:100% !important}
+    [style*="220px 1fr"] nav{display:flex !important;flex-wrap:wrap;gap:8px !important}
+  }
+  @media (max-width:640px){
+    /* 40px de margen lateral se comen un cuarto de una pantalla de 320px */
+    .section{padding-left:20px !important;padding-right:20px !important;padding-top:44px !important;padding-bottom:44px !important}
+    div[style*="px 40px"]{padding-inline:20px !important;box-sizing:border-box}
+    h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
+    h2{font-size:clamp(20px,5.4vw,24px) !important}
+    button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
+    .cta-row{flex-wrap:wrap}
+    .btn-primary,.btn-secondary{flex:1 1 100%;box-sizing:border-box}
+    /* Nada puede empujar la página a lo ancho */
+    body{overflow-x:hidden}
+  }
+  @media (max-width:560px){
+    .rg-hero,.rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages,.rg-resources,
+    .rg-leadmagnet,.rg-problem,.rg-membership,.rg-cart,.rg-checkout,.rg-checkout-fields,
+    .rg-catalog-grid,.rg-pkg-cards,.rg-mockup-stats,.nmx-hero,.nmx-body,.nmx-meta,
+    .doc-grid,.doc-kpis,.doc-phases,.doc-split,.hiw-steps,.hiw-sheets,.hiw-split{
+      grid-template-columns:1fr !important
+    }
+    /* Grillas con medidas fijas declaradas inline */
+    [style*="1.5fr 1fr"],[style*="1.4fr 1fr"],[style*="1.6fr 1fr"],[style*="1.05fr 1fr"],
+    [style*="1.4fr 1fr 1fr 1fr 1fr"],[style*="repeat(3,1fr)"],[style*="repeat(4,1fr)"],
+    [style*="repeat(5,1fr)"]{grid-template-columns:1fr !important}
+    .section{padding-left:16px !important;padding-right:16px !important}
+    div[style*="px 40px"]{padding-inline:16px !important}
+  }
+</style>
+<script src="./nutrimetria-inventory.js"></script>
+</helmet>
+
+<dc-import name="Header" active="tienda" cart-count="2" hint-size="100%,64px"></dc-import>
+
+<div style="max-width:1400px;margin:0 auto;padding:32px 40px 80px">
+  <div style="margin-bottom:24px">
+    <h1 style="font-size:28px;font-weight:800;margin:0 0 6px;letter-spacing:-.4px">Herramientas</h1>
+    <p style="font-size:13.5px;color:#9fb8ae;margin:0">Las 32 herramientas NUTRIMETRÍA, organizadas en 8 fases del flujo de atención nutricional.</p>
+  </div>
+
+  <div style="display:flex;gap:12px;align-items:center;margin-bottom:24px;flex-wrap:wrap">
+    <div style="flex:1;min-width:260px;position:relative">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8fa9a0" stroke-width="2" style="position:absolute;left:14px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>
+      <input placeholder="Buscar plantillas, calculadoras, registros…" value="{{ query }}" onChange="{{ onQueryChange }}" style="width:100%;box-sizing:border-box;padding:11px 14px 11px 38px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Inter Tight',sans-serif;background:rgba(255,255,255,.04);color:#e2e8f0"/>
+    </div>
+    <select value="{{ sortValue }}" onChange="{{ onSortChange }}" style="padding:11px 14px;border:1px solid rgba(110,231,183,.25);border-radius:6px;font-size:13.5px;font-family:'Inter Tight',sans-serif;background:rgba(255,255,255,.04);color:#e2e8f0">
+      <option value="fase">Ordenar: por fase</option>
+      <option value="precio-asc">Precio: menor a mayor</option>
+      <option value="precio-desc">Precio: mayor a menor</option>
+      <option value="nombre">Nombre A–Z</option>
+    </select>
+    <div style="display:flex;border:1px solid rgba(110,231,183,.25);border-radius:6px;overflow:hidden">
+      <button type="button" aria-label="Vista de cuadrícula" aria-pressed="{{ gridPressed }}" onClick="{{ onGridView }}" style="appearance:none;font-family:inherit;padding:10px 12px;background:{{ gridBg }};color:{{ gridColor }};border:none;cursor:pointer;font-size:14px">▦</button>
+      <button type="button" aria-label="Vista de lista" aria-pressed="{{ listPressed }}" onClick="{{ onListView }}" style="appearance:none;font-family:inherit;padding:10px 12px;background:{{ listBg }};color:{{ listColor }};border:none;border-left:1px solid rgba(110,231,183,.25);cursor:pointer;font-size:14px">☰</button>
+    </div>
+  </div>
+
+  <div class="rg-catalog-layout" style="display:grid;grid-template-columns:230px 1fr;gap:36px;align-items:start">
+    <!-- FILTERS -->
+    <aside style="border:1px solid rgba(110,231,183,.16);border-radius:6px;padding:26px 22px">
+      <div class="filter-group" style="border-bottom:1px solid rgba(110,231,183,.08);padding-bottom:24px">
+        <div class="filter-title">Fase</div>
+        <sc-for list="{{ phaseOptions }}" as="ph" hint-placeholder-count="8">
+          <label class="filter-opt"><input type="checkbox" checked="{{ ph.checked }}" onChange="{{ ph.onToggle }}"/> {{ ph.label }}</label>
+        </sc-for>
+      </div>
+      <div class="filter-group" style="border-bottom:1px solid rgba(110,231,183,.08);padding-bottom:24px">
+        <div class="filter-title">Tipo de herramienta</div>
+        <sc-for list="{{ kindOptions }}" as="kd" hint-placeholder-count="6">
+          <label class="filter-opt"><input type="checkbox" checked="{{ kd.checked }}" onChange="{{ kd.onToggle }}"/> {{ kd.label }}</label>
+        </sc-for>
+      </div>
+      <div class="filter-group" style="margin-bottom:0">
+        <div class="filter-title">Precio</div>
+        <input type="range" min="4000" max="8000" step="500" value="{{ priceMax }}" onChange="{{ onPriceChange }}" style="width:100%"/>
+        <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#8fa9a0" class="mono"><span>$4.000</span><span>{{ priceMaxLabel }}</span></div>
+      </div>
+    </aside>
+
+    <!-- RESULTS -->
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <span style="font-size:13px;color:#9fb8ae"><strong style="color:#e2e8f0">{{ filteredProducts.length }}</strong> herramientas encontradas</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ activeBadges }}" as="b" hint-placeholder-count="0">
+            <button type="button" class="mono" aria-label="Quitar filtro: {{ b.label }}" onClick="{{ b.onRemove }}" style="appearance:none;font-family:inherit;font-size:11px;background:rgba(255,255,255,.03);padding:4px 9px;border-radius:12px;color:#c7dad2;border:none;cursor:pointer">{{ b.label }} ✕</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;padding:60px 20px;border:1px dashed rgba(110,231,183,.25);border-radius:8px;color:#9fb8ae;font-size:13.5px">Ningún producto coincide con los filtros seleccionados.</div>
+      </sc-if>
+
+      <div class="rg-catalog-grid" style="display:grid;grid-template-columns:{{ gridColumns }};gap:20px">
+        <sc-for list="{{ filteredProducts }}" as="prod" hint-placeholder-count="9">
+          <div style="border:1px solid rgba(110,231,183,.16);border-radius:6px;overflow:hidden;display:flex;flex-direction:{{ cardDirection }}">
+            <div style="height:{{ coverHeight }};width:{{ coverWidth }};flex:none;background:#0a251c;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+              {{ prod.coverEl }}
+              <sc-if value="{{ prod.badge }}" hint-placeholder-val="{{ true }}">
+                <span class="mono" style="position:absolute;top:8px;left:8px;font-size:9.5px;background:{{ prod.badgeBg }};color:{{ prod.badgeColor }};padding:3px 7px;border-radius:3px">{{ prod.badge }}</span>
+              </sc-if>
+            </div>
+            <div style="padding:14px;display:flex;flex-direction:column;gap:6px;flex:1">
+              <span class="mono" style="font-size:10px;color:#6ee7b7;text-transform:uppercase">{{ prod.category }}</span>
+              <div style="font-weight:800;font-size:14.5px;line-height:1.35;text-wrap:pretty">{{ prod.name }}</div>
+              <div style="font-size:12px;color:#9fb8ae;line-height:1.5;flex:1;text-wrap:pretty">{{ prod.desc }}</div>
+              <div class="mono" style="font-size:11px;color:#7fa398">{{ prod.format }} · {{ prod.version }}</div>
+              <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:#9fb8ae;cursor:pointer">
+                <input type="checkbox" checked="{{ prod.compareChecked }}" onChange="{{ prod.onCompareToggle }}"/> Comparar
+              </label>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+                <span style="font-weight:800;font-size:15px">{{ prod.price }}</span>
+                <div style="display:flex;gap:6px">
+                  <a href="{{ prod.href }}" style="text-decoration:none;font-size:11px;font-weight:700;padding:6px 10px;border:1.5px solid rgba(110,231,183,.3);border-radius:5px;color:#e2e8f0">Ver</a>
+                  <button type="button" disabled="{{ prod.ctaDisabled }}" onClick="{{ prod.onAddToCart }}" style="appearance:none;font-family:inherit;font-size:11px;font-weight:700;padding:6px 10px;background:{{ prod.available }};color:#04140f;border:none;border-radius:5px;cursor:{{ prod.ctaCursor }}">{{ prod.ctaLabel }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="margin-top:36px;padding:18px 20px;border:1px solid rgba(110,231,183,.16);border-radius:7px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:13.5px;font-weight:700;margin-bottom:3px">Cada herramienta trae su portafolio profesional</div>
+          <div style="font-size:12.5px;color:#8fa9a0">32 portafolios documentan población, metodología, fuentes y limitaciones.</div>
+        </div>
+        <a href="Docs.dc.html" style="text-decoration:none;font-size:13px;font-weight:700;padding:11px 18px;border:1.5px solid rgba(110,231,183,.3);border-radius:6px;color:#e2e8f0;white-space:nowrap">Ver documentación oficial</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<sc-if value="{{ compareBarVisible }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;background:rgba(4,20,15,.95);border:1px solid rgba(110,231,183,.3);border-radius:8px;padding:12px 18px;display:flex;align-items:center;gap:16px;box-shadow:0 12px 30px rgba(0,0,0,.4)">
+    <span style="font-size:13px;font-weight:700">{{ compareCount }} seleccionados para comparar</span>
+    <button type="button" onClick="{{ onOpenCompare }}" style="appearance:none;font-family:inherit;padding:8px 16px;background:#6ee7b7;color:#04140f;border:none;border-radius:5px;font-weight:700;font-size:12.5px;cursor:pointer">Comparar</button>
+    <button type="button" onClick="{{ onClearCompare }}" style="appearance:none;font-family:inherit;padding:8px 12px;background:none;border:1px solid rgba(110,231,183,.3);color:#e2e8f0;border-radius:5px;font-size:12.5px;cursor:pointer">Limpiar</button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ compareModalOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;background:rgba(4,20,15,.7);z-index:70;display:flex;align-items:center;justify-content:center;padding:24px">
+    <div style="background:#0a251c;border:1px solid rgba(110,231,183,.25);border-radius:10px;padding:28px;max-width:900px;width:100%;max-height:80vh;overflow:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h2 style="font-size:18px;font-weight:800;margin:0">Comparar herramientas</h2>
+        <button type="button" onClick="{{ onCloseCompare }}" aria-label="Cerrar" style="appearance:none;background:none;border:none;color:#9fb8ae;font-size:20px;cursor:pointer;font-family:inherit">✕</button>
+      </div>
+      <div role="table" style="display:grid;grid-template-columns:140px repeat(3,1fr);font-size:13px;border:1px solid rgba(110,231,183,.16);border-radius:6px;overflow:hidden">
+        <div role="cell" style="padding:12px;font-weight:700;color:#8fa9a0;background:rgba(255,255,255,.03)"></div>
+        <sc-for list="{{ compareItems }}" as="ci" hint-placeholder-count="3">
+          <div role="cell" style="padding:12px;font-weight:800;background:rgba(255,255,255,.03);border-left:1px solid rgba(110,231,183,.12)">{{ ci.name }}</div>
+        </sc-for>
+        <div role="cell" style="padding:12px;font-weight:700;color:#8fa9a0;border-top:1px solid rgba(110,231,183,.12)">Categoría</div>
+        <sc-for list="{{ compareItems }}" as="ci" hint-placeholder-count="3">
+          <div role="cell" style="padding:12px;border-top:1px solid rgba(110,231,183,.12);border-left:1px solid rgba(110,231,183,.12);color:#c7dad2">{{ ci.category }}</div>
+        </sc-for>
+        <div role="cell" style="padding:12px;font-weight:700;color:#8fa9a0;border-top:1px solid rgba(110,231,183,.12)">Precio</div>
+        <sc-for list="{{ compareItems }}" as="ci" hint-placeholder-count="3">
+          <div role="cell" style="padding:12px;border-top:1px solid rgba(110,231,183,.12);border-left:1px solid rgba(110,231,183,.12);font-weight:700">{{ ci.price }}</div>
+        </sc-for>
+        <div role="cell" style="padding:12px;font-weight:700;color:#8fa9a0;border-top:1px solid rgba(110,231,183,.12)">Versión</div>
+        <sc-for list="{{ compareItems }}" as="ci" hint-placeholder-count="3">
+          <div role="cell" style="padding:12px;border-top:1px solid rgba(110,231,183,.12);border-left:1px solid rgba(110,231,183,.12);color:#c7dad2" class="mono">{{ ci.version }}</div>
+        </sc-for>
+        <div role="cell" style="padding:12px;font-weight:700;color:#8fa9a0;border-top:1px solid rgba(110,231,183,.12)"></div>
+        <sc-for list="{{ compareItems }}" as="ci" hint-placeholder-count="3">
+          <div role="cell" style="padding:12px;border-top:1px solid rgba(110,231,183,.12);border-left:1px solid rgba(110,231,183,.12)"><a href="{{ ci.href }}" style="text-decoration:none;font-weight:700;font-size:12.5px">Ver producto →</a></div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<dc-import name="Footer" hint-size="100%,420px"></dc-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    phases: {}, kinds: {}, priceMax: 8000, query: '', sort: 'fase', view: 'grid',
+    compareIds: [], compareModalOpen: false, addedIds: {}, ready: false
+  };
+
+  componentDidMount() {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q');
+    const fase = params.get('fase');
+    const patch = {};
+    if (q) patch.query = q;
+    if (fase && /^[1-8]$/.test(fase)) patch.phases = { [Number(fase)]: true };
+    if (Object.keys(patch).length) this.setState(patch);
+    this._waitForInventory();
+  }
+
+  componentWillUnmount() {
+    if (this._invTimer) clearTimeout(this._invTimer);
+    if (this._addedTimers) Object.values(this._addedTimers).forEach(clearTimeout);
+  }
+
+  _waitForInventory() {
+    if (window.NMXInventory) { this.setState({ ready: true }); return; }
+    this._invTimer = setTimeout(() => this._waitForInventory(), 30);
+  }
+
+  _toggle(group, key) {
+    this.setState((s) => ({ [group]: { ...s[group], [key]: !s[group][key] } }));
+  }
+
+  _toggleCompare(id) {
+    this.setState((s) => {
+      const has = s.compareIds.includes(id);
+      if (has) return { compareIds: s.compareIds.filter((x) => x !== id) };
+      if (s.compareIds.length >= 3) return {};
+      return { compareIds: [...s.compareIds, id] };
+    });
+  }
+
+  async _addToCart(id) {
+    if (!id || !window.NMXStore) return;
+    const session = await window.NMXStore.getSession();
+    if (!session) { window.location.href = 'Login.dc.html'; return; }
+    try {
+      await window.NMXStore.addToCart(id);
+      this.setState((s) => ({ addedIds: { ...s.addedIds, [id]: true } }));
+      this._addedTimers = this._addedTimers || {};
+      if (this._addedTimers[id]) clearTimeout(this._addedTimers[id]);
+      this._addedTimers[id] = setTimeout(() => {
+        this.setState((s) => { const n = { ...s.addedIds }; delete n[id]; return { addedIds: n }; });
+      }, 2400);
+    } catch (e) { /* el contador del Header refleja el estado real del carrito */ }
+  }
+
+  renderVals() {
+    const inv = window.NMXInventory;
+    const s = this.state;
+
+    if (!inv) {
+      return {
+        phaseOptions: [], kindOptions: [], filteredProducts: [], activeBadges: [],
+        query: s.query, onQueryChange: (e) => this.setState({ query: e.target.value }),
+        priceMax: s.priceMax, priceMaxLabel: '$8.000',
+        onPriceChange: (e) => this.setState({ priceMax: Number(e.target.value) }),
+        sortValue: s.sort, onSortChange: (e) => this.setState({ sort: e.target.value }),
+        gridColumns: 'repeat(3,1fr)', cardDirection: 'column', coverHeight: '120px', coverWidth: 'auto',
+        gridPressed: true, listPressed: false, gridBg: '#6ee7b7', gridColor: '#04140f',
+        listBg: 'transparent', listColor: '#c7dad2',
+        onGridView: () => this.setState({ view: 'grid' }), onListView: () => this.setState({ view: 'list' }),
+        noResults: false, compareBarVisible: false, compareCount: 0, compareItems: [],
+        compareModalOpen: false, onOpenCompare: () => {}, onCloseCompare: () => {}, onClearCompare: () => {}
+      };
+    }
+
+    const activePhases = Object.keys(s.phases).filter((k) => s.phases[k]).map(Number);
+    const activeKinds = Object.keys(s.kinds).filter((k) => s.kinds[k]);
+    const q = (s.query || '').trim().toLowerCase();
+
+    const matches = inv.products.filter((p) => {
+      if (activePhases.length && !activePhases.includes(p.phase)) return false;
+      if (activeKinds.length && !activeKinds.includes(p.kind)) return false;
+      if (p.price > s.priceMax) return false;
+      if (q) {
+        const hay = (p.name + ' ' + p.sku + ' ' + p.category + ' ' + p.objective + ' ' + p.phaseName).toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    const SORTERS = {
+      fase: (a, b) => a.order - b.order,
+      'precio-asc': (a, b) => a.price - b.price || a.order - b.order,
+      'precio-desc': (a, b) => b.price - a.price || a.order - b.order,
+      nombre: (a, b) => a.name.localeCompare(b.name, 'es')
+    };
+    matches.sort(SORTERS[s.sort] || SORTERS.fase);
+
+    const isList = s.view === 'list';
+
+    const filteredProducts = matches.map((p) => {
+      const isAdded = !!s.addedIds[p.id];
+      const notConfirmed = p.version === 'NO_CONFIRMADO';
+      return {
+        id: p.id,
+        name: p.name,
+        desc: p.objective,
+        category: p.sku + ' · ' + p.kindLabel,
+        format: '.xlsx',
+        version: notConfirmed ? 'versión no confirmada' : p.version,
+        price: p.priceLabel,
+        badge: '',
+        badgeBg: 'rgba(4,20,15,.72)',
+        badgeColor: '#6ee7b7',
+        available: '#6ee7b7',
+        coverSrc: p.cover,
+        // La portada se construye acá, no en la plantilla: un src en un hole se
+        // emite literal durante el streaming y dispara una petición fallida.
+        coverEl: React.createElement('img', {
+          src: p.cover, alt: p.name,
+          style: { width: '100%', height: '100%', objectFit: 'cover' }
+        }),
+        href: p.href,
+        compareChecked: s.compareIds.includes(p.id),
+        onCompareToggle: () => this._toggleCompare(p.id),
+        ctaLabel: isAdded ? 'Agregado ✓' : 'Agregar',
+        ctaDisabled: false,
+        ctaCursor: 'pointer',
+        onAddToCart: (e) => { if (e && e.preventDefault) e.preventDefault(); this._addToCart(p.id); }
+      };
+    });
+
+    const phaseOptions = inv.phases.map((f) => ({
+      label: 'Fase ' + f.n + ' · ' + f.name.replace(/^Fase \d+ · /, '') + ' (' + f.count + ')',
+      checked: !!s.phases[f.n],
+      onToggle: () => this._toggle('phases', f.n)
+    }));
+
+    const kindOrder = ['motor', 'clinica', 'registro', 'planificacion', 'biblioteca', 'guia'];
+    const kindOptions = kindOrder.map((k) => ({
+      label: inv.kindLabels[k] + ' (' + inv.products.filter((p) => p.kind === k).length + ')',
+      checked: !!s.kinds[k],
+      onToggle: () => this._toggle('kinds', k)
+    }));
+
+    const activeBadges = [];
+    activePhases.forEach((n) => activeBadges.push({
+      label: 'Fase ' + n,
+      onRemove: () => this._toggle('phases', n)
+    }));
+    activeKinds.forEach((k) => activeBadges.push({
+      label: inv.kindLabels[k],
+      onRemove: () => this._toggle('kinds', k)
+    }));
+    if (s.priceMax < 8000) activeBadges.push({
+      label: 'Hasta $' + s.priceMax.toLocaleString('es-CL'),
+      onRemove: () => this.setState({ priceMax: 8000 })
+    });
+    if (q) activeBadges.push({ label: '“' + s.query + '”', onRemove: () => this.setState({ query: '' }) });
+
+    const compareItems = s.compareIds.map((id) => {
+      const p = inv.get(id);
+      if (!p) return null;
+      return {
+        name: p.name,
+        category: p.kindLabel,
+        price: p.priceLabel,
+        version: p.version === 'NO_CONFIRMADO' ? 'no confirmada' : p.version,
+        href: p.href
+      };
+    }).filter(Boolean);
+
+    return {
+      phaseOptions,
+      kindOptions,
+      filteredProducts,
+      activeBadges,
+      noResults: filteredProducts.length === 0,
+      query: s.query,
+      onQueryChange: (e) => this.setState({ query: e.target.value }),
+      priceMax: s.priceMax,
+      priceMaxLabel: '$' + s.priceMax.toLocaleString('es-CL'),
+      onPriceChange: (e) => this.setState({ priceMax: Number(e.target.value) }),
+      sortValue: s.sort,
+      onSortChange: (e) => this.setState({ sort: e.target.value }),
+      gridColumns: isList ? '1fr' : 'repeat(3,1fr)',
+      cardDirection: isList ? 'row' : 'column',
+      coverHeight: isList ? '110px' : '120px',
+      coverWidth: isList ? '190px' : 'auto',
+      gridPressed: !isList,
+      listPressed: isList,
+      gridBg: isList ? 'transparent' : '#6ee7b7',
+      gridColor: isList ? '#c7dad2' : '#04140f',
+      listBg: isList ? '#6ee7b7' : 'transparent',
+      listColor: isList ? '#04140f' : '#c7dad2',
+      onGridView: () => this.setState({ view: 'grid' }),
+      onListView: () => this.setState({ view: 'list' }),
+      compareCount: s.compareIds.length,
+      compareBarVisible: s.compareIds.length > 0 && !s.compareModalOpen,
+      compareModalOpen: s.compareModalOpen,
+      compareItems,
+      onOpenCompare: () => this.setState({ compareModalOpen: true }),
+      onCloseCompare: () => this.setState({ compareModalOpen: false }),
+      onClearCompare: () => this.setState({ compareIds: [], compareModalOpen: false })
+    };
+  }
+}
+
+</script>
+</body>
+</html>

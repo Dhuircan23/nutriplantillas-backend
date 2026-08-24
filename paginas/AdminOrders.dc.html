@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/img/favicon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#04140f">
+<title>Pedidos — NUTRIMETRÍA</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="./store.js"></script>
+<style>
+  body{margin:0;background:radial-gradient(ellipse 1200px 700px at 50% -8%,#0d3226 0%,#0a251c 42%,#04140f 78%,#030f0b 100%) fixed;font-family:'Inter Tight',system-ui,sans-serif;color:#e2e8f0;position:relative}
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(110,231,183,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(110,231,183,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%);-webkit-mask-image:radial-gradient(ellipse 1400px 900px at 50% 0%,#000 40%,transparent 85%)}
+  body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle 520px at 88% 12%,rgba(16,185,129,.13),transparent 70%),radial-gradient(circle 460px at 6% 78%,rgba(255,122,69,.08),transparent 70%)}
+  body > *{position:relative;z-index:1}
+  a{color:#6ee7b7} a:hover{color:#9ff4d1}
+  .mono{font-family:'JetBrains Mono',monospace}
+
+  /* ---- Responsive móvil (no afecta escritorio) ---- */
+  img,svg,canvas,video{max-width:100%;height:auto}
+  @media (max-width:900px){
+    /* Cualquier tabla ancha scrollea dentro de su caja en vez de estirar la página */
+    div:has(> [role="table"]){overflow-x:auto;-webkit-overflow-scrolling:touch}
+    /* Paneles admin/cliente: la barra lateral pasa arriba y a ancho completo.
+       Se busca el VALOR "220px 1fr" porque el serializador puede meter espacios. */
+    [style*="220px 1fr"]{grid-template-columns:1fr !important;gap:18px !important}
+    [style*="220px 1fr"] > *{max-width:100% !important;width:100% !important}
+    [style*="220px 1fr"] nav{display:flex !important;flex-wrap:wrap;gap:8px !important}
+  }
+  @media (max-width:640px){
+    /* 40px de margen lateral se comen un cuarto de una pantalla de 320px */
+    .section{padding-left:20px !important;padding-right:20px !important;padding-top:44px !important;padding-bottom:44px !important}
+    div[style*="px 40px"]{padding-inline:20px !important;box-sizing:border-box}
+    h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
+    h2{font-size:clamp(20px,5.4vw,24px) !important}
+    button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
+    .cta-row{flex-wrap:wrap}
+    .btn-primary,.btn-secondary{flex:1 1 100%;box-sizing:border-box}
+    /* Nada puede empujar la página a lo ancho */
+    body{overflow-x:hidden}
+  }
+  @media (max-width:560px){
+    .rg-hero,.rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages,.rg-resources,
+    .rg-leadmagnet,.rg-problem,.rg-membership,.rg-cart,.rg-checkout,.rg-checkout-fields,
+    .rg-catalog-grid,.rg-pkg-cards,.rg-mockup-stats,.nmx-hero,.nmx-body,.nmx-meta,
+    .doc-grid,.doc-kpis,.doc-phases,.doc-split,.hiw-steps,.hiw-sheets,.hiw-split{
+      grid-template-columns:1fr !important
+    }
+    /* Grillas con medidas fijas declaradas inline */
+    [style*="1.5fr 1fr"],[style*="1.4fr 1fr"],[style*="1.6fr 1fr"],[style*="1.05fr 1fr"],
+    [style*="1.4fr 1fr 1fr 1fr 1fr"],[style*="repeat(3,1fr)"],[style*="repeat(4,1fr)"],
+    [style*="repeat(5,1fr)"]{grid-template-columns:1fr !important}
+    .section{padding-left:16px !important;padding-right:16px !important}
+    div[style*="px 40px"]{padding-inline:16px !important}
+  }
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:220px 1fr;min-height:100vh">
+  <div style="background:#04140f;padding:20px 14px">
+    <dc-import name="AdminNav" active="pedidos" hint-size="192px,480px"></dc-import>
+  </div>
+
+  <div style="padding:28px 36px 60px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap">
+      <h1 style="font-size:24px;font-weight:800;margin:0;letter-spacing:-.3px">Pedidos</h1>
+      <span class="mono" style="font-size:11px;color:#8fa9a0">Proveedor de pago activo: {{ providerNote }}</span>
+    </div>
+    <p style="font-size:12.5px;color:#8fa9a0;margin:0 0 22px">Sin Transbank conectado, confirma aquí a mano los pedidos que ya te pagaron por otro medio.</p>
+
+    <sc-if value="{{ confirmMsg }}" hint-placeholder-val="{{ false }}">
+      <div style="background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.25);border-radius:6px;padding:11px 16px;font-size:12.5px;color:#6ee7b7;margin-bottom:16px">{{ confirmMsg }}</div>
+    </sc-if>
+
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(110,231,183,.16);border-radius:8px;overflow:hidden">
+      <div role="table" style="display:flex;flex-direction:column;min-width:980px">
+        <div role="row" style="display:grid;grid-template-columns:1.3fr 1.7fr 1fr 1fr 1.2fr 1.3fr;background:rgba(255,255,255,.03);font-size:11.5px;font-weight:700;color:#c7dad2">
+          <div style="padding:12px 16px">N.° pedido</div>
+          <div style="padding:12px 16px">Cliente</div>
+          <div style="padding:12px 16px">Fecha</div>
+          <div style="padding:12px 16px">Total</div>
+          <div style="padding:12px 16px">Pago</div>
+          <div style="padding:12px 16px">Acción</div>
+        </div>
+        <sc-for list="{{ orders }}" as="o" hint-placeholder-count="6">
+          <div role="row" style="display:grid;grid-template-columns:1.3fr 1.7fr 1fr 1fr 1.2fr 1.3fr;border-top:1px solid rgba(110,231,183,.12);align-items:center;font-size:12.5px">
+            <div style="padding:12px 16px" class="mono">{{ o.number }}</div>
+            <div style="padding:12px 16px;font-weight:700">{{ o.customer }}</div>
+            <div style="padding:12px 16px;color:#8fa9a0" class="mono">{{ o.date }}</div>
+            <div style="padding:12px 16px;font-weight:700">{{ o.total }}</div>
+            <div style="padding:12px 16px"><span class="mono" style="font-size:10px;padding:3px 8px;border-radius:3px;background:{{ o.payBg }};color:{{ o.payColor }}">{{ o.payStatus }}</span></div>
+            <div style="padding:12px 16px">
+              <sc-if value="{{ o.canConfirm }}" hint-placeholder-val="{{ false }}">
+                <button type="button" disabled="{{ o.confirming }}" onClick="{{ o.onConfirm }}" style="appearance:none;font-family:inherit;font-size:11.5px;font-weight:700;padding:7px 14px;background:#6ee7b7;color:#04140f;border:none;border-radius:5px;cursor:pointer;opacity:{{ o.confirmOpacity }}">{{ o.confirmLabel }}</button>
+              </sc-if>
+              <sc-if value="{{ !o.canConfirm }}" hint-placeholder-val="{{ true }}">
+                <span class="mono" style="font-size:10.5px;color:#7f9a91">—</span>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:32px 16px;text-align:center;color:#8fa9a0;font-size:13px">Aún no hay pedidos.</div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const STATUS_LABEL = {
+  pending: { label: 'Pendiente', bg: 'rgba(255,148,102,.14)', color: '#ff9466' },
+  payment_processing: { label: 'Esperando confirmación', bg: 'rgba(255,148,102,.14)', color: '#ff9466' },
+  authorized: { label: 'Autorizado', bg: 'rgba(255,148,102,.14)', color: '#ff9466' },
+  paid: { label: 'Pagado', bg: 'rgba(110,231,183,.12)', color: '#6ee7b7' },
+  failed: { label: 'Fallido', bg: '#fde8e6', color: '#ff6b5e' },
+  cancelled: { label: 'Cancelado', bg: 'rgba(255,255,255,.06)', color: '#b7cfc6' },
+  refunded: { label: 'Reembolsado', bg: 'rgba(255,255,255,.06)', color: '#b7cfc6' }
+};
+const CONFIRMABLE = ['pending', 'payment_processing', 'authorized'];
+
+class Component extends DCLogic {
+  state = { orders: [], loaded: false, confirmingCode: null, confirmMsg: '' };
+
+  async componentDidMount() {
+    if (!window.NMXStore) { setTimeout(() => this.componentDidMount(), 30); return; }
+    const session = await window.NMXStore.getSession();
+    if (!session || session.role !== 'admin') {
+      window.location.href = 'Login.dc.html';
+      return;
+    }
+    if (this._nmxAdminMount) this._nmxAdminMount();
+    this._loadOrders();
+  }
+
+  async _loadOrders() {
+    try {
+      const orders = await window.NMXStore.adminListOrders();
+      this.setState({ orders, loaded: true });
+    } catch (e) {
+      this.setState({ loaded: true, confirmMsg: 'No se pudieron cargar los pedidos.' });
+    }
+  }
+
+  async _confirm(orderCode) {
+    this.setState({ confirmingCode: orderCode, confirmMsg: '' });
+    try {
+      await window.NMXStore.adminConfirmManualPayment(orderCode);
+      this.setState({ confirmingCode: null, confirmMsg: 'Pedido ' + orderCode + ' confirmado. La descarga ya quedó habilitada para el cliente.' });
+      this._loadOrders();
+    } catch (e) {
+      this.setState({ confirmingCode: null, confirmMsg: (e && e.message) || 'No se pudo confirmar el pedido.' });
+    }
+  }
+
+  renderVals() {
+    const orders = this.state.orders.map((o) => {
+      const st = STATUS_LABEL[o.status] || { label: o.status, bg: 'rgba(255,255,255,.06)', color: '#b7cfc6' };
+      const canConfirm = CONFIRMABLE.includes(o.status);
+      const confirming = this.state.confirmingCode === o.order_code;
+      return {
+        number: o.order_code,
+        customer: o.customer_email,
+        date: new Date(o.created_at).toLocaleDateString('es-CL'),
+        total: '$' + Number(o.total_clp).toLocaleString('es-CL'),
+        payStatus: st.label,
+        payBg: st.bg,
+        payColor: st.color,
+        canConfirm,
+        confirming,
+        confirmOpacity: confirming ? 0.6 : 1,
+        confirmLabel: confirming ? 'Confirmando…' : 'Confirmar pago',
+        onConfirm: () => this._confirm(o.order_code)
+      };
+    });
+    return {
+      orders,
+      isEmpty: this.state.loaded && orders.length === 0,
+      confirmMsg: this.state.confirmMsg,
+      providerNote: 'manual (sin Transbank)'
+    };
+  }
+}
+
+</script>
+</body>
+</html>
