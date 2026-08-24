@@ -61,6 +61,11 @@
     h1,h2{overflow-wrap:break-word;word-break:break-word}
     .rg-hero h1{font-size:clamp(24px,6.6vw,30px) !important}
     .mockup-content{min-width:0}
+    /* La fila de pestañas se desplaza DENTRO de la tarjeta: sin min-width:0 en
+       ella y en sus ancestros, crecía al ancho de su contenido y estiraba el
+       mockup fuera de la pantalla. */
+    .mockup-tabs{min-width:0;max-width:100%}
+    .rg-hero-visual .glass,.rg-hero-visual .glass > div{min-width:0;max-width:100%;box-sizing:border-box}
     /* El mockup del hero era absoluto sobre un contenedor de altura fija: en
        móvil se salía de pantalla y dejaba un hueco vertical enorme. Pasa al
        flujo normal y el canvas decorativo se retira. */
@@ -160,7 +165,7 @@
           <span class="mono-tag" style="margin-left:8px;color:#a7c5ba">Calculadora_Energetica_v1.0.xlsx</span>
         </div>
         <div style="background:rgba(4,20,15,.6);border:1px solid rgba(110,231,183,.14);border-radius:8px;padding:16px">
-          <div style="display:flex;gap:14px;border-bottom:1px solid rgba(110,231,183,.12);margin-bottom:14px;overflow-x:auto">
+          <div class="mockup-tabs" style="display:flex;gap:14px;border-bottom:1px solid rgba(110,231,183,.12);margin-bottom:14px;overflow-x:auto">
             <sc-for list="{{ mockupTabsResolved }}" as="mt" hint-placeholder-count="6">
               <button type="button" class="mockup-tab {{ mt.activeClass }}" role="tab" aria-selected="{{ mt.selected }}" onClick="{{ mt.onSelect }}" style="appearance:none;background:none;border-left:none;border-right:none;border-top:none;font-family:inherit">{{ mt.label }}</button>
             </sc-for>
