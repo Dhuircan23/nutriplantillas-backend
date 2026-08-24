@@ -19,7 +19,11 @@
   .mono{font-family:'JetBrains Mono',monospace}
   .filter-group{margin-bottom:30px}
   .filter-title{font-size:11px;font-weight:700;color:#8fa9a0;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
-  .filter-opt{display:flex;align-items:center;gap:8px;font-size:13px;color:#c7dad2;padding:11px 4px;min-height:44px;cursor:pointer}
+  .filter-opt{display:flex;align-items:center;gap:9px;font-size:13px;color:#c7dad2;padding:10px 12px;min-height:44px;cursor:pointer;margin-bottom:8px;border:1px solid rgba(110,231,183,.16);border-radius:6px;background:rgba(255,255,255,.02);box-sizing:border-box;transition:border-color .18s ease,background .18s ease,color .18s ease}
+  .filter-opt:hover{border-color:rgba(110,231,183,.42);background:rgba(110,231,183,.07);color:#eef7f3}
+  /* Marcado: se tiñe el chip completo, no solo la casilla nativa. */
+  .filter-opt:has(input:checked){border-color:#6ee7b7;background:rgba(110,231,183,.13);color:#eef7f3;font-weight:600}
+  .filter-opt input{accent-color:#6ee7b7;width:16px;height:16px;flex:none;cursor:pointer}
   @media (max-width:768px){
     .rg-catalog-layout{grid-template-columns:1fr !important}
     .rg-catalog-grid{grid-template-columns:repeat(2,1fr) !important}

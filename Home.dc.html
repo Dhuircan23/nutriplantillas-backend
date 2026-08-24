@@ -54,6 +54,13 @@
   .mockup-tab.mockup-tab-active{color:#6ee7b7;border-bottom-color:#6ee7b7}
   .mockup-content{transition:opacity .28s ease,transform .28s ease}
   @media (max-width:560px){
+    /* El mockup del hero era absoluto sobre un contenedor de altura fija: en
+       móvil se salía de pantalla y dejaba un hueco vertical enorme. Pasa al
+       flujo normal y el canvas decorativo se retira. */
+    .rg-hero-visual{height:auto !important;min-height:0 !important}
+    .rg-hero-visual > .glass{position:static !important;transform:none !important;width:100% !important;max-width:none !important}
+    #nmxHeroCanvas{display:none}
+    .mockup-tab{font-size:9px !important}
     .rg-hero-visual{height:260px !important}
     .rg-hero h1{font-size:clamp(26px,7.4vw,34px) !important}
     /* El visual del hero va DESPUÉS de título, texto y CTA en móvil */
@@ -396,7 +403,7 @@
 <!-- FREE RESOURCES -->
 <section class="section hairline" style="position:relative;overflow:hidden">
   <canvas id="nmxDodecaCanvas" style="position:absolute;top:0;right:-60px;width:520px;height:520px;pointer-events:none"></canvas>
-  <div class="wrap" style="position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center" class="rg-leadmagnet">
+  <div class="wrap rg-leadmagnet" style="position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">
     <div>
       <div class="eyebrow" style="color:#ff9466;margin-bottom:14px">LEAD MAGNET — SIN REGISTRO</div>
       <h2 style="font-size:26px;font-weight:800;margin:0 0 10px;letter-spacing:-.3px;color:#fff">Pruébalo gratis, sin registrarte.</h2>

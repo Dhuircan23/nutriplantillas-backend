@@ -138,6 +138,7 @@
           <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#c7dad2">{{ item.name }}</span><span style="font-weight:700">{{ item.priceLabel }}</span></div>
         </sc-for>
       </div>
+      <div style="display:flex;justify-content:space-between;font-size:13.5px;color:{{ discountColor }};margin-bottom:10px"><span>{{ discountLabel }}</span><span>{{ discountAmount }}</span></div>
       <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;border-top:1px solid rgba(110,231,183,.16);padding-top:14px;margin-bottom:20px"><span>Total</span><span>{{ totalLabel }}</span></div>
       <div style="border-top:1px solid rgba(110,231,183,.16);padding-top:16px;margin-bottom:20px;display:flex;flex-direction:column;gap:10px">
         <div style="font-size:11px;font-weight:700;color:#8fa9a0;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px" class="mono">Qué incluye tu compra</div>
@@ -194,7 +195,7 @@ const PAYMENT_NOTICES = {
 };
 
 class Component extends DCLogic {
-  state = { rawItems: [], loaded: false, accepted: false, showAcceptWarning: false, payStep: null, payError: '', payMsg: '', paymentNoticeKey: null, contactName: '', contactEmail: '', contactCountry: 'Chile', showContactWarning: false, payArmed: false };
+  state = { rawItems: [], loaded: false, accepted: false, showAcceptWarning: false, payStep: null, payError: '', payMsg: '', paymentNoticeKey: null, contactName: '', contactEmail: '', contactCountry: 'Chile', showContactWarning: false, payArmed: false, session: null };
 
   componentDidMount() {
     const params = new URLSearchParams(window.location.search);
@@ -219,6 +220,7 @@ class Component extends DCLogic {
       window.location.href = 'Login.dc.html';
       return;
     }
+    this.setState({ session });
     try {
       const buyNowIds = window.NMXStore.getBuyNowIds();
       const rawItems = buyNowIds
@@ -299,12 +301,23 @@ class Component extends DCLogic {
     const raw = this.state.rawItems || [];
     const items = raw.map((p) => ({ name: p.name, priceLabel: p.priceLabel }));
     const total = raw.reduce((sum, p) => sum + Number(p.price_clp ?? p.priceClp ?? p.price ?? 0), 0);
-    const totalLabel = '$' + total.toLocaleString('es-CL') + ' CLP';
+    // Mismo cálculo que orders.js: el monto que se ve acá es el que se cobra.
+    const sess = this.state.session;
+    const pct = (sess && sess.membershipStatus === 'active') ? (sess.membershipDiscountPercent || 15) : 0;
+    const discountable = raw
+      .filter((p) => p.id !== 'membership-mensual')
+      .reduce((sum, p) => sum + Number(p.price_clp ?? p.priceClp ?? p.price ?? 0), 0);
+    const discount = pct > 0 ? Math.round(discountable * pct / 100) : 0;
+    const money = (n) => '$' + n.toLocaleString('es-CL') + ' CLP';
+    const totalLabel = money(total - discount);
     const isProcessing = !!this.state.payStep;
     const notice = this.state.paymentNoticeKey ? PAYMENT_NOTICES[this.state.paymentNoticeKey] : null;
     return {
       items,
       totalLabel,
+      discountLabel: pct > 0 ? ('Descuento membresía −' + pct + '%') : 'Descuento',
+      discountAmount: discount > 0 ? ('−' + money(discount)) : '—',
+      discountColor: discount > 0 ? '#34d399' : '#c7dad2',
       hasItems: this.state.loaded ? items.length > 0 : true,
       accepted: this.state.accepted,
       showAcceptWarning: this.state.showAcceptWarning,

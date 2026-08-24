@@ -92,9 +92,9 @@
       <div style="border:1px solid rgba(110,231,183,.16);border-radius:8px;padding:22px">
         <div style="font-weight:800;font-size:15px;margin-bottom:16px">Resumen de compra</div>
         <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#c7dad2;margin-bottom:10px"><span>Subtotal</span><span>{{ subtotalLabel }}</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#c7dad2;margin-bottom:10px"><span>Descuento</span><span>—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13.5px;color:{{ discountColor }};margin-bottom:10px"><span>{{ discountLabel }}</span><span>{{ discountAmount }}</span></div>
         <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#c7dad2;margin-bottom:16px"><span>Impuestos (si aplica)</span><span>Incluidos</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;border-top:1px solid rgba(110,231,183,.16);padding-top:14px;margin-bottom:20px"><span>Total</span><span>{{ subtotalLabel }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;border-top:1px solid rgba(110,231,183,.16);padding-top:14px;margin-bottom:20px"><span>Total</span><span>{{ totalLabel }}</span></div>
         <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#b7cfc6;margin-bottom:6px">
           <input type="checkbox" checked="{{ accepted }}" onChange="{{ onToggleAccept }}" style="margin-top:2px"/>
           <span>Acepto la <a href="License.dc.html">licencia de uso</a>, los <a href="Terms.dc.html">términos y condiciones</a> y la <a href="Privacy.dc.html">política de privacidad</a>.</span>
@@ -124,7 +124,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { rawItems: [], loaded: false, accepted: false, showAcceptWarning: false };
+  state = { rawItems: [], loaded: false, accepted: false, showAcceptWarning: false, session: null };
 
   componentDidMount() {
     this._init();
@@ -147,6 +147,7 @@ class Component extends DCLogic {
       window.location.href = 'Login.dc.html';
       return;
     }
+    this.setState({ session });
     this._refresh();
   }
 
@@ -182,11 +183,27 @@ class Component extends DCLogic {
     });
     const subtotal = raw.reduce((sum, p) => sum + Number(p.price_clp ?? p.priceClp ?? p.price ?? 0), 0);
     const subtotalLabel = '$' + subtotal.toLocaleString('es-CL') + ' CLP';
+    // El descuento de membresía lo calcula el backend al crear el pedido; acá se
+    // muestra el mismo cálculo para que el total del carrito coincida con el
+    // monto que llega a Mercado Pago. La membresía no se descuenta a sí misma.
+    const s = this.state.session;
+    const memberActive = !!(s && s.membershipStatus === 'active');
+    const pct = memberActive ? (s.membershipDiscountPercent || 15) : 0;
+    const discountable = raw
+      .filter((p) => p.id !== 'membership-mensual')
+      .reduce((sum, p) => sum + Number(p.price_clp ?? p.priceClp ?? p.price ?? 0), 0);
+    const discount = pct > 0 ? Math.round(discountable * pct / 100) : 0;
+    const total = subtotal - discount;
+    const money = (n) => '$' + n.toLocaleString('es-CL') + ' CLP';
     const accepted = this.state.accepted;
     return {
       items,
       hasItems: this.state.loaded ? items.length > 0 : true,
       subtotalLabel,
+      totalLabel: money(total),
+      discountLabel: pct > 0 ? ('Descuento membresía −' + pct + '%') : 'Descuento',
+      discountAmount: discount > 0 ? ('−' + money(discount)) : '—',
+      discountColor: discount > 0 ? '#34d399' : '#c7dad2',
       accepted,
       showAcceptWarning: this.state.showAcceptWarning,
       ctaBg: accepted ? '#ff7a45' : 'rgba(255,122,69,.35)',
