@@ -33,6 +33,8 @@ jobs:
           cp -r assets _site/
           # Documentacion publica (32 portafolios PDF + maestros)
           cp -r public _site/
+          # SEO: robots.txt y sitemap.xml deben quedar en la raiz del sitio
+          cp robots.txt sitemap.xml _site/
           # Entrada del sitio
           cp Home.dc.html _site/index.html
 
