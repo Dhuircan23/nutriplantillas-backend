@@ -115,7 +115,11 @@
     h1{font-size:clamp(26px,7.4vw,34px) !important;line-height:1.18 !important}
     h2{font-size:clamp(20px,5.4vw,24px) !important}
     button,[role="button"],.btn-primary,.btn-secondary{min-height:44px}
-    .btn-primary,.btn-secondary{width:100%;box-sizing:border-box}
+    /* Los CTA van en fila flex: con width:100% cada uno sumaban el doble del
+       ancho de la pantalla y estiraban todo el hero. Con wrap + base 100%
+       ocupan una fila cada uno sin desbordar. */
+    .cta-row{flex-wrap:wrap}
+    .btn-primary,.btn-secondary{flex:1 1 100%;box-sizing:border-box}
     /* Nada puede empujar la página a lo ancho */
     body{overflow-x:hidden}
   }
@@ -151,7 +155,7 @@
       <div class="eyebrow" style="color:#ff9466;margin-bottom:18px">NUTRIMETRÍA EXCEL LAB — COLECCIÓN 01</div>
       <h1 style="font-size:44px;line-height:1.14;font-weight:800;letter-spacing:-.6px;margin:0 0 20px;color:#fff">Plantillas <span style="color:#ff9466">profesionales</span> para trabajar con más orden y <span style="color:#6ee7b7">menos cálculos manuales</span>.</h1>
       <p style="font-size:16px;line-height:1.65;color:#d6ebe3;margin:0 0 30px;max-width:520px">Herramientas originales de Excel para estudiantes y profesionales de nutrición, con instrucciones, fuentes, pruebas y actualizaciones claramente documentadas.</p>
-      <div style="display:flex;gap:14px;margin-bottom:36px">
+      <div class="cta-row" style="display:flex;gap:14px;margin-bottom:36px">
         <a href="Catalog.dc.html" class="btn-primary">Explorar herramientas</a>
         <a href="HowItWorks.dc.html" class="btn-secondary">Ver cómo funciona</a>
       </div>
