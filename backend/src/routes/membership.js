@@ -1,28 +1,17 @@
 const express = require('express');
-const db = require('../db');
 const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 router.use(requireAuth);
 
+// La membresía se compra como producto ('membership-mensual') y se paga por la
+// misma pasarela que el resto del catálogo; markOrderPaid activa los 30 días.
+// Este módulo ya no expone la activación manual: se retiró para que no exista
+// una segunda vía que deje al usuario esperando confirmación de un admin.
 const MONTHLY_PRICE_CLP = 2990;
 
-// POST /api/membership/subscribe
-// No hay Transbank conectado, así que esto NO cobra: deja la solicitud en
-// 'pending' y un admin la confirma a mano (POST /api/admin/memberships/:userId/confirm),
-// igual que el flujo manual de pago de pedidos.
-router.post('/subscribe', async (req, res) => {
-  const result = await db.query('SELECT membership_status, membership_expires_at FROM users WHERE id = $1', [req.user.id]);
-  const u = result.rows[0];
-  const stillActive = u.membership_status === 'active' && u.membership_expires_at && new Date(u.membership_expires_at) > new Date();
-  if (stillActive) {
-    return res.status(409).json({ error: 'Ya tienes una membresía activa.' });
-  }
-  await db.query(
-    "UPDATE users SET membership_status = 'pending', membership_requested_at = now() WHERE id = $1",
-    [req.user.id]
-  );
-  res.json({ ok: true, priceClp: MONTHLY_PRICE_CLP });
+router.get('/price', (req, res) => {
+  res.json({ priceClp: MONTHLY_PRICE_CLP, productId: 'membership-mensual' });
 });
 
 module.exports = router;
