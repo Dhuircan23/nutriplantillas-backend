@@ -107,8 +107,8 @@
     try { global.dispatchEvent(new Event('nmx:session-changed')); } catch (e) {}
     return d.user;
   }
-  async function register(email, password) {
-    var d = await apiFetch('/api/auth/register', { method: 'POST', body: JSON.stringify({ email: email, password: password }) });
+  async function register(email, password, name, phone) {
+    var d = await apiFetch('/api/auth/register', { method: 'POST', body: JSON.stringify({ email: email, password: password, name: name, phone: phone }) });
     try { global.dispatchEvent(new Event('nmx:session-changed')); } catch (e) {}
     return d.user;
   }
@@ -133,15 +133,20 @@
   async function resetPassword(token, newPassword) {
     return await apiFetch('/api/auth/reset-password', { method: 'POST', body: JSON.stringify({ token: token, newPassword: newPassword }) });
   }
-  async function subscribeMembership() {
-    return await apiFetch('/api/membership/subscribe', { method: 'POST' });
-  }
   async function adminListMemberships() {
     return (await apiFetch('/api/admin/memberships')).memberships;
   }
   async function adminConfirmMembership(userId) {
     return await apiFetch('/api/admin/memberships/' + encodeURIComponent(userId) + '/confirm', { method: 'POST' });
   }
+
+  async function verifyEmailToken(token) {
+    return await apiFetch('/api/auth/verify-email?token=' + encodeURIComponent(token));
+  }
+  async function resendVerificationEmail() {
+    return await apiFetch('/api/auth/resend-verification', { method: 'POST' });
+  }
+
   async function addToCart(productId) {
     await apiFetch('/api/cart', { method: 'POST', body: JSON.stringify({ productId: productId }) });
     try { global.dispatchEvent(new Event('nmx:cart-changed')); } catch (e) {}
@@ -231,9 +236,10 @@
     changePassword: changePassword,
     forgotPassword: forgotPassword,
     resetPassword: resetPassword,
-    subscribeMembership: subscribeMembership,
     adminListMemberships: adminListMemberships,
     adminConfirmMembership: adminConfirmMembership,
+    verifyEmailToken: verifyEmailToken,
+    resendVerificationEmail: resendVerificationEmail,
     addToCart: addToCart,
     removeFromCart: removeFromCart,
     getCartItems: getCartItems,
