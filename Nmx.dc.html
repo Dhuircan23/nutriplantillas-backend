@@ -85,6 +85,14 @@
     /* Visor a pantalla completa: el padding de escritorio dejaba la captura
        diminuta entre dos franjas vacías. */
     body > div[style*="z-index: 200"],body > div[style*="z-index:200"]{padding:14px 12px !important}
+    /* Barra del visor: en móvil los tres botones con texto se pasaban a dos
+       filas. Quedan como círculos de 46px (objetivo táctil cómodo) y solo el
+       de zoom conserva su etiqueta, que es la acción menos evidente. */
+    .nmx-viewer-bar{gap:14px !important;flex-wrap:nowrap !important;margin-top:16px !important}
+    .nmx-vbtn{width:46px;height:46px;padding:0 !important;border-radius:50% !important;flex:none}
+    .nmx-vbtn .nmx-vlabel{display:none}
+    .nmx-vbtn-zoom{width:auto !important;border-radius:999px !important;padding:0 20px !important}
+    .nmx-vbtn-zoom .nmx-vlabel{display:inline}
   }
 </style>
 <script src="./nutrimetria-inventory.js"></script>
@@ -333,10 +341,10 @@
       <button type="button" onClick="{{ onCloseViewer }}" aria-label="Cerrar" style="appearance:none;background:rgba(255,255,255,.06);border:1px solid rgba(110,231,183,.2);color:#eef7f3;border-radius:6px;width:36px;height:36px;font-size:18px;cursor:pointer;line-height:1">×</button>
     </div>
     <div onClick="{{ onToggleZoom }}" style="max-width:1100px;width:100%;flex:1;display:flex;align-items:{{ zoomAlign }};justify-content:{{ zoomAlign }};min-height:0;border:1px solid rgba(110,231,183,.18);border-radius:8px;overflow:{{ zoomOverflow }};background:#0a1f18;cursor:{{ zoomCursor }}">{{ viewerImageEl }}</div>
-    <div style="display:flex;gap:12px;align-items:center;margin-top:14px;flex-wrap:wrap;justify-content:center">
-      <button type="button" onClick="{{ onPrev }}" aria-label="Anterior" style="appearance:none;font-family:inherit;background:rgba(255,255,255,.06);border:1px solid rgba(110,231,183,.25);color:#eef7f3;border-radius:6px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer">← Anterior</button>
-      <button type="button" onClick="{{ onToggleZoom }}" style="appearance:none;font-family:inherit;display:flex;align-items:center;gap:7px;background:{{ zoomBtnBg }};border:1px solid {{ zoomBtnBorder }};color:{{ zoomBtnColor }};border-radius:6px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer">{{ zoomIconEl }}{{ zoomLabel }}</button>
-      <button type="button" onClick="{{ onNext }}" aria-label="Siguiente" style="appearance:none;font-family:inherit;background:rgba(255,255,255,.06);border:1px solid rgba(110,231,183,.25);color:#eef7f3;border-radius:6px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer">Siguiente →</button>
+    <div class="nmx-viewer-bar" style="display:flex;gap:12px;align-items:center;margin-top:14px;flex-wrap:wrap;justify-content:center">
+      <button type="button" class="nmx-vbtn" onClick="{{ onPrev }}" aria-label="Anterior" style="appearance:none;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;background:rgba(255,255,255,.06);border:1px solid rgba(110,231,183,.25);color:#eef7f3;border-radius:999px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M15 5l-7 7 7 7"></path></svg><span class="nmx-vlabel">Anterior</span></button>
+      <button type="button" class="nmx-vbtn nmx-vbtn-zoom" onClick="{{ onToggleZoom }}" aria-label="{{ zoomLabel }}" style="appearance:none;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;background:{{ zoomBtnBg }};border:1px solid {{ zoomBtnBorder }};color:{{ zoomBtnColor }};border-radius:999px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer">{{ zoomIconEl }}<span class="nmx-vlabel">{{ zoomLabel }}</span></button>
+      <button type="button" class="nmx-vbtn" onClick="{{ onNext }}" aria-label="Siguiente" style="appearance:none;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;background:rgba(255,255,255,.06);border:1px solid rgba(110,231,183,.25);color:#eef7f3;border-radius:999px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer"><span class="nmx-vlabel">Siguiente</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
   </div>
 </sc-if>
