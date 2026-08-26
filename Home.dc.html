@@ -92,6 +92,7 @@
   }
   @media (max-width:768px){
     .rg-hero,.rg-problem,.rg-membership{grid-template-columns:1fr !important}
+    .rg-review{grid-template-columns:1fr !important;gap:26px !important}
     .rg-trust,.rg-featured,.rg-steps,.rg-sheets,.rg-packages{grid-template-columns:repeat(2,1fr) !important}
     .rg-resources{grid-template-columns:repeat(2,1fr) !important}
     .rg-leadmagnet{grid-template-columns:1fr !important}
@@ -253,7 +254,39 @@
   </div>
 </section>
 
-<!-- PROBLEM / SOLUTION — terminal style -->
+<!-- REVISIÓN PROFESIONAL -->
+<section class="section" style="padding-top:0;padding-bottom:64px">
+  <div class="wrap">
+    <div style="border:1.5px solid rgba(110,231,183,.35);border-radius:14px;padding:36px 34px;background:linear-gradient(135deg,rgba(110,231,183,.09),rgba(110,231,183,.02))">
+      <div class="rg-review" style="display:grid;grid-template-columns:1.15fr 1fr;gap:40px;align-items:center">
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(110,231,183,.16);border:1px solid rgba(110,231,183,.4);border-radius:999px;padding:6px 14px;margin-bottom:18px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M20 6L9 17l-5-5"></path></svg>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.4px;color:#6ee7b7">REVISADO POR PROFESIONALES DE NUTRICIÓN</span>
+          </div>
+          <h2 style="font-size:27px;font-weight:800;margin:0 0 14px;letter-spacing:-.4px;line-height:1.2;color:#fff;text-wrap:pretty">Cada ecuación fue revisada por docentes y profesionales del área.</h2>
+          <p style="font-size:14.5px;color:#c7dad2;line-height:1.65;margin:0 0 20px;max-width:520px;text-wrap:pretty">Las fórmulas, coeficientes y criterios de clasificación de las 32 herramientas fueron contrastados con sus fuentes primarias y revisados por docentes y profesionales de nutrición antes de publicarse. La distribución comercial está autorizada por el titular.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a href="Docs.dc.html" class="btn-secondary" style="padding:11px 20px;font-size:13.5px">Ver documentación de respaldo</a>
+            <a href="HowItWorks.dc.html" style="display:inline-flex;align-items:center;padding:11px 20px;font-size:13.5px;font-weight:700;text-decoration:none;color:#6ee7b7">Cómo se audita cada fórmula →</a>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1px;background:rgba(110,231,183,.16);border:1px solid rgba(110,231,183,.16);border-radius:10px;overflow:hidden">
+          <sc-for list="{{ reviewFacts }}" as="rf" hint-placeholder-count="4">
+            <div style="background:#0a1f18;padding:16px 18px;display:flex;gap:14px;align-items:center">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:800;color:#6ee7b7;line-height:1;flex:none;min-width:44px">{{ rf.value }}</span>
+              <span style="font-size:12.5px;color:#c7dad2;line-height:1.45">{{ rf.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="margin-top:26px;padding-top:20px;border-top:1px solid rgba(110,231,183,.16);display:flex;gap:11px;align-items:flex-start">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8fa9a0" stroke-width="2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16.5v.01"></path></svg>
+        <p style="font-size:12px;color:#9fb8ae;line-height:1.6;margin:0;max-width:820px">Revisión de exactitud matemática y trazabilidad de fuentes. No constituye validación clínica ni certificación sanitaria: la interpretación de cada resultado corresponde al profesional que usa la herramienta.</p>
+      </div>
+    </div>
+  </div>
+</section>
 <section class="section hairline section-alt">
   <div class="wrap">
     <div class="glass" style="border-radius:10px;overflow:hidden">
@@ -946,6 +979,12 @@ class Component extends DCLogic {
       isMockupResultados: active === 'RESULTADOS',
       isMockupGraficos: active === 'GRÁFICOS',
       isMockupFuentes: active === 'FUENTES',
+      reviewFacts: [
+        {value: '32', label: 'Herramientas con fuentes documentadas celda por celda'},
+        {value: '160', label: 'Afirmaciones verificadas en la matriz de trazabilidad'},
+        {value: '8', label: 'Fases del flujo de atención nutricional cubiertas'},
+        {value: '0', label: 'Fórmulas sin referencia bibliográfica declarada'}
+      ],
       trustItems: [
         {icon:'◆', title:'Archivos originales', desc:'Diseñados desde cero para el estándar Excel Lab.'},
         {icon:'∑', title:'Fórmulas auditables', desc:'Cada cálculo puede revisarse celda por celda.'},
