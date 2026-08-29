@@ -354,8 +354,24 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240,&quot;height&quot;:1400}}">
 class Component extends DCLogic {
-  // slideIndex: 0 = portada de marca, 1..N = capturas reales del libro.
-  state = { added: false, inventoryReady: false, viewerIndex: null, slideIndex: 0, zoomed: false };
+  // zoomLevel: 0 = ajustada al marco, 1 = tamaño real, 2 = 200%.
+  // naturalWidth se captura en el onLoad de la imagen: el ancho del zoom debe
+  // expresarse en píxeles propios del archivo, porque un porcentaje se mide
+  // contra el contenedor y en móvil eso queda por debajo del tamaño natural.
+  state = { added: false, inventoryReady: false, viewerIndex: null, slideIndex: 0, zoomLevel: 0, naturalWidth: 0 };
+
+  // Ref de la imagen del visor: lee naturalWidth en cuanto el elemento existe.
+  // Se usa un ref y no onLoad porque una imagen ya en caché llega con
+  // complete=true y su onLoad puede no volver a disparar.
+  _captureNatural = (el) => {
+    if (!el) return;
+    const read = () => {
+      const w = el.naturalWidth || 0;
+      if (w && w !== this.state.naturalWidth) this.setState({ naturalWidth: w });
+    };
+    if (el.complete) read();
+    else el.addEventListener('load', read, { once: true });
+  };
 
   componentDidMount() {
     this._waitForInventory();
@@ -442,7 +458,7 @@ class Component extends DCLogic {
     const notConfirmed = product.version === 'NO_CONFIRMADO';
     // Las portadas se construyen acá, no en la plantilla: un src en un hole se
     // emite literal durante el streaming y dispara una petición fallida.
-    const img = (src, alt, style) => React.createElement('img', { src, alt, style });
+    const img = (src, alt, style, ref) => React.createElement('img', ref ? { src, alt, style, ref } : { src, alt, style });
     const siblings = inv.byPhase(product.phase).filter((p) => p.id !== product.id).map((p) => ({
       ...p,
       coverEl: img(p.cover, p.name, { display: 'block', width: '100%', height: '88px', objectFit: 'cover' })
@@ -451,7 +467,9 @@ class Component extends DCLogic {
     // Capturas reales del libro: miniatura clicable + visor a pantalla completa.
     const shots = window.NMXCaptures ? window.NMXCaptures.forProduct(product.id) : [];
     const vi = this.state.viewerIndex;
-    const zoomed = this.state.zoomed;
+    const zoomLevel = this.state.zoomLevel;
+    const zoomed = zoomLevel > 0;
+    const nat = this.state.naturalWidth;
     // Icono del botón de zoom: lupa con + o − según el estado.
     const zoomIcon = React.createElement('svg', {
       width: 15, height: 15, viewBox: '0 0 24 24', fill: 'none',
@@ -460,7 +478,7 @@ class Component extends DCLogic {
       React.createElement('circle', { key: 'c', cx: 11, cy: 11, r: 7 }),
       React.createElement('path', { key: 'h', d: 'M20 20l-4.5-4.5' }),
       React.createElement('path', { key: 'm', d: 'M8 11h6' }),
-      zoomed ? null : React.createElement('path', { key: 'v', d: 'M11 8v6' })
+      zoomLevel === 2 ? null : React.createElement('path', { key: 'v', d: 'M11 8v6' })
     ]);
     const current = vi !== null && shots[vi] ? shots[vi] : null;
     const allSlides = [{ label: 'Portada', src: product.cover }, ...shots];
@@ -493,31 +511,43 @@ class Component extends DCLogic {
       onSlidePrev: () => this._slideStep(-1),
       onSlideNext: () => this._slideStep(1),
       // Desde la portada, "pantalla completa" abre la primera captura real.
-      onOpenViewer: () => this.setState({ viewerIndex: Math.max(0, si - 1), zoomed: false }),
+      onOpenViewer: () => this.setState({ viewerIndex: Math.max(0, si - 1), zoomLevel: 0, naturalWidth: 0 }),
       hasCaptures: shots.length > 0,
       captureCount: shots.length,
       viewerOpen: !!current,
       viewerLabel: current ? current.label : '',
       viewerPosition: current ? (vi + 1) + ' de ' + shots.length : '',
-      // Ampliado: la imagen se muestra a tamaño real y el contenedor permite
-      // desplazarla; sin ampliar, se ajusta completa dentro del marco.
+      // Nivel 0 se ajusta al marco. Niveles 1 y 2 usan el ancho REAL del
+      // archivo (naturalWidth) x1 y x2: con porcentajes el navegador los
+      // medía contra el contenedor y en pantallas angostas el "zoom" acababa
+      // mostrando la imagen más pequeña que su resolución.
       viewerImageEl: current
-        ? (zoomed
-            ? img(current.src, current.label, { display: 'block', width: 'auto', maxWidth: 'none', height: 'auto', maxHeight: 'none' })
-            : img(current.src, current.label, { maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', display: 'block' }))
+        ? (zoomLevel === 0
+            ? img(current.src, current.label, { maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', display: 'block' }, this._captureNatural)
+            : img(current.src, current.label, {
+                display: 'block',
+                width: (nat ? (zoomLevel === 2 ? nat * 2 : nat) + 'px' : 'auto'),
+                // flexShrink:0 es imprescindible: el contenedor es flex y con el
+                // valor por defecto (1) el algoritmo encoge la imagen hacia el
+                // ancho disponible, frenando en su tamaño intrínseco. Eso
+                // convertía el nivel 2 en un 1:1 disfrazado.
+                flexShrink: 0,
+                maxWidth: 'none', height: 'auto', maxHeight: 'none'
+              }, this._captureNatural))
         : null,
       zoomAlign: zoomed ? 'flex-start' : 'center',
       zoomOverflow: zoomed ? 'auto' : 'hidden',
-      zoomCursor: zoomed ? 'zoom-out' : 'zoom-in',
-      zoomLabel: zoomed ? 'Ajustar' : 'Ampliar',
+      zoomCursor: zoomLevel === 2 ? 'zoom-out' : 'zoom-in',
+      zoomLabel: zoomLevel === 0 ? 'Ampliar' : (zoomLevel === 1 ? 'Ampliar más' : 'Ajustar'),
       zoomIconEl: zoomIcon,
       zoomBtnBg: zoomed ? 'rgba(110,231,183,.14)' : 'rgba(255,255,255,.06)',
       zoomBtnBorder: zoomed ? '#6ee7b7' : 'rgba(110,231,183,.25)',
       zoomBtnColor: zoomed ? '#6ee7b7' : '#eef7f3',
-      onToggleZoom: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState((s) => ({ zoomed: !s.zoomed })); },
-      onCloseViewer: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ viewerIndex: null, zoomed: false }); },
-      onPrev: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ zoomed: false }); this._step(-1); },
-      onNext: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ zoomed: false }); this._step(1); },
+      // Ciclo de tres pasos: ajustada → real → 200% → ajustada.
+      onToggleZoom: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState((s) => ({ zoomLevel: (s.zoomLevel + 1) % 3 })); },
+      onCloseViewer: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ viewerIndex: null, zoomLevel: 0, naturalWidth: 0 }); },
+      onPrev: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ zoomLevel: 0, naturalWidth: 0 }); this._step(-1); },
+      onNext: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ zoomLevel: 0, naturalWidth: 0 }); this._step(1); },
       siblings,
       captureNotice: inv.report.captureNotice,
       versionLabel: notConfirmed ? 'No confirmada en el archivo' : product.version,
