@@ -25,12 +25,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.nutrimetria.cc/Docs.dc.html</loc>
-    <lastmod>2026-08-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://www.nutrimetria.cc/Resources.dc.html</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>monthly</changefreq>
@@ -49,34 +43,10 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.nutrimetria.cc/About.dc.html</loc>
-    <lastmod>2026-08-24</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://www.nutrimetria.cc/Contact.dc.html</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.nutrimetria.cc/License.dc.html</loc>
-    <lastmod>2026-08-24</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://www.nutrimetria.cc/Terms.dc.html</loc>
-    <lastmod>2026-08-24</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://www.nutrimetria.cc/Privacy.dc.html</loc>
-    <lastmod>2026-08-24</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://www.nutrimetria.cc/Nmx.dc.html?id=nmx01</loc>
@@ -270,4 +240,5 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url><loc>https://www.nutrimetria.cc/Legal.dc.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>
